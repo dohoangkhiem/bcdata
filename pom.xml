@@ -18,5 +18,6 @@
   <modules>
     <module>wbexplorer</module>
     <module>sec-xbrl</module>
+    <module>hive-experiment</module>
   </modules>
 </project>
