@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!DOCTYPE orm PUBLIC 
+    "-//Sun Microsystems, Inc.//DTD Java Data Objects Metadata 2.0//EN" 
+    "http://java.sun.com/dtd/orm_2_0.dtd">
+<orm>
+  <package name="khiem.data.worldbank.pojo">
+    <class name="Country" identity-type="datastore" table="Countries">
+      <inheritance strategy="new-table" />
+      <field name="id">
+        <column name="id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="iso2Code">
+        <column name="iso2_code" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="name">
+        <column name="name" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="regionId">
+        <column name="region_id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="adminRegionId">
+        <column name="admin_region_id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="incomeLevelId">
+        <column name="income_level_id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="lendingTypeId">
+        <column name="lending_type_id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="capitalCity">
+        <column name="capital_city" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="latitude">
+        <column name="latitude" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="longitude">
+        <column name="longitude" length="40" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+
+    <class name="IncomeLevel" identity-type="datastore" table="IncomeLevels">
+      <inheritance strategy="new-table" />
+      <field name="id">
+        <column name="id" length="100" jdbc-type="VARCHAR" />
+      </field>
+      <field name="value">
+        <column name="value" length="255" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+    
+    <class name="Region" identity-type="datastore" table="Regions">
+      <inheritance strategy="new-table" />
+      <field name="code">
+        <column name="code" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="name">
+        <column name="name" length="255" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+
+    <class name="Indicator" identity-type="datastore" table="Indicators">
+      <inheritance strategy="new-table" />
+      <field name="id">
+        <column name="id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="name">
+        <column name="name" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="sourceId">
+        <column name="source_id" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="sourceNote">
+        <column name="source_note" length="10000" jdbc-type="LONGVARCHAR" />
+      </field>
+      <field name="sourceOrganization">
+        <column name="source_organization" length="10000" jdbc-type="LONGVARCHAR" />
+      </field>
+      <field name="topicIds" table="Indicators_Topics">
+        <collection element-type="java.lang.String"/>
+        <join column="indicator_id"/>
+        <element column="topic_id" />       
+      </field>
+    </class>
+    
+    <class name="Topic" identity-type="datastore" table="Topics">
+      <inheritance strategy="new-table" />
+      <field name="id">
+        <column name="id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="value">
+        <column name="value" length="500" jdbc-type="VARCHAR" />
+      </field>
+      <field name="sourceNote">
+        <column name="source_note" length="2000" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+    
+    <class name="LendingType" identity-type="datastore" table="LendingTypes">
+      <inheritance strategy="new-table" />
+      <field name="id">
+        <column name="id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="value">
+        <column name="value" length="500" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+    
+    <class name="Source" identity-type="datastore" table="Sources">
+      <inheritance strategy="new-table" />
+      <field name="id">
+        <column name="id" length="40" jdbc-type="VARCHAR" />
+      </field>
+      <field name="name">
+        <column name="name" length="500" jdbc-type="VARCHAR" />
+      </field>
+      <field name="description">
+        <column name="description" length="2000" jdbc-type="LONGVARCHAR" />
+      </field>
+      <field name="url">
+        <column name="url" length="255" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+  </package>
+</orm>
