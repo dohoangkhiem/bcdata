@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Xbrlware::Instance</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Xbrlware::Instance</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/xbrlware/instance_rb.html">
+                lib/xbrlware/instance.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Class to deal with valid, well-formatted XBRl instance file. This class
+provides methods to deal with instance file. Look at <a
+href="http://code.google.com/p/xbrlware/wiki/InstanceTaxonomy">delaing with
+instance page on xbrlware wiki</a> for more details.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000080">context</a>&nbsp;&nbsp;
+      <a href="#M000090">context_for_item</a>&nbsp;&nbsp;
+      <a href="#M000081">ctx_groupby_dim</a>&nbsp;&nbsp;
+      <a href="#M000084">ctx_groupby_dim_dom_print</a>&nbsp;&nbsp;
+      <a href="#M000082">ctx_groupby_dom</a>&nbsp;&nbsp;
+      <a href="#M000083">ctx_groupby_period</a>&nbsp;&nbsp;
+      <a href="#M000094">entity_details</a>&nbsp;&nbsp;
+      <a href="#M000093">entity_details=</a>&nbsp;&nbsp;
+      <a href="#M000092">footnotes</a>&nbsp;&nbsp;
+      <a href="#M000085">inspect</a>&nbsp;&nbsp;
+      <a href="#M000089">item</a>&nbsp;&nbsp;
+      <a href="#M000087">item_all</a>&nbsp;&nbsp;
+      <a href="#M000088">item_all_map</a>&nbsp;&nbsp;
+      <a href="#M000091">item_ctx_filter</a>&nbsp;&nbsp;
+      <a href="#M000077">new</a>&nbsp;&nbsp;
+      <a href="#M000078">raw</a>&nbsp;&nbsp;
+      <a href="#M000079">schema_ref</a>&nbsp;&nbsp;
+      <a href="#M000086">unit</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">taxonomy</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000077" class="method-detail">
+        <a name="M000077"></a>
+
+        <div class="method-heading">
+          <a href="#M000077" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(instance_str, taxonomy_filepath=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <a href="Instance.html">Instance</a>.
+</p>
+<table>
+<tr><td valign="top">instance_str:</td><td>XBRL <a href="Instance.html">Instance</a> source. Tries to load and parse
+instance file from the instance_str. This can be XBRL instance file from
+the file system or XBRL content string.
+
+</td></tr>
+<tr><td valign="top">taxonomy_filepath:</td><td>optional parameter, XBRL <a href="Taxonomy.html">Taxonomy</a> source. Tries
+to load and parse taxonomy file from path. If this param is specified,
+taxonomy file in the instance document will be ignored
+
+</td></tr>
+</table>
+<p>
+Expects instance source is well-formatted and valid Sometimes instance
+document contains large chunk of HTML content with <a
+href="Instance.html#M000077">new</a> lines in-between, which will cause
+parsing error. Hence any exceptions during instance source parsing, will
+trigger re-parsing of the entire instnace file with <a
+href="Instance.html#M000077">new</a> lines replaced. Look at <a
+href="http://code.google.com/p/xbrlware/wiki/InstanceTaxonomy">delaing with
+instance page on xbrlware wiki</a> for details.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000077-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000077-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 42</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">instance_str</span>, <span class="ruby-identifier">taxonomy_filepath</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">m</span>=<span class="ruby-constant">Benchmark</span>.<span class="ruby-identifier">measure</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-ivar">@file_name</span>=<span class="ruby-identifier">instance_str</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">instance_str</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/&lt;.*?&gt;/</span><span class="ruby-identifier">m</span>
+          <span class="ruby-ivar">@xbrl_content</span> = <span class="ruby-constant">XmlParser</span>.<span class="ruby-identifier">xml_in</span>(<span class="ruby-identifier">instance_str</span>, {<span class="ruby-value str">'ForceContent'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>})
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span>
+          <span class="ruby-identifier">new_content</span>=<span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">instance_str</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/&lt;.*?&gt;/</span><span class="ruby-identifier">m</span>
+            <span class="ruby-identifier">$LOG</span>.<span class="ruby-identifier">warn</span> <span class="ruby-value str">&quot;Supplied XBRL content is not well formed. Starting reparsing after removing new lines.&quot;</span>
+            <span class="ruby-identifier">new_content</span>=<span class="ruby-identifier">instance_str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-value str">&quot;\n&quot;</span>, <span class="ruby-value str">&quot;&quot;</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">$LOG</span>.<span class="ruby-identifier">warn</span> <span class="ruby-value str">&quot;File [&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">instance_str</span><span class="ruby-operator">+</span><span class="ruby-value str">&quot;] is not well formed. Starting reparsing after removing new lines.&quot;</span>
+            <span class="ruby-identifier">new_content</span>=<span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">instance_str</span>).<span class="ruby-identifier">read</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-value str">&quot;\n&quot;</span>, <span class="ruby-value str">&quot;&quot;</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-ivar">@xbrl_content</span> = <span class="ruby-constant">XmlParser</span>.<span class="ruby-identifier">xml_in</span>(<span class="ruby-identifier">new_content</span>, {<span class="ruby-value str">'ForceContent'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>}) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">new_content</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">bm</span>(<span class="ruby-value str">&quot;Parsing [&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">instance_str</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;] took&quot;</span>, <span class="ruby-identifier">m</span>)
+
+      <span class="ruby-comment cmt"># if taxonomy file is not supplied, get it from instance schema_ref</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">taxonomy_filepath</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">taxonomy_file_location</span>=<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">instance_str</span>)<span class="ruby-operator">+</span><span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">Separator</span><span class="ruby-operator">+</span><span class="ruby-identifier">schema_ref</span>
+        <span class="ruby-identifier">taxonomy_filepath</span> = <span class="ruby-identifier">taxonomy_file_location</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">taxonomy_file_location</span>) <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-keyword kw">not</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">taxonomy_file_location</span>))
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@taxonomy</span>=<span class="ruby-constant">Xbrlware</span><span class="ruby-operator">::</span><span class="ruby-constant">Taxonomy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">taxonomy_filepath</span>, <span class="ruby-keyword kw">self</span>)
+      <span class="ruby-ivar">@entity_details</span>=<span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;UNKNOWN&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000080" class="method-detail">
+        <a name="M000080"></a>
+
+        <div class="method-heading">
+          <a href="#M000080" class="method-signature">
+          <span class="method-name">context</span><span class="method-args">(context_id=nil, dimensions=[])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes optional context_id as string and dimensions as array
+</p>
+<pre>
+  Returns all contexts when context_id is nil
+  Returns instance of Context object if context_id or dimensions is passed and matching context exist
+  Returns nil if context_id or dimensions is passed and no matching context exist
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000080-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000080-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 88</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">context</span>(<span class="ruby-identifier">context_id</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">dimensions</span>=[])
+      <span class="ruby-identifier">all_contexts</span>= <span class="ruby-identifier">context_by_id</span>(<span class="ruby-identifier">context_id</span>)
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">all_contexts</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dimensions</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">==</span><span class="ruby-value">0</span>
+
+      <span class="ruby-identifier">contexts</span>=[]
+
+      <span class="ruby-identifier">all_contexts</span>=[<span class="ruby-identifier">all_contexts</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+      <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ctx</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">has_explicit_dimensions?</span>(<span class="ruby-identifier">dimensions</span>)
+        <span class="ruby-identifier">contexts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ctx</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">contexts</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">context_id</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">contexts</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000090" class="method-detail">
+        <a name="M000090"></a>
+
+        <div class="method-heading">
+          <a href="#M000090" class="method-signature">
+          <span class="method-name">context_for_item</span><span class="method-args">(item_name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes <a href="Instance.html#M000089">item</a> name
+</p>
+<pre>
+ Returns array of contexts for given item name
+ Returns empty array if no item with given name found
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000090-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000090-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 350</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">context_for_item</span>(<span class="ruby-identifier">item_name</span>)
+      <span class="ruby-identifier">contexts</span>=[]
+      <span class="ruby-identifier">items</span> = <span class="ruby-identifier">item</span>(<span class="ruby-identifier">item_name</span>)
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">contexts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">context</span>}
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">contexts</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000081" class="method-detail">
+        <a name="M000081"></a>
+
+        <div class="method-heading">
+          <a href="#M000081" class="method-signature">
+          <span class="method-name">ctx_groupby_dim</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns contexts grouped by dimension as map. Map contains dimension as key
+and corresponding contexts as value
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000081-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000081-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 106</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ctx_groupby_dim</span>
+      <span class="ruby-identifier">dim_group</span>={}
+      <span class="ruby-identifier">all_contexts</span>= <span class="ruby-identifier">context</span>
+      <span class="ruby-identifier">all_contexts</span>=[<span class="ruby-identifier">all_contexts</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+      <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ctx</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">explicit_dimensions</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dim</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">dim_group</span>[<span class="ruby-identifier">dim</span>] = [] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dim_group</span>[<span class="ruby-identifier">dim</span>].<span class="ruby-identifier">nil?</span>
+          <span class="ruby-identifier">dim_group</span>[<span class="ruby-identifier">dim</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ctx</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">dim_group</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000084" class="method-detail">
+        <a name="M000084"></a>
+
+        <div class="method-heading">
+          <a href="#M000084" class="method-signature">
+          <span class="method-name">ctx_groupby_dim_dom_print</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Prints dimension -&gt; domain -&gt; <a
+href="Instance.html#M000080">context</a> relationship for all contexts in
+the console.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000084-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000084-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 148</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ctx_groupby_dim_dom_print</span>
+      <span class="ruby-identifier">group_dim</span>=<span class="ruby-identifier">ctx_groupby_dim</span>
+      <span class="ruby-identifier">group_dim</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dimension</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot; dimension :: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">dimension</span>
+        <span class="ruby-identifier">group_dom</span>=<span class="ruby-identifier">ctx_groupby_dom</span>(<span class="ruby-identifier">dimension</span>)
+        <span class="ruby-identifier">group_dom</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">domain</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot; \t domain :: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">domain</span>
+          <span class="ruby-identifier">group_dom</span>[<span class="ruby-identifier">domain</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ctx</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot; \t\t ctx :: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">id</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000082" class="method-detail">
+        <a name="M000082"></a>
+
+        <div class="method-heading">
+          <a href="#M000082" class="method-signature">
+          <span class="method-name">ctx_groupby_dom</span><span class="method-args">(dimensions=[])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes optional dimensions as array
+</p>
+<pre>
+  Returns contexts group by domain as map. Map contains domain as key and corresponding contexts as value
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000082-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000082-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 121</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ctx_groupby_dom</span>(<span class="ruby-identifier">dimensions</span>=[])
+      <span class="ruby-identifier">dom_group</span>={}
+      <span class="ruby-identifier">all_contexts</span>= <span class="ruby-identifier">context</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">dimensions</span>)
+      <span class="ruby-identifier">all_contexts</span>=[<span class="ruby-identifier">all_contexts</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+      <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ctx</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">explicit_domains</span>(<span class="ruby-identifier">dimensions</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dom</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">dom_group</span>[<span class="ruby-identifier">dom</span>] = [] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dom_group</span>[<span class="ruby-identifier">dom</span>].<span class="ruby-identifier">nil?</span>
+          <span class="ruby-identifier">dom_group</span>[<span class="ruby-identifier">dom</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ctx</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">dom_group</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000083" class="method-detail">
+        <a name="M000083"></a>
+
+        <div class="method-heading">
+          <a href="#M000083" class="method-signature">
+          <span class="method-name">ctx_groupby_period</span><span class="method-args">(dimensions=[])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes optional dimensions as array
+</p>
+<pre>
+  Returns contexts group by period as map. Map contains period as key and corresponding contexts as value
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000083-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000083-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 136</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ctx_groupby_period</span>(<span class="ruby-identifier">dimensions</span>=[])
+      <span class="ruby-identifier">period_group</span>={}
+      <span class="ruby-identifier">all_contexts</span>= <span class="ruby-identifier">context</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">dimensions</span>)
+      <span class="ruby-identifier">all_contexts</span>=[<span class="ruby-identifier">all_contexts</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+      <span class="ruby-identifier">all_contexts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ctx</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">period_group</span>[<span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">period</span>] = [] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">period_group</span>[<span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">period</span>].<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">period_group</span>[<span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">period</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ctx</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">period_group</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000094" class="method-detail">
+        <a name="M000094"></a>
+
+        <div class="method-heading">
+          <a href="#M000094" class="method-signature">
+          <span class="method-name">entity_details</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000094-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000094-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 393</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">entity_details</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@entity_details</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">==</span><span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-comment cmt"># Specific to US filing </span>
+          <span class="ruby-identifier">e_name</span>=<span class="ruby-identifier">item</span>(<span class="ruby-value str">&quot;EntityRegistrantName&quot;</span>)[<span class="ruby-value">0</span>]
+          <span class="ruby-identifier">e_ci_key</span>=<span class="ruby-identifier">item</span>(<span class="ruby-value str">&quot;EntityCentralIndexKey&quot;</span>)[<span class="ruby-value">0</span>]
+          <span class="ruby-identifier">e_doc_type</span>=<span class="ruby-identifier">item</span>(<span class="ruby-value str">&quot;DocumentType&quot;</span>)[<span class="ruby-value">0</span>]
+          <span class="ruby-identifier">e_doc_end_type</span>=<span class="ruby-identifier">item</span>(<span class="ruby-value str">&quot;DocumentPeriodEndDate&quot;</span>)[<span class="ruby-value">0</span>]
+
+          <span class="ruby-identifier">fedate</span>=<span class="ruby-identifier">item</span>(<span class="ruby-value str">&quot;CurrentFiscalYearEndDate&quot;</span>)
+          <span class="ruby-identifier">e_fiscal_end_date</span>=<span class="ruby-identifier">fedate</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">fedate</span>.<span class="ruby-identifier">nil?</span>
+
+          <span class="ruby-identifier">shares_outstanding</span> = <span class="ruby-identifier">item</span>(<span class="ruby-value str">&quot;EntityCommonStockSharesOutstanding&quot;</span>)
+          <span class="ruby-identifier">e_common_shares_outstanding</span>=<span class="ruby-identifier">shares_outstanding</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">shares_outstanding</span>.<span class="ruby-identifier">nil?</span>
+
+          <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;name&quot;</span>]=<span class="ruby-identifier">e_name</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">e_name</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;ci_key&quot;</span>]=<span class="ruby-identifier">e_ci_key</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">e_ci_key</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;doc_type&quot;</span>]=<span class="ruby-identifier">e_doc_type</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">e_doc_type</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;doc_end_date&quot;</span>]=<span class="ruby-identifier">e_doc_end_type</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">e_doc_end_type</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;fiscal_end_date&quot;</span>]=<span class="ruby-identifier">e_fiscal_end_date</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">e_fiscal_end_date</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;common_shares_outstanding&quot;</span>]=<span class="ruby-identifier">e_common_shares_outstanding</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">e_common_shares_outstanding</span>.<span class="ruby-identifier">nil?</span>
+
+          <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@file_name</span>.<span class="ruby-identifier">nil?</span>
+            <span class="ruby-identifier">file_name</span>=<span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-ivar">@file_name</span>)
+            <span class="ruby-identifier">symbol</span>=<span class="ruby-identifier">file_name</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;-&quot;</span>)[<span class="ruby-value">0</span>]
+            <span class="ruby-identifier">symbol</span>.<span class="ruby-identifier">upcase!</span>
+
+            <span class="ruby-ivar">@entity_details</span>[<span class="ruby-value str">&quot;symbol&quot;</span>]=<span class="ruby-identifier">symbol</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">symbol</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+          <span class="ruby-ivar">@entity_details</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@entity_details</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000093" class="method-detail">
+        <a name="M000093"></a>
+
+        <div class="method-heading">
+          <a href="#M000093" class="method-signature">
+          <span class="method-name">entity_details=</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000093-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000093-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 389</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">entity_details=</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-ivar">@entity_details</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">value</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000092" class="method-detail">
+        <a name="M000092"></a>
+
+        <div class="method-heading">
+          <a href="#M000092" class="method-signature">
+          <span class="method-name">footnotes</span><span class="method-args">(item_id=nil, lang=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes optional <a href="Instance.html#M000089">item</a> id and language
+</p>
+<pre>
+ Every item in XBRL instance file may contain optional id element.
+ Footnotes is associated with id of the item. Footnotes may be in different languages.
+ Returns Map with lang as key and corresponding footnotes in array as value if item_id is givien
+ Returns Map with item_id as key and another Map as value.
+   Second map has lang as key and corresponding footnotes in array as value if item_id is givien
+ Returns nil if no match found for item_it or footnotes not exist
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000092-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000092-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 379</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">footnotes</span> (<span class="ruby-identifier">item_id</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">lang</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-ivar">@item_footnote_map</span>=<span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot; lang can't be passed when item id is nil&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">item_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-keyword kw">not</span> <span class="ruby-identifier">lang</span>.<span class="ruby-identifier">nil?</span>)
+      <span class="ruby-ivar">@item_footnote_map</span> = <span class="ruby-identifier">compute_footnotes</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@item_footnote_map</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@item_footnote_map</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@item_footnote_map</span>[<span class="ruby-identifier">item_id</span>] <span class="ruby-keyword kw">if</span> (<span class="ruby-keyword kw">not</span> <span class="ruby-identifier">item_id</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">lang</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@item_footnote_map</span>[<span class="ruby-identifier">item_id</span>][<span class="ruby-identifier">lang</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">item_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">lang</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-ivar">@item_footnote_map</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000085" class="method-detail">
+        <a name="M000085"></a>
+
+        <div class="method-heading">
+          <a href="#M000085" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000085-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000085-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 162</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000089" class="method-detail">
+        <a name="M000089"></a>
+
+        <div class="method-heading">
+          <a href="#M000089" class="method-signature">
+          <span class="method-name">item</span><span class="method-args">(name, context_ref=nil, unit_ref=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes name and optional context_ref and unit_ref
+</p>
+<pre>
+ Returns array of Item for given name, context_ref and unit_ref
+ Returns empty array if item is not found
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000089-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000089-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 328</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">item</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">context_ref</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">unit_ref</span>=<span class="ruby-keyword kw">nil</span>)
+
+      <span class="ruby-identifier">item_content</span> = <span class="ruby-ivar">@xbrl_content</span>[<span class="ruby-identifier">name</span>]
+
+      <span class="ruby-keyword kw">return</span> [] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">item_content</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">items</span>=[]
+
+      <span class="ruby-identifier">item_content</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">context_ref</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">context_ref</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">item</span>[<span class="ruby-value str">&quot;contextRef&quot;</span>]
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">unit_ref</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">unit_ref</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">item</span>[<span class="ruby-value str">&quot;unitRef&quot;</span>]
+
+        <span class="ruby-identifier">item</span> = <span class="ruby-identifier">to_item_obj</span>(<span class="ruby-identifier">item</span>, <span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">items</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">item</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">items</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000087" class="method-detail">
+        <a name="M000087"></a>
+
+        <div class="method-heading">
+          <a href="#M000087" class="method-signature">
+          <span class="method-name">item_all</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000087-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000087-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 294</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">item_all</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@item_all</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@item_all</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">all_items</span> = <span class="ruby-ivar">@xbrl_content</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">all_items</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-ivar">@item_all</span>=[]
+
+      <span class="ruby-identifier">all_items</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">item_content</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">item_content</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">item_content</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item_content</span>[<span class="ruby-value">0</span>][<span class="ruby-value str">&quot;contextRef&quot;</span>].<span class="ruby-identifier">nil?</span>
+        <span class="ruby-ivar">@item_all</span> = <span class="ruby-ivar">@item_all</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">item</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@item_all</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000088" class="method-detail">
+        <a name="M000088"></a>
+
+        <div class="method-heading">
+          <a href="#M000088" class="method-signature">
+          <span class="method-name">item_all_map</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000088-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000088-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 311</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">item_all_map</span>
+      <span class="ruby-identifier">items</span>=<span class="ruby-identifier">item_all</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">items</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">items_hash</span>={}
+
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">_name</span>= <span class="ruby-identifier">item</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">upcase</span>
+        <span class="ruby-identifier">items_hash</span>[<span class="ruby-identifier">_name</span>] = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">items_hash</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">_name</span>)
+        <span class="ruby-identifier">items_hash</span>[<span class="ruby-identifier">_name</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">item</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">items_hash</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000091" class="method-detail">
+        <a name="M000091"></a>
+
+        <div class="method-heading">
+          <a href="#M000091" class="method-signature">
+          <span class="method-name">item_ctx_filter</span><span class="method-args">(name) {|item.context| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes <a href="Instance.html#M000089">item</a> name and filter block
+</p>
+<pre>
+ Fetches item with name and invokes filter block with item context
+ Returns matched items.
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000091-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000091-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 361</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">item_ctx_filter</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">context_filter_block</span>)
+      <span class="ruby-identifier">items</span>=<span class="ruby-identifier">item</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">items</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">context_filter_block</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">filtered_items</span>=[]
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">filtered_items</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">item</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">item</span>.<span class="ruby-identifier">context</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">filtered_items</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000078" class="method-detail">
+        <a name="M000078"></a>
+
+        <div class="method-heading">
+          <a href="#M000078" class="method-signature">
+          <span class="method-name">raw</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a href="Instance.html#M000078">raw</a> content of instance file in
+the form of Hash
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000078-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000078-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 72</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">raw</span>
+      <span class="ruby-ivar">@xbrl_content</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000079" class="method-detail">
+        <a name="M000079"></a>
+
+        <div class="method-heading">
+          <a href="#M000079" class="method-signature">
+          <span class="method-name">schema_ref</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns schemaRef element of instance file. schemaRef holds path to
+taxonomy file for the instance file.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000079-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000079-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 77</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">schema_ref</span>
+      <span class="ruby-identifier">base</span> = <span class="ruby-ivar">@xbrl_content</span>[<span class="ruby-value str">&quot;schemaRef&quot;</span>][<span class="ruby-value">0</span>][<span class="ruby-value str">&quot;xml:base&quot;</span>]
+      <span class="ruby-identifier">href</span> = <span class="ruby-ivar">@xbrl_content</span>[<span class="ruby-value str">&quot;schemaRef&quot;</span>][<span class="ruby-value">0</span>][<span class="ruby-value str">&quot;xlink:href&quot;</span>]
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">base</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">href</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">base</span>
+      <span class="ruby-identifier">href</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000086" class="method-detail">
+        <a name="M000086"></a>
+
+        <div class="method-heading">
+          <a href="#M000086" class="method-signature">
+          <span class="method-name">unit</span><span class="method-args">(unit_id=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Takes optional unit_id
+</p>
+<pre>
+  Returns all units if unit_id is nil
+  Returns matching unit as Unit object if unit_id  is given and matching unit found
+  Returns nil if unit_id is given and no matching unit found
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000086-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000086-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/instance.rb, line 243</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unit</span>(<span class="ruby-identifier">unit_id</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">unit_content</span> = <span class="ruby-ivar">@xbrl_content</span>[<span class="ruby-value str">&quot;unit&quot;</span>]
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">unit_content</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">units</span>=[]
+
+      <span class="ruby-identifier">l</span> = <span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">measure_list</span><span class="ruby-operator">|</span> <span class="ruby-identifier">measures</span>=[]; <span class="ruby-identifier">measure_list</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">measure</span><span class="ruby-operator">|</span> <span class="ruby-identifier">measures</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">measure</span>[<span class="ruby-value str">&quot;content&quot;</span>]}; <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">measures</span>}
+      <span class="ruby-identifier">unit_content</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">unit</span><span class="ruby-operator">|</span>
+
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">unit_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;id&quot;</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">unit_id</span>
+
+        <span class="ruby-identifier">_unit</span>=<span class="ruby-keyword kw">nil</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;measure&quot;</span>].<span class="ruby-identifier">nil?</span>
+          <span class="ruby-identifier">_unit</span> = <span class="ruby-constant">Unit</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;id&quot;</span>], <span class="ruby-identifier">l</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;measure&quot;</span>]))
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">divide_content</span> = <span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;divide&quot;</span>][<span class="ruby-value">0</span>]
+
+          <span class="ruby-identifier">numerator</span> = <span class="ruby-identifier">l</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">divide_content</span>[<span class="ruby-value str">&quot;unitNumerator&quot;</span>][<span class="ruby-value">0</span>][<span class="ruby-value str">&quot;measure&quot;</span>])
+          <span class="ruby-identifier">denominator</span> = <span class="ruby-identifier">l</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">divide_content</span>[<span class="ruby-value str">&quot;unitDenominator&quot;</span>][<span class="ruby-value">0</span>][<span class="ruby-value str">&quot;measure&quot;</span>])
+
+          <span class="ruby-identifier">divide</span>=<span class="ruby-constant">Unit</span><span class="ruby-operator">::</span><span class="ruby-constant">Divide</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">numerator</span>, <span class="ruby-identifier">denominator</span>)
+          <span class="ruby-identifier">_unit</span> = <span class="ruby-constant">Unit</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;id&quot;</span>], <span class="ruby-identifier">divide</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">_unit</span>.<span class="ruby-identifier">ns</span>=<span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;nspace&quot;</span>]
+        <span class="ruby-identifier">_unit</span>.<span class="ruby-identifier">nsp</span>=<span class="ruby-identifier">unit</span>[<span class="ruby-value str">&quot;nspace_prefix&quot;</span>]
+        <span class="ruby-identifier">units</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">_unit</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">units</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">unit_id</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">units</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

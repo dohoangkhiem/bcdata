@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Xbrlware::Linkbase::PresentationLinkbase</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Xbrlware::Linkbase::PresentationLinkbase</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/xbrlware/linkbase/presentation_linkbase_rb.html">
+                lib/xbrlware/linkbase/presentation_linkbase.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Linkbase.html">
+                Linkbase
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000014">new</a>&nbsp;&nbsp;
+      <a href="#M000015">presentation</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="PresentationLinkbase/Presentation.html" class="link">Xbrlware::Linkbase::PresentationLinkbase::Presentation</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <a href="#M000014" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(linkbase_path, instance, def_linkbase, label_linkbase=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="PresentationLinkbase.html">PresentationLinkbase</a>.
+</p>
+<table>
+<tr><td valign="top">linkbase_path:</td><td>XBRL <a href="PresentationLinkbase/Presentation.html">Presentation</a> <a
+href="../Linkbase.html">Linkbase</a> source. Tries to load and parse <a
+href="PresentationLinkbase.html#M000015">presentation</a> linkbase from
+path.
+
+</td></tr>
+<tr><td valign="top">instance:</td><td><a href="../Instance.html">Instance</a> object
+
+</td></tr>
+<tr><td valign="top">def_linkbase:</td><td><a href="DefinitionLinkbase.html">DefinitionLinkbase</a> object
+
+</td></tr>
+<tr><td valign="top">label_linkbase:</td><td>optional parameter, <a href="LabelLinkbase.html">LabelLinkbase</a> object
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000014-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/linkbase/presentation_linkbase.rb, line 37</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">linkbase_path</span>, <span class="ruby-identifier">instance</span>, <span class="ruby-identifier">def_linkbase</span>, <span class="ruby-identifier">label_linkbase</span>=<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">super</span> <span class="ruby-identifier">linkbase_path</span>
+        <span class="ruby-ivar">@instance</span>=<span class="ruby-identifier">instance</span>
+        <span class="ruby-ivar">@def_linkbase</span>=<span class="ruby-identifier">def_linkbase</span>
+        <span class="ruby-ivar">@label_linkbase</span>=<span class="ruby-identifier">label_linkbase</span>
+        <span class="ruby-ivar">@pre_content_optimized</span>=<span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
+
+        <div class="method-heading">
+          <a href="#M000015" class="method-signature">
+          <span class="method-name">presentation</span><span class="method-args">(role=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000015-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/linkbase/presentation_linkbase.rb, line 45</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">presentation</span>(<span class="ruby-identifier">role</span>=<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-identifier">presentations</span>=[]
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@pre_content_optimized</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-identifier">pre_content</span>=<span class="ruby-ivar">@linkbase_content</span>[<span class="ruby-value str">&quot;presentationLink&quot;</span>]
+
+          <span class="ruby-ivar">@pre_content_optimized</span> = []
+          <span class="ruby-identifier">pre_content</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pre</span>, <span class="ruby-identifier">index</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;loc&quot;</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;presentationArc&quot;</span>].<span class="ruby-identifier">nil?</span>
+            <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;loc&quot;</span>].<span class="ruby-identifier">map!</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">e</span>[<span class="ruby-value str">&quot;xlink:label&quot;</span>]=<span class="ruby-node">&quot;#{e['xlink:label']}_#{index}&quot;</span>
+              <span class="ruby-identifier">e</span>
+            <span class="ruby-keyword kw">end</span>
+
+            <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;presentationArc&quot;</span>].<span class="ruby-identifier">map!</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">e</span>[<span class="ruby-value str">&quot;xlink:from&quot;</span>]=<span class="ruby-node">&quot;#{e['xlink:from']}_#{index}&quot;</span>
+              <span class="ruby-identifier">e</span>[<span class="ruby-value str">&quot;xlink:to&quot;</span>]=<span class="ruby-node">&quot;#{e['xlink:to']}_#{index}&quot;</span>
+              <span class="ruby-identifier">e</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">selected</span>=<span class="ruby-ivar">@pre_content_optimized</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">pre_existing</span><span class="ruby-operator">|</span> <span class="ruby-identifier">pre_existing</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>]<span class="ruby-operator">==</span><span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>]}[<span class="ruby-value">0</span>]
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">selected</span>.<span class="ruby-identifier">nil?</span>
+              <span class="ruby-ivar">@pre_content_optimized</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pre</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;loc&quot;</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">current</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">matched_loc</span>=<span class="ruby-keyword kw">nil</span>
+                <span class="ruby-identifier">selected</span>[<span class="ruby-value str">&quot;loc&quot;</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">existing</span><span class="ruby-operator">|</span>
+                  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">existing</span>[<span class="ruby-value str">&quot;xlink:href&quot;</span>]<span class="ruby-operator">==</span><span class="ruby-identifier">current</span>[<span class="ruby-value str">&quot;xlink:href&quot;</span>]
+                    <span class="ruby-identifier">matched_loc</span>=<span class="ruby-identifier">current</span>
+                    <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;presentationArc&quot;</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arc</span><span class="ruby-operator">|</span>
+                      <span class="ruby-identifier">arc</span>[<span class="ruby-value str">&quot;xlink:from&quot;</span>] = <span class="ruby-identifier">existing</span>[<span class="ruby-value str">&quot;xlink:label&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">current</span>[<span class="ruby-value str">&quot;xlink:label&quot;</span>]<span class="ruby-operator">==</span><span class="ruby-identifier">arc</span>[<span class="ruby-value str">&quot;xlink:from&quot;</span>]
+                      <span class="ruby-identifier">arc</span>[<span class="ruby-value str">&quot;xlink:to&quot;</span>] = <span class="ruby-identifier">existing</span>[<span class="ruby-value str">&quot;xlink:label&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">current</span>[<span class="ruby-value str">&quot;xlink:label&quot;</span>]<span class="ruby-operator">==</span><span class="ruby-identifier">arc</span>[<span class="ruby-value str">&quot;xlink:to&quot;</span>]
+                    <span class="ruby-keyword kw">end</span>
+                    <span class="ruby-keyword kw">break</span>
+                  <span class="ruby-keyword kw">end</span>
+                <span class="ruby-keyword kw">end</span>
+                <span class="ruby-identifier">selected</span>[<span class="ruby-value str">&quot;loc&quot;</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matched_loc</span>.<span class="ruby-identifier">nil?</span>
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-identifier">selected</span>[<span class="ruby-value str">&quot;presentationArc&quot;</span>] <span class="ruby-operator">+=</span> <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;presentationArc&quot;</span>]
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-ivar">@pre_content_optimized</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pre</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>]<span class="ruby-operator">==</span><span class="ruby-identifier">role</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">nil?</span>
+
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;presentationArc&quot;</span>].<span class="ruby-identifier">nil?</span>
+            <span class="ruby-identifier">presentations</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Presentation</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@instance</span>.<span class="ruby-identifier">entity_details</span>, <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:title&quot;</span>], <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>], <span class="ruby-ivar">@role_map</span>[<span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>]])
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">definition</span>=<span class="ruby-keyword kw">nil</span>
+            <span class="ruby-identifier">definition</span>=<span class="ruby-ivar">@def_linkbase</span>.<span class="ruby-identifier">definition</span>(<span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>]) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@def_linkbase</span>.<span class="ruby-identifier">nil?</span>
+
+            <span class="ruby-identifier">dimensions</span>=[]
+            <span class="ruby-identifier">dimensions</span> = <span class="ruby-identifier">definition</span>.<span class="ruby-identifier">dimension_domain_map</span>.<span class="ruby-identifier">keys</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">definition</span>.<span class="ruby-identifier">nil?</span>
+
+            <span class="ruby-identifier">contexts_and_arcs</span>=<span class="ruby-identifier">arcs</span>(<span class="ruby-identifier">pre</span>, <span class="ruby-identifier">dimensions</span>)
+            <span class="ruby-identifier">presentations</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Presentation</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@instance</span>.<span class="ruby-identifier">entity_details</span>, <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:title&quot;</span>], <span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>], <span class="ruby-ivar">@role_map</span>[<span class="ruby-identifier">pre</span>[<span class="ruby-value str">&quot;xlink:role&quot;</span>]], <span class="ruby-identifier">contexts_and_arcs</span>[<span class="ruby-value str">&quot;contexts&quot;</span>], <span class="ruby-identifier">contexts_and_arcs</span>[<span class="ruby-value str">&quot;arcs&quot;</span>], <span class="ruby-identifier">definition</span>, <span class="ruby-ivar">@instance</span>, <span class="ruby-identifier">dimensions</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">presentations</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">presentations</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

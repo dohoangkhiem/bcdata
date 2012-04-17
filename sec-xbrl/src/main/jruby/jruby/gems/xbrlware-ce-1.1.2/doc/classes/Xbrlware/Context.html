@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Xbrlware::Context</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Xbrlware::Context</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/xbrlware/context_rb.html">
+                lib/xbrlware/context.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This class represents each context in the XBRL instance file. Look at <a
+href="http://code.google.com/p/xbrlware/wiki/InstanceTaxonomy">delaing with
+instance page on xbrlware wiki</a> for more details.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000043">dimensions</a>&nbsp;&nbsp;
+      <a href="#M000047">dimensions_domains</a>&nbsp;&nbsp;
+      <a href="#M000045">domains</a>&nbsp;&nbsp;
+      <a href="#M000038">eql?</a>&nbsp;&nbsp;
+      <a href="#M000042">explicit_dimensions</a>&nbsp;&nbsp;
+      <a href="#M000046">explicit_dimensions_domains</a>&nbsp;&nbsp;
+      <a href="#M000044">explicit_domains</a>&nbsp;&nbsp;
+      <a href="#M000041">has_dimensions?</a>&nbsp;&nbsp;
+      <a href="#M000040">has_explicit_dimensions?</a>&nbsp;&nbsp;
+      <a href="#M000036">has_scenario?</a>&nbsp;&nbsp;
+      <a href="#M000039">hash</a>&nbsp;&nbsp;
+      <a href="#M000035">new</a>&nbsp;&nbsp;
+      <a href="#M000037">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../NSAware.html">NSAware</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Context/Period.html" class="link">Xbrlware::Context::Period</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PERIOD_FOREVER</td>
+          <td>=</td>
+          <td class="context-item-value">-1</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">entity</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">id</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">period</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">scenario</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000035" class="method-detail">
+        <a name="M000035"></a>
+
+        <div class="method-heading">
+          <a href="#M000035" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(id, entity, period, scenario=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000035-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000035-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 61</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">id</span>, <span class="ruby-identifier">entity</span>, <span class="ruby-identifier">period</span>, <span class="ruby-identifier">scenario</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-ivar">@id</span> = <span class="ruby-identifier">id</span>
+      <span class="ruby-ivar">@entity</span> = <span class="ruby-identifier">entity</span>
+      <span class="ruby-ivar">@period</span> = <span class="ruby-constant">Period</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">period</span>)
+      <span class="ruby-ivar">@scenario</span>=<span class="ruby-identifier">scenario</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000043" class="method-detail">
+        <a name="M000043"></a>
+
+        <div class="method-heading">
+          <span class="method-name">dimensions</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Context.html#M000042">explicit_dimensions</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000047" class="method-detail">
+        <a name="M000047"></a>
+
+        <div class="method-heading">
+          <span class="method-name">dimensions_domains</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Context.html#M000046">explicit_dimensions_domains</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000045" class="method-detail">
+        <a name="M000045"></a>
+
+        <div class="method-heading">
+          <span class="method-name">domains</span><span class="method-args">(dimensions=[])</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Context.html#M000044">explicit_domains</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000038" class="method-detail">
+        <a name="M000038"></a>
+
+        <div class="method-heading">
+          <a href="#M000038" class="method-signature">
+          <span class="method-name">eql?</span><span class="method-args">(o)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000038-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000038-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 76</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">o</span>)
+      <span class="ruby-identifier">o</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Context</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000042" class="method-detail">
+        <a name="M000042"></a>
+
+        <div class="method-heading">
+          <a href="#M000042" class="method-signature">
+          <span class="method-name">explicit_dimensions</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000042-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000042-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 91</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">explicit_dimensions</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@entity</span>.<span class="ruby-identifier">explicit_dimensions</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000046" class="method-detail">
+        <a name="M000046"></a>
+
+        <div class="method-heading">
+          <a href="#M000046" class="method-signature">
+          <span class="method-name">explicit_dimensions_domains</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000046-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000046-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 103</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">explicit_dimensions_domains</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@entity</span>.<span class="ruby-identifier">explicit_dimensions_domains</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000044" class="method-detail">
+        <a name="M000044"></a>
+
+        <div class="method-heading">
+          <a href="#M000044" class="method-signature">
+          <span class="method-name">explicit_domains</span><span class="method-args">(dimensions=[])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000044-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000044-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 97</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">explicit_domains</span>(<span class="ruby-identifier">dimensions</span>=[])
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@entity</span>.<span class="ruby-identifier">explicit_domains</span>(<span class="ruby-identifier">dimensions</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000041" class="method-detail">
+        <a name="M000041"></a>
+
+        <div class="method-heading">
+          <span class="method-name">has_dimensions?</span><span class="method-args">(dimensions=[])</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for has_explicit_dimensions?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000040" class="method-detail">
+        <a name="M000040"></a>
+
+        <div class="method-heading">
+          <a href="#M000040" class="method-signature">
+          <span class="method-name">has_explicit_dimensions?</span><span class="method-args">(dimensions=[])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000040-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000040-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 84</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_explicit_dimensions?</span>(<span class="ruby-identifier">dimensions</span>=[])
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@entity</span>.<span class="ruby-identifier">has_explicit_dimensions?</span>(<span class="ruby-identifier">dimensions</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@entity</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000036" class="method-detail">
+        <a name="M000036"></a>
+
+        <div class="method-heading">
+          <a href="#M000036" class="method-signature">
+          <span class="method-name">has_scenario?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000036-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000036-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 68</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_scenario?</span>
+      (<span class="ruby-keyword kw">not</span> <span class="ruby-ivar">@scenario</span>.<span class="ruby-identifier">nil?</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000039" class="method-detail">
+        <a name="M000039"></a>
+
+        <div class="method-heading">
+          <a href="#M000039" class="method-signature">
+          <span class="method-name">hash</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000039-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000039-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 80</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hash</span>
+      <span class="ruby-ivar">@id</span>.<span class="ruby-identifier">hash</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000037" class="method-detail">
+        <a name="M000037"></a>
+
+        <div class="method-heading">
+          <a href="#M000037" class="method-signature">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000037-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000037-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/xbrlware/context.rb, line 72</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
+      <span class="ruby-value str">&quot;Id [&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;], Entity { &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@entity</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot; },  period [&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">period</span>.<span class="ruby-identifier">to_s</span><span class="ruby-operator">+</span><span class="ruby-value str">&quot;]&quot;</span><span class="ruby-operator">+</span> (<span class="ruby-value str">&quot;,  scenario [&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">scenario</span><span class="ruby-operator">+</span><span class="ruby-value str">&quot;]&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">nil?</span>).<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

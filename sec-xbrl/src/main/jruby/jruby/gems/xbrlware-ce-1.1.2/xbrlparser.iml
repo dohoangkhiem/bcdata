@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RUBY_MODULE" version="4">
+  <component name="GemRequirementsHolder" version="2">
+    <requirement>
+      <requirement>
+        <dependency name="rake" version="0" bound="GREATER_OR_EQUAL" />
+      </requirement>
+      <source from="Rakefile" />
+      <source from="Rakefile.rb" />
+    </requirement>
+    <requirement>
+      <requirement>
+        <dependency name="xml-simple" version="1.0.12" bound="EQUAL" />
+      </requirement>
+      <source from="lib/code_gen/gaap_taxonomy_generator.rb" />
+      <source from="lib/xbrl.rb" />
+      <source from="lib/xbrlware.rb" />
+      <source from="pkg/xbrlware-ce-1.1.1/lib/xbrlware.rb" />
+    </requirement>
+    <requirement>
+      <requirement>
+        <dependency name="xml-simple" version="0" bound="GREATER_OR_EQUAL" />
+      </requirement>
+      <source manual="true" />
+    </requirement>
+  </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/example" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="xml-simple" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] xml-simple (v1.0.12, /usr/lib/ruby/gems/1.8/gems/xml-simple-1.0.12)" level="application" />
+  </component>
+</module>
+
