@@ -7,10 +7,10 @@
     <groupId>khiem.dataprj</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>khiem.dataprj.hive</groupId>
-  <artifactId>hive-experiment</artifactId>
+  <groupId>khiem.dataprj.plf</groupId>
+  <artifactId>plfdemo</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>hive-experiment</name>
+  <name>Platform Demo</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>

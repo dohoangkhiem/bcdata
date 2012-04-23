@@ -7,6 +7,7 @@
     <groupId>khiem.dataprj</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
+  <groupId>khiem.dataprj.worldbank</groupId>
   <artifactId>wbexplorer</artifactId>
   <name>wbexplorer</name>
   <url>http://maven.apache.org</url>

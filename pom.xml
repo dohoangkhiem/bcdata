@@ -19,5 +19,6 @@
     <module>wbexplorer</module>
     <module>sec-xbrl</module>
     <module>hive-experiment</module>
+    <module>plfdemo</module>
   </modules>
 </project>

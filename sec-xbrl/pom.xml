@@ -7,7 +7,7 @@
     <groupId>khiem.dataprj</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>khiem.dataprj</groupId>
+  <groupId>khiem.dataprj.sec</groupId>
   <artifactId>sec-xbrl</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>sec-xbrl</name>
