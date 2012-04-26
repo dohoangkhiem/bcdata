@@ -13,6 +13,11 @@ public class Dataset {
   private String description;
   @NotPersistent private List<Table> tables;
 
+  public Dataset(String name, String description) {
+    this.name = name;
+    this.description = description;
+  }
+  
   public int getId() {
     return id;
   }

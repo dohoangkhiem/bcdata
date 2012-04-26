@@ -1,41 +1,72 @@
 package khiem.dataprj.demo.plfdemo.datastore;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
 
-public class JdoDatastoreDao implements DatastoreDao {
+import org.springframework.orm.jdo.support.JdoDaoSupport;
 
+public class JdoDatastoreDao extends JdoDaoSupport implements DatastoreDao {
+
+  
+  public JdoDatastoreDao() {
+  }
+    
   @Override
   public List<Dataset> getDatasetList() {
-    // TODO Auto-generated method stub
-    return null;
+    Query q = getPersistenceManager().newQuery(Dataset.class);
+    q.compile();
+    List<Dataset> datasets = (List) q.execute();
+    return datasets;
   }
 
   @Override
   public void createDataset(String name, String description) {
-    // TODO Auto-generated method stub
-    
+    Dataset dataset = new Dataset(name, description);
+    List<Dataset> datasets = new ArrayList<Dataset>();
+    datasets.add(dataset);
+    persistData(datasets);
   }
 
   @Override
   public List<Table> getTableList(String datasetName) {
-    // TODO Auto-generated method stub
-    return null;
+    Query q = getPersistenceManager().newQuery(Table.class);
+    q.setFilter("dataset==\"" + datasetName + "\"");
+    List<Table> tables = (List<Table>) q.execute();
+    return tables;
   }
 
   @Override
   public void createTable(String datasetName, String tableName, String fieldList) {
-    // TODO Auto-generated method stub
+    String[] fields = fieldList.split(",");
     
   }
 
   @Override
-  public void importJsonData(String datasetName, String tableName,
-      String jsonData) {
+  public void importJsonData(String datasetName, String tableName, String jsonData) {
     // TODO Auto-generated method stub
-    
+  }
+  
+  public <T> void persistData(Collection<T> collection) {
+    if (collection != null && collection.size() > 0) {
+      PersistenceManager pm = getPersistenceManager();
+      Transaction tx = pm.currentTransaction();
+      try {
+        tx.begin();
+        pm.makePersistentAll(collection);
+        tx.commit();
+      } finally {
+        if (tx.isActive()) tx.rollback();
+      }
+      
+    }
   }
 
 }

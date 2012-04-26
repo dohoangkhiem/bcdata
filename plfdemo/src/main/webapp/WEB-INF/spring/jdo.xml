@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <!-- PMF Bean -->
+  <bean id="pmf"
+    class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean">
+    <property name="jdoProperties">
+      <props>
+        <prop key="javax.jdo.PersistenceManagerFactoryClass">
+          org.jpox.jdo.JDOPersistenceManagerFactory</prop>
+        <prop key="javax.jdo.option.ConnectionURL">jdbc:mysql://localhost:3306/plfdemo</prop>
+        <prop key="javax.jdo.option.ConnectionUserName">root</prop>
+        <prop key="javax.jdo.option.ConnectionPassword">a</prop>
+        <prop key="javax.jdo.option.ConnectionDriverName">com.mysql.jdbc.Driver</prop>
+      </props>
+    </property>
+  </bean>
+
+  <!-- Transaction Manager for PMF -->
+  <bean id="jdoTransactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
+    <property name="persistenceManagerFactory">
+      <ref local="pmf" />
+    </property>
+  </bean>
+
+  <!-- Typical DAO -->
+  <bean id="jdoDatastoreDao" class="khiem.dataprj.demo.plfdemo.datastore.JdoDatastoreDao">
+    <property name="persistenceManagerFactory">
+      <ref local="pmf" />
+    </property>
+  </bean>
+
+  <!-- Typical Business Service 
+  <bean id="sampleService" class="org.jpox.spring.SampleService">
+    <property name="sampleDAO">
+      <ref local="sampleDAO" />
+    </property>
+  </bean-->
+
+  <!-- Transaction Interceptor for Business Services -->
+  <bean id="transactionInterceptor"
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="transactionManager">
+      <ref local="jdoTransactionManager" />
+    </property>
+    <property name="target">
+      <ref local="sampleService" />
+    </property>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="store*">PROPAGATION_REQUIRED</prop>
+        <prop key="delete*">PROPAGATION_REQUIRED</prop>
+        <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+      </props>
+    </property>
+  </bean>
+</beans>
