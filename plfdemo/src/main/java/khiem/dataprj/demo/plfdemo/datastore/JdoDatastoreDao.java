@@ -69,4 +69,18 @@ public class JdoDatastoreDao extends JdoDaoSupport implements DatastoreDao {
     }
   }
 
+  @Override
+  public void executeSql(String sql) {
+    Query query = getPersistenceManager().newQuery(sql);
+    query.compile();
+    query.execute();
+  }
+
+  @Override
+  public <T> List<T> executeSqlWithResult(String sql) {
+    Query q = getPersistenceManager().newQuery(sql);
+    List<T> results = (List<T>) q.execute();
+    return results;
+  }
+
 }

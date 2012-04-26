@@ -16,4 +16,8 @@ public interface DatastoreDao {
   public void createTable(String datasetName, String tableName, String fieldList);
   
   public void importJsonData(String datasetName, String tableName, String jsonData);
+  
+  public void executeSql(String sql);
+  
+  public <T> List<T> executeSqlWithResult(String sql);
 }
