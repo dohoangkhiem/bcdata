@@ -8,17 +8,18 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
+import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
 
-public class JdoDatastoreDao extends JdoDaoSupport implements DatastoreDao {
+public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
 
-  
-  public JdoDatastoreDao() {
+  public JdoDataStorage() {
   }
-    
+
   @Override
   public List<Dataset> getDatasetList() {
     Query q = getPersistenceManager().newQuery(Dataset.class);
@@ -81,6 +82,29 @@ public class JdoDatastoreDao extends JdoDaoSupport implements DatastoreDao {
     Query q = getPersistenceManager().newQuery(sql);
     List<T> results = (List<T>) q.execute();
     return results;
+  }
+
+  @Override
+  public List<Application> getApplicationList() throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Application.class);
+    q.compile();
+    List<Application> applications = (List) q.execute();
+    return applications;
+  }
+
+  @Override
+  public Application getApplication(String appname) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Application.class);
+    q.setFilter("name==\"" + appname + "\"");
+    List<Application> results = (List<Application>) q.execute();
+    if (results != null && results.size() > 0) {
+      return results.get(0);
+    } else return null;
+  }
+
+  @Override
+  public void createApplication(String name, String language) {
+    
   }
 
 }

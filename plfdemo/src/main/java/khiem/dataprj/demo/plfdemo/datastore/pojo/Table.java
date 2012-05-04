@@ -1,7 +1,9 @@
 package khiem.dataprj.demo.plfdemo.datastore.pojo;
 
+import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.PrimaryKey;
 
+@PersistenceCapable
 public class Table {
   @PrimaryKey
   private int id;
