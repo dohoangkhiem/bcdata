@@ -10,17 +10,21 @@ public class Application {
   
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
-  private String id;
+  private int id;
   private String name;
   private String description;
-  private String dataset;
   private String language;
-  private String code;
   
-  public String getId() {
+  public Application(String name, String description, String language) {
+    this.name = name;
+    this.description = description;
+    this.language = language;
+  }
+  
+  public int getId() {
     return id;
   }
-  public void setId(String id) {
+  public void setId(int id) {
     this.id = id;
   }
   public String getName() {
@@ -35,22 +39,11 @@ public class Application {
   public void setDescription(String description) {
     this.description = description;
   }
-  public String getDataset() {
-    return dataset;
-  }
-  public void setDataset(String dataset) {
-    this.dataset = dataset;
-  }
   public String getLanguage() {
     return language;
   }
   public void setLanguage(String language) {
     this.language = language;
   }
-  public String getCode() {
-    return code;
-  }
-  public void setCode(String code) {
-    this.code = code;
-  }
+
 }

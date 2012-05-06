@@ -16,17 +16,30 @@
  
  <!-- Forwards requests to the "/" resource to the "welcome" view -->
   <mvc:view-controller path="/" view-name="main" />
+
+  <mvc:resources mapping="/resources/**" location="/resources/" />
   
   <bean id="localAppExecutor" class="khiem.dataprj.demo.plfdemo.service.LocalApplicationExecutor">
+  </bean>
+ 
+  <bean id="appStoreService" class="khiem.dataprj.demo.plfdemo.service.ApplicationStoreService">
+    <constructor-arg value="/home/khiem/java/temp/apps"></constructor-arg>
   </bean>
   
   <bean id="mainController" class="khiem.dataprj.demo.plfdemo.controller.MainController">
     <property name="datastoreService" ref="datastoreService" />
+    <property name="appStoreService" ref="appStoreService" />
   </bean>
   
   <bean id="appController" class="khiem.dataprj.demo.plfdemo.controller.AppController">
     <property name="datastoreService" ref="datastoreService" />
     <property name="appExecutor" ref="localAppExecutor" />
+    <property name="appStoreService" ref="appStoreService" />
+    <property name="userDataService" ref="userDataService" />
+  </bean>
+  
+  <bean id="visualizeController" class="khiem.dataprj.demo.plfdemo.controller.VisualizeController">
+    <property name="appStoreService" ref="appStoreService"></property>
   </bean>
   
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

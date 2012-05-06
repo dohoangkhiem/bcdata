@@ -8,48 +8,55 @@ import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 
-public class DatastoreServiceImpl implements DatastoreService {
+public class UserDataService implements DatastoreService {
   
   DataStorage dataStorage;
   
   public void setDataStorage(DataStorage dataStorage) {
     this.dataStorage = dataStorage;
   }
-
+  
   @Override
   public List<Dataset> getDatasetList() {
-    return dataStorage.getDatasetList();
-  }
-
-  @Override
-  public List<Application> getApplicationList() {
-    return dataStorage.getApplicationList();
-  }
-
-  @Override
-  public Application getApplication(String appname) {
-    return dataStorage.getApplication(appname);
-  }
-
-  @Override
-  public Dataset getDataset(String appname) {
+    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public void createApplication(String appname, String description, String language) {
-    dataStorage.createApplication(appname, description, language);
+  public List<Application> getApplicationList() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Application getApplication(String appname) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Dataset getDataset(String appname) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void createApplication(String appname, String description,
+      String language) {
+    // TODO Auto-generated method stub
     
   }
 
   @Override
   public void createDataset(String name, String description) {
-    dataStorage.createDataset(name, description);
+    // TODO Auto-generated method stub
+    
   }
 
   @Override
   public List<Table> getTableList(String datasetName) {
-    return dataStorage.getTableList(datasetName);
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
@@ -59,6 +66,8 @@ public class DatastoreServiceImpl implements DatastoreService {
 
   @Override
   public List<Visualization> getVisualizationList(String appname) {
-    return dataStorage.getVisualization(appname);
+    // TODO Auto-generated method stub
+    return null;
   }
+
 }

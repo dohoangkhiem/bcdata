@@ -5,6 +5,7 @@ import java.util.List;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
+import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 
 import org.springframework.dao.DataAccessException;
 
@@ -28,5 +29,11 @@ public interface DataStorage {
   
   public Application getApplication(String appname) throws DataAccessException;
   
-  public void createApplication(String name, String language);
+  public void createApplication(String name, String description, String language);
+  
+  public List<Visualization> getVisualization(String appname);
+
+  public String getTableDataInJson(String appname, String tablename);
+  
 }
+

@@ -1,11 +1,11 @@
 package khiem.dataprj.demo.plfdemo.service;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.UUID;
 
 public class LocalApplicationExecutor implements ApplicationExecutor {
@@ -24,17 +24,20 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     
     //ProcessBuilder pb = new ProcessBuilder("appexecute.sh", appname, code);
     ProcessBuilder pb = new ProcessBuilder("python", "/tmp/" + appname + ".py");
-    Map<String, String> env = pb.environment();
+    pb.redirectErrorStream(true);
+    //Map<String, String> env = pb.environment();
     //env.put("VAR1", "myValue");
     //env.remove("OTHERVAR");
     //env.put("VAR2", env.get("VAR1") + "suffix");
     try {
-      Process p = pb.start();
-      InputStream is = p.getInputStream();
+      Process p = pb.start();   
+      InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
       int c;
       StringBuilder output = new StringBuilder();
-      while ((c = is.read()) != -1) {
-        output.append((char)c);
+      byte[] b = new byte[1024];
+      while ((c = appOutputStream.read(b)) != -1) {
+        String chunk = new String(b, 0, c);
+        output.append(chunk);
       }
       return output.toString();
     } catch (IOException e) {

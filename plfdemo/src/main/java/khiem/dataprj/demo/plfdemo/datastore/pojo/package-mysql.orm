@@ -16,5 +16,59 @@
         <column name="description" length="2000" jdbc-type="VARCHAR" />
       </field>
     </class>
+    
+    <class name="Application" identity-type="datastore" table="Applications">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="name">
+        <column name="name" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="description">
+        <column name="description" length="2000" jdbc-type="VARCHAR" />
+      </field>
+      <field name="language">
+        <column name="language" length="40" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+    
+    <class name="Table" identity-type="datastore" table="Tables">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="name">
+        <column name="name" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="description">
+        <column name="description" length="2000" jdbc-type="VARCHAR" />
+      </field>
+      <field name="dataset">
+        <column name="dataset" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="fieldList">
+        <column name="field_list" length="1000" jdbc-type="VARCHAR" />
+      </field>
+    </class>
+    
+    <class name="Visualization" identity-type="datastore" table="Visualizations">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="name">
+        <column name="name" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="description">
+        <column name="description" length="2000" jdbc-type="VARCHAR" />
+      </field>
+      <field name="appname">
+        <column name="appname" length="255" jdbc-type="VARCHAR" />
+      </field>
+      <field name="type">
+        <column name="type" length="20" jdbc-type="VARCHAR" />
+      </field>
+    </class>
   </package>
 </orm>

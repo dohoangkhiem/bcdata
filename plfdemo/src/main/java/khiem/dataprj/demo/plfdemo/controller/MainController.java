@@ -1,10 +1,12 @@
 package khiem.dataprj.demo.plfdemo.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
+import khiem.dataprj.demo.plfdemo.service.ApplicationStoreService;
 import khiem.dataprj.demo.plfdemo.service.DatastoreService;
 
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -19,14 +22,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MainController {
   
   private DatastoreService datastoreService;
+  private ApplicationStoreService appStoreService;
   
   public void setDatastoreService(DatastoreService ds) {
     this.datastoreService = ds;
   }
   
+  public void setAppStoreService(ApplicationStoreService appStoreService) {
+    this.appStoreService = appStoreService;
+  }
+  
   @RequestMapping(method = RequestMethod.GET)
   public String main(ModelMap model) {
-    model.addAttribute("message", "Hello I am Khiem");
+    //model.addAttribute("message", "Hello I am Khiem");
     return "main";
   }
   
@@ -36,7 +44,7 @@ public class MainController {
     try {
       List<Dataset> datasets = datastoreService.getDatasetList();
       if (datasets != null) System.out.println("Number of dataset " + datasets.size());
-      else System.out.println("None of dataset");
+      else System.out.println("None of dataset");      
       return datasets;
     } catch (Exception e) {
       // log
@@ -63,6 +71,26 @@ public class MainController {
       e.printStackTrace();
       return null; 
     }
+  }
+  
+  @RequestMapping(value = "/createApp", method = RequestMethod.POST)
+  @ResponseBody
+  public String createApplication(@RequestParam(value = "appname", required = true) String appname,
+      @RequestParam(value = "description", required = true) String description,
+      @RequestParam(value = "code", required = true) String code, ModelMap model) {
+    
+    // store app info
+    datastoreService.createApplication(appname, description, "python");
+    
+    // store app code file
+    try {
+      appStoreService.createApplicationFile(appname, "python", code);
+    } catch (IOException e) {
+      // loggin
+      e.printStackTrace();
+    }
+    
+    return "";
   }
   
 }

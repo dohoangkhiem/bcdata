@@ -11,6 +11,7 @@ import javax.jdo.Transaction;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
+import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
@@ -65,8 +66,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         tx.commit();
       } finally {
         if (tx.isActive()) tx.rollback();
-      }
-      
+      }      
     }
   }
 
@@ -80,6 +80,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   @Override
   public <T> List<T> executeSqlWithResult(String sql) {
     Query q = getPersistenceManager().newQuery(sql);
+    //q.setClass(Object.class);
     List<T> results = (List<T>) q.execute();
     return results;
   }
@@ -103,8 +104,24 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void createApplication(String name, String language) {
-    
+  public void createApplication(String name, String description, String language) throws DataAccessException {
+    Application app = new Application(name, description, language);
+    List<Application> apps = new ArrayList<Application>();
+    apps.add(app);
+    persistData(apps);
+  }
+
+  @Override
+  public List<Visualization> getVisualization(String appname) {
+    Query q = getPersistenceManager().newQuery(Visualization.class);
+    q.setFilter("appname==\"" + appname + "\"");
+    List<Visualization> visuals = (List<Visualization>) q.execute();
+    return visuals;
+  }
+
+  @Override
+  public String getTableDataInJson(String appname, String tablename) {
+    throw new RuntimeException("Not support!");
   }
 
 }

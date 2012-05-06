@@ -52,6 +52,20 @@
     </dependency>
     
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.1</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.9</version>
@@ -64,13 +78,13 @@
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-core</artifactId>
-      <version>(2.9, )</version>
+      <version>3.0.5</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-api-jdo</artifactId>
-      <version>3.0.4</version>
+      <version>3.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
@@ -83,7 +97,7 @@
       <version>3.0.1</version>
     </dependency>
     
-    <!-- dependency>
+    <dependency>
       <groupId>javax.servlet.jsp.jstl</groupId>
       <artifactId>jstl-api</artifactId>
       <version>1.2</version>
@@ -92,7 +106,7 @@
       <groupId>org.glassfish.web</groupId>
       <artifactId>jstl-impl</artifactId>
       <version>1.2</version>
-    </dependency-->
+    </dependency>
 
     <!-- Jackson JSON Processor -->
     <dependency>
@@ -100,6 +114,18 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.8.1</version>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.4</version>
+      <classifier>jdk15</classifier>
+    </dependency>
+            
   </dependencies>
   <build>
     <finalName>plfdemo</finalName>

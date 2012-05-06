@@ -1,8 +1,14 @@
 package khiem.dataprj.demo.plfdemo.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
+import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
+import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 import khiem.dataprj.demo.plfdemo.service.ApplicationExecutor;
+import khiem.dataprj.demo.plfdemo.service.ApplicationStoreService;
 import khiem.dataprj.demo.plfdemo.service.DatastoreService;
 
 import org.springframework.stereotype.Controller;
@@ -19,6 +25,8 @@ public class AppController {
   
   private DatastoreService datastoreService;
   private ApplicationExecutor appExecutor;
+  private ApplicationStoreService appStoreService;
+  private DatastoreService userDataService;
   
   public void setDatastoreService(DatastoreService dsService) {
     this.datastoreService = dsService;
@@ -28,18 +36,41 @@ public class AppController {
     this.appExecutor = appExecutor;
   }
   
+  public void setAppStoreService(ApplicationStoreService appStoreService) {
+    this.appStoreService = appStoreService;
+  }
+  
+  public void setUserDataService(DatastoreService userDataService) {
+    this.userDataService = userDataService;
+  }
+  
   @RequestMapping(value="/{appname}", method = RequestMethod.GET)
-  public String getApp(@PathVariable String appname, ModelMap model) {
-    model.addAttribute("appname", appname);
-    
+  public String getApp(@PathVariable String appname, ModelMap model) {    
     // get application name, code
     Application application = datastoreService.getApplication(appname);
     if (application == null) return "app";
     
+    model.addAttribute("app", application);
+    
     // get application dataset, visualization
     Dataset dataset = datastoreService.getDataset(appname);
+    model.addAttribute("dataset", dataset);
     
+    // get list of tables inside dataset
+    List<Table> tables = datastoreService.getTableList(appname);
+    // get data from (at least) the first table
+    model.addAttribute("tables", tables);
     
+    // list of visualizations
+    List<Visualization> visualizations = datastoreService.getVisualizationList(appname);
+    model.addAttribute("visualizations", visualizations);
+    
+    try {
+      String code = appStoreService.getAppliationCode(appname, "python");
+      model.addAttribute("appcode", code);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return "app";
   }
   
@@ -51,5 +82,30 @@ public class AppController {
     // return the output console
     return output;
   }
+  
+  @RequestMapping(value="/{appname}/save", method = RequestMethod.POST)
+  public @ResponseBody String saveApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, ModelMap model) {
+    try {
+      appStoreService.saveApplicationCode(appname, "python", code);
+      return "OK";
+    } catch (IOException e) {
+      return "Failed";
+    }
+  }
+  
+  @RequestMapping(value="/{appname}/data/{tablename}", method = RequestMethod.GET)
+  public @ResponseBody String getData(@PathVariable String appname, @PathVariable String tablename, ModelMap model) {
+    return userDataService.getTableData(appname, tablename);
+  }
+  
+  @RequestMapping(value="/{appname}/visualize/{visualizationName}", method = RequestMethod.GET)
+  public @ResponseBody String getVisualizationContent(@PathVariable String appname, @PathVariable String visualizationName, ModelMap model) {
+    try {
+      return appStoreService.getVisualizationContent(appname, visualizationName);
+    } catch(IOException e) {
+      return "Failed to load this visualization";
+    }
+  }
+  
   
 }

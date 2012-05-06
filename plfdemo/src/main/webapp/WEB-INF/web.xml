@@ -6,6 +6,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
       /WEB-INF/spring/jdo.xml 
+      /WEB-INF/spring/jdbc.xml
     </param-value>
   </context-param>
 
