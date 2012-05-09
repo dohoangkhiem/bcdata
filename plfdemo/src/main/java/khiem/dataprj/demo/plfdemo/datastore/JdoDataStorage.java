@@ -7,6 +7,7 @@ import java.util.List;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
+import javax.transaction.NotSupportedException;
 
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
@@ -71,18 +72,13 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void executeSql(String sql) {
-    Query query = getPersistenceManager().newQuery(sql);
-    query.compile();
-    query.execute();
+  public void executeSql(String sql) throws Exception {
+    throw new NotSupportedException("");
   }
 
   @Override
-  public <T> List<T> executeSqlWithResult(String sql) {
-    Query q = getPersistenceManager().newQuery(sql);
-    //q.setClass(Object.class);
-    List<T> results = (List<T>) q.execute();
-    return results;
+  public String executeSqlWithResult(String sql) throws Exception {
+    throw new NotSupportedException("");
   }
 
   @Override
@@ -122,6 +118,22 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   @Override
   public String getTableDataInJson(String appname, String tablename) {
     throw new RuntimeException("Not support!");
+  }
+
+  @Override
+  public Dataset getDataset(String dataset) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Dataset.class);
+    q.setFilter("name==\"" + dataset + "\"");
+    List<Dataset> dss = (List<Dataset>) q.execute();
+    return (dss == null?null:(dss.size()>0?dss.get(0):null));
+  }
+
+  @Override
+  public void deleteVisualization(String appname, String visualizationName)
+      throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Visualization.class);
+    q.setFilter("appname == \"" + appname + "\" && name == \"" + visualizationName + "\"" );
+    q.deletePersistentAll();
   }
 
 }

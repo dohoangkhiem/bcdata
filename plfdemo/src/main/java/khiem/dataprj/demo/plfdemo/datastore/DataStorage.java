@@ -9,11 +9,16 @@ import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 
 import org.springframework.dao.DataAccessException;
 
+/**
+ *
+ */
 public interface DataStorage {
   
   public List<Dataset> getDatasetList() throws DataAccessException;
   
   public void createDataset(String name, String description) throws DataAccessException;
+  
+  public Dataset getDataset(String dataset) throws DataAccessException;
   
   public List<Table> getTableList(String datasetName) throws DataAccessException;
   
@@ -21,9 +26,9 @@ public interface DataStorage {
   
   public void importJsonData(String datasetName, String tableName, String jsonData) throws DataAccessException;
   
-  public void executeSql(String sql) throws DataAccessException;
+  public void executeSql(String sql) throws Exception;
   
-  public <T> List<T> executeSqlWithResult(String sql) throws DataAccessException;
+  public String executeSqlWithResult(String sql) throws Exception;
   
   public List<Application> getApplicationList() throws DataAccessException;
   
@@ -33,7 +38,8 @@ public interface DataStorage {
   
   public List<Visualization> getVisualization(String appname);
 
-  public String getTableDataInJson(String appname, String tablename);
+  public String getTableDataInJson(String appname, String tablename) throws DataAccessException;
   
+  public void deleteVisualization(String appname, String visualizationName) throws DataAccessException;
 }
 

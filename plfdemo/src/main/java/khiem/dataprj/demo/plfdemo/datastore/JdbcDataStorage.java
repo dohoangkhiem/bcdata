@@ -59,16 +59,40 @@ public class JdbcDataStorage implements DataStorage {
   }
 
   @Override
-  public void executeSql(String sql) throws DataAccessException {
-    // TODO Auto-generated method stub
-    
+  public void executeSql(String sql) throws Exception {
+    Connection conn = null;
+    Statement st = null;
+    try {
+      conn = dataSource.getConnection();
+      st = conn.createStatement();
+      st.executeUpdate(sql);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (conn != null) {
+        try { st.close(); conn.close(); } catch (Exception e) {}
+      }
+    }
   }
 
   @Override
-  public <T> List<T> executeSqlWithResult(String sql)
-      throws DataAccessException {
-    // TODO Auto-generated method stub
-    return null;
+  public String executeSqlWithResult(String sql) throws Exception {
+    Connection conn = null;
+    Statement st = null;
+    ResultSet rs = null;
+    try {
+      conn = dataSource.getConnection();
+      st = conn.createStatement();
+      rs = st.executeQuery(sql);
+      String result =  Utils.resultSetToJson(rs);
+      return result;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (conn != null) {
+        try { rs.close(); st.close(); conn.close(); } catch (Exception e) {}
+      }
+    }
   }
 
   @Override
@@ -114,6 +138,19 @@ public class JdbcDataStorage implements DataStorage {
         try { conn.close(); } catch (Exception e) {}
       }
     }
+  }
+
+  @Override
+  public Dataset getDataset(String dataset) throws DataAccessException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void deleteVisualization(String appname, String visualizationName)
+      throws DataAccessException {
+    // TODO Auto-generated method stub
+    
   }
 
 }

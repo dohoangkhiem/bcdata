@@ -70,4 +70,27 @@ public class UserDataService implements DatastoreService {
     return null;
   }
 
+  @Override
+  public void executeQuery(String query) {
+    try {
+      dataStorage.executeSql(query);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  public String executeQueryWithResult(String query) {
+    try {
+      return dataStorage.executeSqlWithResult(query);
+    }  catch (Exception e) {
+      return null;
+    }
+  }
+
+  @Override
+  public void deleteVisualization(String appname, String visualizationName) {
+    
+    
+  }
+
 }

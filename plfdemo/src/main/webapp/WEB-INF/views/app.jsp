@@ -19,7 +19,7 @@
         $("#show-console").val("Hide console");
       }
       $(function() {
-        $.post($("#appname").text() + "/execute", {code: $("#code").val()}, function(output) { $("#console").show(); $("#console").val(output); $("#ajax-loading").css("display", "none");
+        $.post($("#appname").text() + "/execute", {code: $("#code").val()}, function(output) { $("#console").show(); $("#console").append(output); $("#ajax-loading").css("display", "none");
     	  $("#ajax-message").text("Finished running.");});
       });
       
@@ -38,7 +38,7 @@
     }
     
     function clearConsole() {
-      $("#console").val("");
+      $("#console").text("");
     }
     
     function saveCode() {
@@ -67,17 +67,30 @@
       $.ajax({
         url: "${app.name}" + "/visualize/" + name,
         success: function(content) {
-          vsContainer.append("<div>" + name + "</div>");
+          vsContainer.append("<div>" + name + "&nbsp; <input type=\"submit\" value=\"Delete\" onclick=\"deleteVisualization('" + "${app.name}" + "','" + name + "')\"" + "/></div>");
           $('<iframe class="visualization-frame" id="visualize-' + name + '" src="' + ctx + '/visualize/' + '${app.name}' + '/' + name + '">').load().appendTo(vsContainer);
         },
         error: function(json) {
-          
+          $('<span>Failed to load visualization ' + name + '</span>').appendTo(vsContainer);
         }
       });
-      
-      
-      
     }
+    
+    function deleteVisualization(appname, name) {
+      $.ajax({
+        url: "${app.name}" + "/visualize/" + name + "/delete",
+        type: "post",
+        success: function(result) {
+          console.info("Delete visualization " + name + ": " + result);
+        },
+        error: function(result) {
+          console.info("Delete visualization " + name + ": " + result);
+        }         
+      });
+      location.reload();
+    }
+      
+    
     
   </script>
 </head>
@@ -144,10 +157,10 @@
             	  $.ajax({
             	    url: "${app.name}" + "/data/" + "${table.name}",
             	    success: function(json) { 
-            	      $("#${table.name}-data").text(JSON.stringify(json))
+            	      $("#${table.name}-data").text(json)
             	     // $("#${table.name}-data").replaceWith('<span id="${table.name}-data">' + JSON.stringify(json) + '</span>');
             	    }, 
-            	    error: function() { $("#${table.name}-data").text(JSON.stringify("Failed to load data")); }
+            	    error: function() { $("#${table.name}-data").text("Failed to load data"); }
             	  });
             	});
             </script>

@@ -19,6 +19,7 @@
   </div>
   
   <script type="text/javascript">
+    ctx = "${pageContext.request.contextPath}"
   	function getDataset() {
   	  $(function() {
   	    $.ajax({ url: "main/dataset", dataType: "json", success: function(json) {
@@ -26,7 +27,7 @@
   	      var i;
   	      for (i = 0; i < json.length; i++) {
 	      	  var dataset = json[i];
-	      	  $("#datasetList").append('<li><a href="#"><span>' + dataset['name'] + '</span></a></li>');
+	      	  $("#datasetList").append('<li><a href="' + ctx + '/dataset/gui"><span>' + dataset['name'] + '</span></a></li>');
 	      	} 
   	    }, error: function() { alert("error"); }   
   	    }); 

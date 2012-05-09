@@ -27,7 +27,7 @@ public interface DatastoreService {
    * @param appname
    * @return
    */
-  public Dataset getDataset(String appname);
+  public Dataset getDataset(String dataset);
   
   /**
    * @param appname
@@ -47,4 +47,10 @@ public interface DatastoreService {
   public String getTableData(String appname, String tablename);
   
   public List<Visualization> getVisualizationList(String appname);
+  
+  public void executeQuery(String query);
+  
+  public String executeQueryWithResult(String query);
+  
+  public void deleteVisualization(String appname, String visualizationName);
 }

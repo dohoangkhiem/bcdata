@@ -23,11 +23,11 @@
   </bean>
 
   <!-- Transaction Manager for PMF -->
-  <bean id="jdoTransactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
+  <!-- bean id="jdoTransactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
     <property name="persistenceManagerFactory">
       <ref local="pmf" />
     </property>
-  </bean>
+  </bean-->
 
   <!-- Typical DAO -->
   <bean id="dataStorage" class="khiem.dataprj.demo.plfdemo.datastore.JdoDataStorage">
@@ -44,7 +44,7 @@
   </bean>
 
   <!-- Transaction Interceptor for Business Services -->
-  <bean id="transactionInterceptor"
+  <!-- bean id="transactionInterceptor"
     class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
     <property name="transactionManager">
       <ref local="jdoTransactionManager" />
@@ -59,5 +59,5 @@
         <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
       </props>
     </property>
-  </bean>
+  </bean-->
 </beans>

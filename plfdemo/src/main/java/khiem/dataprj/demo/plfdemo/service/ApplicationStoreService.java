@@ -52,4 +52,10 @@ public class ApplicationStoreService implements ServletContextAware {
        + appname + System.getProperty("file.separator") + "/visualization/" + visualizationName + ".html"));
    return content;
  }
+ 
+ public void saveVisualizationCode(String appname, String visualizationName, String code) throws IOException {
+   String file = storePath + System.getProperty("file.separator") + appname + System.getProperty("file.separator")
+       + "/visualization/" + visualizationName + ".html";
+   FileUtils.writeStringToFile(new File(file), code, "UTF-8");
+ }
 }

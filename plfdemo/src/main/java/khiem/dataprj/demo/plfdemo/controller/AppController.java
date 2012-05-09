@@ -1,6 +1,7 @@
 package khiem.dataprj.demo.plfdemo.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
@@ -98,6 +99,18 @@ public class AppController {
     return userDataService.getTableData(appname, tablename);
   }
   
+  @RequestMapping(value="/{appname}/visualize", method = RequestMethod.GET) 
+  public @ResponseBody List<String> getVisualization(@PathVariable String appname) {
+    List<Visualization> visuals = datastoreService.getVisualizationList(appname);
+    List<String> results = new ArrayList<String>();
+    if (visuals != null) {
+      for (Visualization v : visuals) {
+        results.add(v.getName());
+      }
+    }
+    return results;
+  }
+  
   @RequestMapping(value="/{appname}/visualize/{visualizationName}", method = RequestMethod.GET)
   public @ResponseBody String getVisualizationContent(@PathVariable String appname, @PathVariable String visualizationName, ModelMap model) {
     try {
@@ -107,5 +120,26 @@ public class AppController {
     }
   }
   
+  @RequestMapping(value="/{appname}/visualize/{visualName}/delete", method = RequestMethod.POST)
+  public @ResponseBody String deleteVisualization(@PathVariable String appname, @PathVariable String visualName) {
+    try {
+      datastoreService.deleteVisualization(appname, visualName);
+      return "OK";
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "Error";
+    }
+  }
+  
+  @RequestMapping(value="/{appname}/visualize/{visualName}/save", method = RequestMethod.POST)
+  public @ResponseBody String saveVisualizationCode(@PathVariable String appname, @PathVariable String visualName, @RequestParam(value="code", required=true) String code) {
+    try {
+      appStoreService.saveVisualizationCode(appname, visualName, code);
+      return "OK";
+    } catch (IOException e) {
+      e.printStackTrace();
+      return "Error";
+    }
+  }
   
 }
