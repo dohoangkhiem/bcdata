@@ -53,4 +53,6 @@ public interface DatastoreService {
   public String executeQueryWithResult(String query);
   
   public void deleteVisualization(String appname, String visualizationName);
+  
+  public void deleteTable(String appname, String tableName);
 }

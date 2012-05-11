@@ -136,4 +136,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     q.deletePersistentAll();
   }
 
+  @Override
+  public void deleteTable(String appname, String tableName) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Table.class);
+    q.setFilter("dataset == \"" + appname + "\" && name == \"" + tableName + "\"");
+    q.deletePersistentAll();
+  }
+
 }

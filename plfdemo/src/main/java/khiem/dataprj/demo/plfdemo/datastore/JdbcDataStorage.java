@@ -153,4 +153,23 @@ public class JdbcDataStorage implements DataStorage {
     
   }
 
+  @Override
+  public void deleteTable(String appname, String tableName) throws DataAccessException {
+    String sql = "drop table userdata_" + appname + "_" + tableName;
+    Connection conn = null;
+    Statement st = null;
+    try {
+      conn = dataSource.getConnection();
+      st = conn.createStatement();
+      int rs = st.executeUpdate(sql);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      try {
+        if (st != null) st.close();
+        if (conn != null) conn.close();
+      } catch (Exception e) {}
+    }
+  }
+
 }

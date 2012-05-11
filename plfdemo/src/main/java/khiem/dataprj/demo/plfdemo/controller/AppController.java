@@ -11,6 +11,8 @@ import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 import khiem.dataprj.demo.plfdemo.service.ApplicationExecutor;
 import khiem.dataprj.demo.plfdemo.service.ApplicationStoreService;
 import khiem.dataprj.demo.plfdemo.service.DatastoreService;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -99,6 +101,18 @@ public class AppController {
     return userDataService.getTableData(appname, tablename);
   }
   
+  @RequestMapping(value="/{appname}/data/{tablename}/delete", method = RequestMethod.POST)
+  public @ResponseBody String deleteTable(@PathVariable String appname, @PathVariable String tablename) {
+    try {
+      datastoreService.deleteTable(appname, tablename);
+      userDataService.deleteTable(appname, tablename);
+      return "OK";
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "Failed";
+    }  
+  }
+  
   @RequestMapping(value="/{appname}/visualize", method = RequestMethod.GET) 
   public @ResponseBody List<String> getVisualization(@PathVariable String appname) {
     List<Visualization> visuals = datastoreService.getVisualizationList(appname);
@@ -140,6 +154,33 @@ public class AppController {
       e.printStackTrace();
       return "Error";
     }
+  }
+  
+  @RequestMapping(value="/{appname}/data")
+  public @ResponseBody String getApplicationData(@PathVariable String appname) {
+    List<Table> tableList = datastoreService.getTableList(appname);
+    JSONArray tableListJson = new JSONArray();
+    if (tableList != null) {
+      for (Table t : tableList) {
+        String tdata = userDataService.getTableData(appname, t.getName());
+        JSONObject js = new JSONObject();
+        js.element("name", t.getName());
+        js.element("data", tdata);
+        tableListJson.add(js);
+      }
+    }
+    
+    JSONArray visualizationListJson = new JSONArray();
+    List<Visualization> visualizations = datastoreService.getVisualizationList(appname);
+    if (visualizations != null) {
+      for (Visualization v : visualizations) {
+        visualizationListJson.add(v.getName());      
+      }
+    }
+    JSONObject result = new JSONObject();
+    result.element("tables", tableListJson.toString());
+    result.element("visualizations", visualizationListJson.toString());
+    return result.toString();
   }
   
 }

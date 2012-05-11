@@ -80,4 +80,9 @@ public class DatastoreServiceImpl implements DatastoreService {
     dataStorage.deleteVisualization(appname, visualizationName);
     
   }
+
+  @Override
+  public void deleteTable(String appname, String tableName) {
+    dataStorage.deleteTable(appname, tableName);
+  }
 }

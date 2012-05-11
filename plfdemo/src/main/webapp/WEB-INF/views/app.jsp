@@ -20,10 +20,41 @@
       }
       $(function() {
         $.post($("#appname").text() + "/execute", {code: $("#code").val()}, function(output) { $("#console").show(); $("#console").append(output); $("#ajax-loading").css("display", "none");
-    	  $("#ajax-message").text("Finished running.");});
+    	  $("#ajax-message").text("Finished running."); refresh(); });
       });
-      
     }
+  	
+  	function refresh() {
+  	  $.ajax({
+  	    url: "${app.name}/data", 
+  	    success: function(jsStr) {
+          var json = JSON.parse(jsStr);
+  	      var tables = json["tables"];
+  	      var visualizations = json["visualizations"];
+  	      
+  	      var tableContainer = $("#table-data-container");
+  	      tableContainer.empty();
+  	      // for each table in dataset, render the data table
+          var index = 0;
+  	      for (index in tables) {
+  	        $(document).ready(function() { renderTableData(tables[index]["name"], JSON.stringify(tables[index]["data"])); }); 
+  	      }
+  	      $("#table-count").text(tables.length);
+  	      
+          var vsContainer = $("#visualization-container"); 
+          vsContainer.empty();
+  	      // for each visualization in visualizations, append to the visualization panel
+
+  	      for (index in visualizations) {  
+  	        renderVisualization(visualizations[index]);
+  	      }
+  	      $("#visualization-count").text(visualizations.length);
+  	    }, 
+  	    error: function(json) {
+  	      console.debug("Error when trying to refresh data");
+  	    }
+  	  });
+  	}
     
     function showConsole() {
       if (!$("#console").is(":visible")) {
@@ -63,20 +94,17 @@
     
     function renderVisualization(name) {
       var vsContainer = $("#visualization-container");
-      // get visualization content
-      $.ajax({
-        url: "${app.name}" + "/visualize/" + name,
-        success: function(content) {
-          vsContainer.append("<div>" + name + "&nbsp; <input type=\"submit\" value=\"Delete\" onclick=\"deleteVisualization('" + "${app.name}" + "','" + name + "')\"" + "/></div>");
-          $('<iframe class="visualization-frame" id="visualize-' + name + '" src="' + ctx + '/visualize/' + '${app.name}' + '/' + name + '">').load().appendTo(vsContainer);
-        },
-        error: function(json) {
-          $('<span>Failed to load visualization ' + name + '</span>').appendTo(vsContainer);
-        }
-      });
+      vsContainer.append("<div>" + name + "&nbsp; <input type=\"submit\" value=\"Delete\" onclick=\"deleteVisualization('" + name + "')\"" + "/></div>");
+      $('<iframe class="visualization-frame" id="visualize-' + name + '" src="' + ctx + '/visualize/' + '${app.name}' + '/' + name + '">').load().appendTo(vsContainer);
     }
     
-    function deleteVisualization(appname, name) {
+    function renderTableData(tableName, tableData) {
+      var tableContainer = $("#table-data-container");
+      tableContainer.append("<div><span>" + tableName + "</span> &nbsp; <input type=\"submit\" value=\"Delete\" onclick=\"deleteTable('" + tableName + "')\"" + "/> Data:<div> <span id=\"" + tableName + "-data\" style=\"font-size: 0.75em; color: Gray;\"></span></div></div>");
+     	$("#" + tableName + "-data").text(tableData);	     
+    }
+    
+    function deleteVisualization(name) {
       $.ajax({
         url: "${app.name}" + "/visualize/" + name + "/delete",
         type: "post",
@@ -87,11 +115,23 @@
           console.info("Delete visualization " + name + ": " + result);
         }         
       });
-      location.reload();
+      refresh();
+    }
+    
+    function deleteTable(name) {
+      $.ajax({
+        url: "${app.name}" + "/data/" + name + "/delete",
+        type: "post",
+        success: function(result) {
+          console.info("Delete table " + name + ": " + JSON.stringify(result));
+        },
+        error: function(result) {
+          console.info("Delete table " + name + ": " + JSON.stringify(result));
+        }
+      });
+      refresh();
     }
       
-    
-    
   </script>
 </head>
 <body>
@@ -143,33 +183,28 @@
     
       <div class="right-content">
         <div class="righ-content-upper">
-          <h3 style="margin-top: 0px;">Datasets</h3> <c:out value="${fn:length(tables)}" /> tables:&nbsp; 
-          <c:forEach items="${tables}" var="table">
-            <div>
-              <span>${table.name }</span> &nbsp; Data:
-              <div> 
-                <span id="${table.name}-data" style="font-size: 0.75em; color: Gray;"></span>
-              </div>
-            </div>
-            <script type="text/javascript">
-              var tablename = '${table.name}'
-            	$(function() {
-            	  $.ajax({
-            	    url: "${app.name}" + "/data/" + "${table.name}",
-            	    success: function(json) { 
-            	      $("#${table.name}-data").text(json)
-            	     // $("#${table.name}-data").replaceWith('<span id="${table.name}-data">' + JSON.stringify(json) + '</span>');
-            	    }, 
-            	    error: function() { $("#${table.name}-data").text("Failed to load data"); }
-            	  });
-            	});
-            </script>
-            
-          </c:forEach>
+          <h3 style="margin-top: 0px;">Datasets</h3> <span id="table-count"><c:out value="${fn:length(tables)}" /></span> tables:&nbsp; 
+          <div id="table-data-container">
+            <c:forEach items="${tables}" var="table">
+              <script type="text/javascript">
+                var tablename = '${table.name}'
+              	$(function() {
+              	  $.ajax({
+              	    url: "${app.name}" + "/data/" + "${table.name}",
+              	    success: function(json) { 
+              	      $(document).ready(function() { renderTableData("${table.name}", json); });           	      
+              	    }, 
+              	    error: function() { $("#${table.name}-data").text("Failed to load data"); }
+              	  });
+              	});
+              </script>
+              
+            </c:forEach>
+          </div>
         </div>
         
         <div class="right-content-lower">
-          <h3>Visualizations</h3> <c:out value="${fn:length(visualizations)}" /> visualizations
+          <h3>Visualizations</h3> <span id="visualization-count"><c:out value="${fn:length(visualizations)}" /></span> visualizations
           <div id="visualization-container">
             <c:forEach items="${visualizations }" var="visualization">
               <script type="text/javascript">

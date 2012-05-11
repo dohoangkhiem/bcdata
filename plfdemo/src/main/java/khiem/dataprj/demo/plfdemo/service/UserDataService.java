@@ -64,6 +64,10 @@ public class UserDataService implements DatastoreService {
     return dataStorage.getTableDataInJson(appname, tablename);
   }
 
+  public void deleteTable(String appname, String tableName) {
+    dataStorage.deleteTable(appname, tableName);
+  }
+  
   @Override
   public List<Visualization> getVisualizationList(String appname) {
     // TODO Auto-generated method stub

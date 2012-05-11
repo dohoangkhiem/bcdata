@@ -41,5 +41,7 @@ public interface DataStorage {
   public String getTableDataInJson(String appname, String tablename) throws DataAccessException;
   
   public void deleteVisualization(String appname, String visualizationName) throws DataAccessException;
+  
+  public void deleteTable(String appname, String tableName) throws DataAccessException;
 }
 

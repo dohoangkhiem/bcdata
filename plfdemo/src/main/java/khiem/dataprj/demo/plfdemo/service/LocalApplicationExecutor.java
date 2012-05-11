@@ -8,12 +8,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import khiem.dataprj.demo.plfdemo.utils.Utils;
+
 public class LocalApplicationExecutor implements ApplicationExecutor {
 
   @Override
   public String executePython(String appname, String code) {
+    // get execution ticket
+    String ticket = Utils.getExecutionId();
+    
     // invokes Python
-    String random = UUID.randomUUID().toString();
     File temp = new File("/tmp/" + appname + ".py");
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
@@ -25,6 +29,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     //ProcessBuilder pb = new ProcessBuilder("appexecute.sh", appname, code);
     ProcessBuilder pb = new ProcessBuilder("python", "/tmp/" + appname + ".py");
     pb.redirectErrorStream(true);
+    
+    //return ticket;
+    
     //Map<String, String> env = pb.environment();
     //env.put("VAR1", "myValue");
     //env.remove("OTHERVAR");
@@ -60,6 +67,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
 + "datalist = obj[1]";
     String output = new LocalApplicationExecutor().executePython("khiem", code);
     System.out.println (output);
+  }
+
+  @Override
+  public String executeR(String appname, String code) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

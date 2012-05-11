@@ -5,12 +5,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.UUID;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class Utils {
-
+  
   public static String resultSetToJson(ResultSet rs) throws SQLException {
     
     JSONArray json = new JSONArray();
@@ -60,6 +61,10 @@ public class Utils {
 
     }// end while
     return json.toString();
+  }
+  
+  public static String getExecutionId() {
+    return UUID.randomUUID().toString();
   }
   
   public static void main(String args[]) {
