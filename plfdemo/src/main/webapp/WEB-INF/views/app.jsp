@@ -11,8 +11,8 @@
   	ctx = "${pageContext.request.contextPath}"
 
     function executeApp() {
-  	  $("#ajax-loading").css("display", "inline");
-  	  $("#ajax-message").text("Running...");
+			$("#ajax-loading").css("display", "inline");
+ 			$("#ajax-message").text("Running...");
       if (!$("#console").is(":visible")) {
         $("#console").show();
         $("#clear-console").show();
@@ -24,114 +24,115 @@
       });
     }
   	
-  	function refresh() {
-  	  $.ajax({
-  	    url: "${app.name}/data", 
-  	    success: function(jsStr) {
+    function refresh() {
+      $.ajax({
+        url : "${app.name}/data",
+        success : function(jsStr) {
           var json = JSON.parse(jsStr);
-  	      var tables = json["tables"];
-  	      var visualizations = json["visualizations"];
-  	      
-  	      var tableContainer = $("#table-data-container");
-  	      tableContainer.empty();
-  	      // for each table in dataset, render the data table
+          var tables = json["tables"];
+          var visualizations = json["visualizations"];
+          var tableContainer = $("#table-data-container");
+          tableContainer.empty();
+          // for each table in dataset, render the data table
           var index = 0;
-  	      for (index in tables) {
-  	        $(document).ready(function() { renderTableData(tables[index]["name"], JSON.stringify(tables[index]["data"])); }); 
-  	      }
-  	      $("#table-count").text(tables.length);
-  	      
-          var vsContainer = $("#visualization-container"); 
-          vsContainer.empty();
-  	      // for each visualization in visualizations, append to the visualization panel
+          for (index in tables) {
+            $(document).ready(function() {
+              renderTableData(tables[index]["name"], JSON.stringify(tables[index]["data"]));
+            });
+          }
+          $("#table-count").text(tables.length);
 
-  	      for (index in visualizations) {  
-  	        renderVisualization(visualizations[index]);
-  	      }
-  	      $("#visualization-count").text(visualizations.length);
-  	    }, 
-  	    error: function(json) {
-  	      console.debug("Error when trying to refresh data");
-  	    }
-  	  });
-  	}
-    
-    function showConsole() {
-      if (!$("#console").is(":visible")) {
-        $("#console").show();
-        $("#clear-console").show();
-        $("#show-console").val("Hide console");
-      } else {
-        $("#console").hide();
-        $("#clear-console").hide();
-        $("#show-console").val("Show console");
-      }
+          var vsContainer = $("#visualization-container");
+          vsContainer.empty();
+          // for each visualization in visualizations, append to the visualization panel
+          for (index in visualizations) {
+            renderVisualization(visualizations[index]);
+          }
+          $("#visualization-count").text(visualizations.length);
+        },
+        error : function(json) {
+          console.debug("Error when trying to refresh data");
+        }
+      });
     }
-    
+
+    function showConsole() {
+        if (!$("#console").is(":visible")) {
+          $("#console").show();
+          $("#clear-console").show();
+          $("#show-console").val("Hide console");
+        } else {
+          $("#console").hide();
+          $("#clear-console").hide();
+          $("#show-console").val("Show console");
+        }
+    }
+
     function clearConsole() {
       $("#console").text("");
     }
-    
+
     function saveCode() {
       $("#ajax-loading").css("display", "inline");
-  	  $("#ajax-message").text("Saving...");
-    	$.ajax({
-    	  url: "${app.name}" + "/save",
-    	  data: { code: $("#code").val() },
-    	  success: function(json) {
-    	    console.info("Update code: " + JSON.stringify(json));
-    	    $("#ajax-loading").css("display", "none");
-      	  $("#ajax-message").text("Updated!");
-    	  }, 
-    	  error: function(json) {
-    	    console.info("Update code: " + JSON.stringify(json));
-    	    $("#ajax-loading").css("display", "none");
-      	  $("#ajax-message").text("Update code: Failed.");
-    	  }, 
-    	  type: "post"
-    	});  
+      $("#ajax-message").text("Saving...");
+      $.ajax({
+        url : "${app.name}" + "/save",
+        data : {
+          code : $("#code").val()
+        },
+        success : function(json) {
+          console.info("Update code: " + JSON.stringify(json));
+          $("#ajax-loading").css("display", "none");
+          $("#ajax-message").text("Updated!");
+        },
+        error : function(json) {
+          console.info("Update code: " + JSON.stringify(json));
+          $("#ajax-loading").css("display", "none");
+          $("#ajax-message").text("Update code: Failed.");
+        },
+        type : "post"
+      });
     }
-    
+
     function renderVisualization(name) {
       var vsContainer = $("#visualization-container");
       vsContainer.append("<div>" + name + "&nbsp; <input type=\"submit\" value=\"Delete\" onclick=\"deleteVisualization('" + name + "')\"" + "/></div>");
       $('<iframe class="visualization-frame" id="visualize-' + name + '" src="' + ctx + '/visualize/' + '${app.name}' + '/' + name + '">').load().appendTo(vsContainer);
     }
-    
+
     function renderTableData(tableName, tableData) {
       var tableContainer = $("#table-data-container");
       tableContainer.append("<div><span>" + tableName + "</span> &nbsp; <input type=\"submit\" value=\"Delete\" onclick=\"deleteTable('" + tableName + "')\"" + "/> Data:<div> <span id=\"" + tableName + "-data\" style=\"font-size: 0.75em; color: Gray;\"></span></div></div>");
-     	$("#" + tableName + "-data").text(tableData);	     
+      $("#" + tableName + "-data").text(tableData);
     }
-    
+
     function deleteVisualization(name) {
       $.ajax({
-        url: "${app.name}" + "/visualize/" + name + "/delete",
-        type: "post",
-        success: function(result) {
+        url : "${app.name}" + "/visualize/" + name + "/delete",
+        type : "post",
+        success : function(result) {
           console.info("Delete visualization " + name + ": " + result);
         },
-        error: function(result) {
+        error : function(result) {
           console.info("Delete visualization " + name + ": " + result);
-        }         
+        }
       });
       refresh();
     }
-    
+
     function deleteTable(name) {
       $.ajax({
-        url: "${app.name}" + "/data/" + name + "/delete",
-        type: "post",
-        success: function(result) {
+        url : "${app.name}" + "/data/" + name + "/delete",
+        type : "post",
+        success : function(result) {
           console.info("Delete table " + name + ": " + JSON.stringify(result));
         },
-        error: function(result) {
+        error : function(result) {
           console.info("Delete table " + name + ": " + JSON.stringify(result));
         }
       });
       refresh();
     }
-      
   </script>
 </head>
 <body>
