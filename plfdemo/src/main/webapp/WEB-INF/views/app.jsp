@@ -8,11 +8,11 @@
   <script type="text/javascript" src="<c:url value="/resources/js/json2.js" />"></script>
   
   <script type="text/javascript">
-  	ctx = "${pageContext.request.contextPath}"
+    ctx = "${pageContext.request.contextPath}"
 
     function executeApp() {
-			$("#ajax-loading").css("display", "inline");
- 			$("#ajax-message").text("Running...");
+      $("#ajax-loading").css("display", "inline");
+      $("#ajax-message").text("Running...");
       if (!$("#console").is(":visible")) {
         $("#console").show();
         $("#clear-console").show();
@@ -57,15 +57,15 @@
     }
 
     function showConsole() {
-        if (!$("#console").is(":visible")) {
-          $("#console").show();
-          $("#clear-console").show();
-          $("#show-console").val("Hide console");
-        } else {
-          $("#console").hide();
-          $("#clear-console").hide();
-          $("#show-console").val("Show console");
-        }
+      if (!$("#console").is(":visible")) {
+        $("#console").show();
+        $("#clear-console").show();
+        $("#show-console").val("Hide console");
+      } else {
+        $("#console").hide();
+        $("#clear-console").hide();
+        $("#show-console").val("Show console");
+      }
     }
 
     function clearConsole() {
