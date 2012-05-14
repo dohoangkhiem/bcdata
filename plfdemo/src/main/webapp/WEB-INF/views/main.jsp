@@ -37,13 +37,15 @@
   	
   	function createApp() {
   	  var data = { 
-  	  	appname: $("#appname").val(), 
+  	  	appname: $("#appname").val(),
+  	  	language: $("#language").val(),
   	    description: $("#description").val(),
   	   	code: $("#code").val()
   	  };
   	  $(function() {
   	  	$.ajax({ url: "main/createApp", data: data, type: "post", dataType: "json", success: function(json) {
   	  	  alert("Success");
+  	  	  window.location.href="<c:url value='app/'/>" + $("#appname").val();
   	  	}, error: function() { alert("Failed"); } });  
   	  });
   	}
@@ -73,6 +75,15 @@
       <tr>
         <td><span>Application name</span></td>
         <td><input type="text" id="appname" /></td>
+      </tr>
+      <tr>
+        <td><span>Language</span></td>
+        <td>
+          <select id="language">
+            <option value="python">Python</option>
+            <option value="r">R</option>
+          </select>
+        </td>
       </tr>
       <tr>
         <td><span>Description</span></td>

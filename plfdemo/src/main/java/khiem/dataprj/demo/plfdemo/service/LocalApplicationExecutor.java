@@ -71,8 +71,32 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
 
   @Override
   public String executeR(String appname, String code) {
-    // TODO Auto-generated method stub
-    return null;
+    File temp = new File("/tmp/" + appname + ".R");
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
+    
+      writer.write(code);
+      writer.close();
+    } catch (Exception e) { e.printStackTrace(); }
+    
+    ProcessBuilder pb = new ProcessBuilder("Rscript", "/tmp/" + appname + ".R");
+    pb.redirectErrorStream(true);
+    
+    try {
+      Process p = pb.start();   
+      InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
+      int c;
+      StringBuilder output = new StringBuilder();
+      byte[] b = new byte[1024];
+      while ((c = appOutputStream.read(b)) != -1) {
+        String chunk = new String(b, 0, c);
+        output.append(chunk);
+      }
+      return output.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 }

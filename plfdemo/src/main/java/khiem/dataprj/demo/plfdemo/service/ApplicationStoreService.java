@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
+import khiem.dataprj.demo.plfdemo.utils.Utils;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.web.context.ServletContextAware;
 
@@ -29,22 +31,25 @@ public class ApplicationStoreService implements ServletContextAware {
     if (!dir.isDirectory()) {
       dir.mkdirs(); 
     }
-    FileUtils.write(new File(dir.getAbsolutePath() + System.getProperty("file.separator") + "appcode.py"), code);
+    String filename = Utils.getApplicationFilename(language);
+    FileUtils.write(new File(dir.getAbsolutePath() + System.getProperty("file.separator") + filename), code);
     //logging
-    System.out.println("Successfully write " + appname + ".py");
+    System.out.println("Successfully write " + appname + "/" + filename);
   }
   
   public String getAppliationCode(String appname, String language) throws IOException {
     String storeAbsPath = storePath; //servletContext.getRealPath(System.getProperty("file.separator") + storePath);
+    String filename = Utils.getApplicationFilename(language);
     String code = FileUtils.readFileToString(new File(storeAbsPath + System.getProperty("file.separator") + appname 
-        + System.getProperty("file.separator") + "appcode.py"));
+        + System.getProperty("file.separator") + filename));
     return code;
   }
   
   public void saveApplicationCode(String appname, String language, String code) throws IOException {
     String storeAbsPath = storePath;
+    String filename = Utils.getApplicationFilename(language);
     FileUtils.write(new File(storeAbsPath + System.getProperty("file.separator") + appname 
-        + System.getProperty("file.separator") + "appcode.py"), code);
+        + System.getProperty("file.separator") + filename), code);
   }
   
  public String getVisualizationContent(String appname, String visualizationName) throws IOException {

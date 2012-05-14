@@ -67,6 +67,13 @@ public class Utils {
     return UUID.randomUUID().toString();
   }
   
+  public static String getApplicationFilename(String language) {
+    String filename = null;
+    if ("python".equals(language)) filename = "appcode.py";
+    else if ("r".equals(language)) filename = "appcode.r";
+    return filename;
+  }
+  
   public static void main(String args[]) {
     System.out.println("MySQL Connect Example.");
     Connection conn = null;

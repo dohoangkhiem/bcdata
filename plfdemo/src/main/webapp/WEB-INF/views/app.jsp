@@ -6,10 +6,33 @@
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/app.css" />" />
   <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.6.4.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/json2.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/jqconsole-2.7.min.js" />" charset="utf-8"></script>
   
   <script type="text/javascript">
-    ctx = "${pageContext.request.contextPath}"
-
+    var ctx = "${pageContext.request.contextPath}"
+    var jqconsole; 
+    
+    function startPrompt() {
+      jqconsole.Prompt(true, function(input) {
+        $.ajax({
+          url: "${app.name}/execute",
+          type: "get",
+          data: {
+            code: input,
+            language: $("#language").val()
+          },
+          success: function(result) {
+            jqconsole.Write(result + '\n', 'jqconsole-output');
+            startPrompt();
+          },
+          error: function(result) {
+            console.info(output);
+            startPrompt();
+          }
+        });
+      });
+    }
+    
     function executeApp() {
       $("#ajax-loading").css("display", "inline");
       $("#ajax-message").text("Running...");
@@ -19,8 +42,17 @@
         $("#show-console").val("Hide console");
       }
       $(function() {
-        $.post($("#appname").text() + "/execute", {code: $("#code").val()}, function(output) { $("#console").show(); $("#console").append(output); $("#ajax-loading").css("display", "none");
-    	  $("#ajax-message").text("Finished running."); refresh(); });
+        $.post($("#appname").text() + "/execute", 
+            { code: $("#code").val(), language: $("#language").val() }, 
+            function(output) { 
+              $("#console").show(); 
+              //$("#console").val($("#console").val() + output + "\n");
+              jqconsole.Write(output + '\n', 'jqconsole-output');
+              startPrompt();
+              $("#ajax-loading").css("display", "none");
+    	  			$("#ajax-message").text("Finished running."); refresh(); 
+    	  	  }
+         );
       });
     }
   	
@@ -69,7 +101,7 @@
     }
 
     function clearConsole() {
-      $("#console").text("");
+      jqconsole.Reset();
     }
 
     function saveCode() {
@@ -133,6 +165,12 @@
       });
       refresh();
     }
+    
+    function getConsoleCaret() {
+      if ("${app.language}" == "python") return ">>>";
+      else if ("${app.language}" == "r") return ">";
+      else return null;
+    }
   </script>
 </head>
 <body>
@@ -165,15 +203,31 @@
         <div style="clear:both;">
         
           <div style="width: 550px; display: block;">
+            <div>  
+              <span>Language: </span>
+              <select id="language">
+                <option value="python">Python</option>
+                <option value="r">R</option>
+              </select>
+              <script type="text/javascript">
+                $("#language").val("${app.language}");
+                $("#language").attr('disabled', true);
+              </script>
+            </div>
               <textarea rows="20" cols="80" id="code" >${appcode}</textarea>
               <input id="execute" type="button" value="Execute" onclick="executeApp();">
               <input id="show-console" type="button" value="Show console" onclick="showConsole();" />
+              <input id="clear-console" type="button" value="Clear console" style="display:none;" onclick="clearConsole();" />
               <input id="save" type="submit" value="Save code" onclick="saveCode();" />
               <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
               <span id="ajax-message" style="color: Green; font-style: italic;"></span>
             <div>
-              <textarea rows="15" cols="80" id="console" style="display:none; background-color: #000000; color: #FFFFFF;"></textarea>
-              <input id="clear-console" type="button" value="Clear console" style="display:none;" onclick="clearConsole();" />
+              <div id="console" class="prompt" style="display: none;"></div>
+              <script type="text/javascript">
+              	jqconsole = $("#console").jqconsole('Welcome to our console\n', getConsoleCaret());
+              	startPrompt();
+              </script>
+              
             </div>
           </div>
           

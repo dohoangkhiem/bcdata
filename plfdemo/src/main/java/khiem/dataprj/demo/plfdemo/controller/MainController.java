@@ -76,15 +76,16 @@ public class MainController {
   @RequestMapping(value = "/createApp", method = RequestMethod.POST)
   @ResponseBody
   public String createApplication(@RequestParam(value = "appname", required = true) String appname,
+      @RequestParam(value = "language", required = true) String language,
       @RequestParam(value = "description", required = true) String description,
       @RequestParam(value = "code", required = true) String code, ModelMap model) {
     
     // store app info
-    datastoreService.createApplication(appname, description, "python");
+    datastoreService.createApplication(appname, description, language);
     
     // store app code file
     try {
-      appStoreService.createApplicationFile(appname, "python", code);
+      appStoreService.createApplicationFile(appname, language, code);
     } catch (IOException e) {
       // loggin
       e.printStackTrace();

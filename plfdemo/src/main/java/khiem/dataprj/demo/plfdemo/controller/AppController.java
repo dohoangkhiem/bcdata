@@ -77,10 +77,17 @@ public class AppController {
     return "app";
   }
   
-  @RequestMapping(value="/{appname}/execute",  method = RequestMethod.POST)
-  public @ResponseBody String executeApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, ModelMap model) {
+  @RequestMapping(value="/{appname}/execute")
+  public @ResponseBody String executeApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
     // invoke executor to execute code, pass the appname as parameter
-    String output = appExecutor.executePython(appname, code);
+    String output = null;
+    if ("python".equals(language)) {
+      output = appExecutor.executePython(appname, code);
+    } else if ("r".equals(language)) {
+      output = appExecutor.executeR(appname, code);
+    } else {
+      
+    }
     
     // return the output console
     return output;
