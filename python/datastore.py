@@ -1,4 +1,5 @@
 import MySQLdb as mysqldb
+import json
 
 #conn = mysqldb.connect (host='localhost', user='root', passwd='a', db='worldbank')
 
@@ -10,8 +11,15 @@ import MySQLdb as mysqldb
 #cursor.close()
 #conn.close()
 
-def persist_data(appname, tablename, data):
+appname = ''
+tablename = 'data'
+mode = 'persistence'
+
+log_dir = '/home/khiem/java/temp/logs'
+
+def persist_data(appname, tablename, data, *field_list):
   if data == None or len(data) == 0:
+    print "No data to persist"
     return
   # check if the dataset for this app was created
   conn = mysqldb.connect (host='localhost', user='root', passwd='a', db='plfdemo')
@@ -22,7 +30,7 @@ def persist_data(appname, tablename, data):
   if row == None:
     __create_dataset(appname, "This dataset belongs to application " + appname)
   # create dataset if neccessary  
-
+  
   # create table info if neccessary
   query = "select * from Tables where name = '" + tablename + "' and dataset='" + appname + "'"
   cursor.execute(query)
@@ -30,12 +38,23 @@ def persist_data(appname, tablename, data):
   if row == None:
     fields = []
     for key in data[0]:
+      if len(field_list) > 0:
+        if str(key) not in field_list:
+          continue
       fields.append(key)
     __create_table_info(appname, tablename, "table info", fields)      
   # create table if neccessary
   
-  # insert data to table	
-  __persist_json("userdata_" + appname + "_" + tablename, data)
+  print "Preparing to persist"
+  # insert data to table    
+  __persist_json("userdata_" + appname + "_" + tablename, data, field_list)
+
+  # log data
+  filename = log_dir + "/" + appname + ".dat"
+  output_file = open(filename, "w")
+  output_file.write(json.dumps(data))
+  output_file.close()
+  
   print "Successfully persist data for ", appname, "dataset, table ", tablename
   cursor.close()
   conn.close()
@@ -72,15 +91,20 @@ def __create_table_info(dataset_name, table_name, description, fieldlist):
   cursor.close()
   conn.close()
 
-def __persist_json(table_name, jsonlist):
+def __persist_json(table_name, jsonlist, field_list):
+  print field_list
   conn = mysqldb.connect (host='localhost', user='root', passwd='a', db='plfdemo')
   cursor = conn.cursor()
   try:
     cursor.execute("drop table if exists " + table_name)
     fields = []
     for key in jsonlist[0]:
+      if key not in field_list:
+        continue
       fields.append(key)
-
+    if len(fields) == 0:
+      print "No field to persist. Return now."
+      return;
     # create table
     create_table_str = "create table " + table_name + "("
     for i in range(len(fields) - 1):
@@ -128,14 +152,52 @@ def __persist_json(table_name, jsonlist):
     conn.rollback()
   cursor.close()
   conn.close()
+  
+  
+def __persist_dataset(app_name, table_name, data_list, *columns):
+  if data == None or len(data) == 0:
+    return
+  # check if the dataset for this app was created
+  conn = mysqldb.connect (host='localhost', user='root', passwd='a', db='plfdemo')
+  cursor = conn.cursor()
+  query = "select * from Datasets where name = '" + appname + "'"
+  cursor.execute(query)
+  row = cursor.fetchone()
+  if row == None:
+    __create_dataset(appname, "This dataset belongs to application " + appname)
+  # create dataset if neccessary  
+
+  # create table info if neccessary
+  query = "select * from Tables where name = '" + tablename + "' and dataset='" + appname + "'"
+  cursor.execute(query)
+  row = cursor.fetchone()
+  if row == None:
+    fields = []
+    for key in data[0]:
+      fields.append(key)
+    __create_table_info(appname, tablename, "table info", fields)      
+  # create table if neccessary
+  
+  # insert data to table    
+  __persist_json("userdata_" + appname + "_" + tablename, data)
+
+  # log data
+  filename = log_dir + "/" + appname + ".dat"
+  output_file = open(filename, "w")
+  output_file.write(json.dumps(data))
+  output_file.close()
+  
+  print "Successfully persist data for ", appname, "dataset, table ", tablename
+  cursor.close()
+  conn.close()
 
 #test
 def test():
-	json_str = [{"page":1,"pages":1,"per_page":"50","total":11},[{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"2087889553821.68","decimal":"0","date":"2010"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1594489675023.99","decimal":"0","date":"2009"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1652632229227.61","decimal":"0","date":"2008"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1365982651542.37","decimal":"0","date":"2007"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1088917279411.76","decimal":"0","date":"2006"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"882185291700.904","decimal":"0","date":"2005"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"663760000000","decimal":"0","date":"2004"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"552469288267.793","decimal":"0","date":"2003"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"504221228974.035","decimal":"0","date":"2002"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"553582178386.192","decimal":"0","date":"2001"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"644701831101.394","decimal":"0","date":"2000"}]]
+    json_str = [{"page":1,"pages":1,"per_page":"50","total":11},[{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"2087889553821.68","decimal":"0","date":"2010"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1594489675023.99","decimal":"0","date":"2009"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1652632229227.61","decimal":"0","date":"2008"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1365982651542.37","decimal":"0","date":"2007"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"1088917279411.76","decimal":"0","date":"2006"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"882185291700.904","decimal":"0","date":"2005"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"663760000000","decimal":"0","date":"2004"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"552469288267.793","decimal":"0","date":"2003"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"504221228974.035","decimal":"0","date":"2002"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"553582178386.192","decimal":"0","date":"2001"},{"indicator":{"id":"NY.GDP.MKTP.CD","value":"GDP (current US$)"},"country":{"id":"BR","value":"Brazil"},"value":"644701831101.394","decimal":"0","date":"2000"}]]
 
-	datalist = json_str[1]
-	#persist_json("test_table", datalist)
-	#create_dataset("test", "a test")
-	#fields = ["id", "name", "age"]
-	#create_table_info("test", "test_table", "a test table", fields)
-        persist_data("newapp", "newtable", datalist)
+    datalist = json_str[1]
+    #persist_json("test_table", datalist)
+    #create_dataset("test", "a test")
+    #fields = ["id", "name", "age"]
+    #create_table_info("test", "test_table", "a test table", fields)
+    persist_data("newapp", "newtable", datalist, 'date', 'country', 'value')

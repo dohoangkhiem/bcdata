@@ -85,4 +85,14 @@ public class DatastoreServiceImpl implements DatastoreService {
   public void deleteTable(String appname, String tableName) {
     dataStorage.deleteTable(appname, tableName);
   }
+
+  @Override
+  public List<Application> searchApplication(String query) {
+    return dataStorage.searchApplication(query);
+  }
+
+  @Override
+  public List<Dataset> searchDataset(String query) {
+    return dataStorage.searchDataset(query);
+  }
 }

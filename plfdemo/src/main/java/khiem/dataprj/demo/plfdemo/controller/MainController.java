@@ -34,7 +34,7 @@ public class MainController {
   
   @RequestMapping(method = RequestMethod.GET)
   public String main(ModelMap model) {
-    //model.addAttribute("message", "Hello I am Khiem");
+    model.addAttribute("app", null);
     return "main";
   }
   

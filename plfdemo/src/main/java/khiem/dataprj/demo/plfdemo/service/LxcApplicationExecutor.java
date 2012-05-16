@@ -30,7 +30,7 @@ public class LxcApplicationExecutor implements ApplicationExecutor {
   }
   
   public static void main(String[] args) {
-    ProcessBuilder pb = new ProcessBuilder("sudo", "lxc-execute", "-n lxc-1", "ls /");
+    ProcessBuilder pb = new ProcessBuilder("appexecute.sh", "/root/syspath.py");
     //ProcessBuilder pb = new ProcessBuilder("echo", "hello");
     pb.redirectErrorStream(true);
     

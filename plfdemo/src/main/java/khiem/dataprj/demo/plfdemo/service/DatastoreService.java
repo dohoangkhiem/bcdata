@@ -55,4 +55,8 @@ public interface DatastoreService {
   public void deleteVisualization(String appname, String visualizationName);
   
   public void deleteTable(String appname, String tableName);
+  
+  public List<Application> searchApplication(String query);
+  
+  public List<Dataset> searchDataset(String query);
 }

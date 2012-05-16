@@ -97,4 +97,14 @@ public class UserDataService implements DatastoreService {
     
   }
 
+  @Override
+  public List<Application> searchApplication(String query) {
+    return dataStorage.searchApplication(query);
+  }
+
+  @Override
+  public List<Dataset> searchDataset(String query) {
+    return dataStorage.searchDataset(query);
+  }
+
 }

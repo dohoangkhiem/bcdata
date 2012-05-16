@@ -43,5 +43,9 @@ public interface DataStorage {
   public void deleteVisualization(String appname, String visualizationName) throws DataAccessException;
   
   public void deleteTable(String appname, String tableName) throws DataAccessException;
+  
+  public List<Application> searchApplication(String query) throws DataAccessException;
+  
+  public List<Dataset> searchDataset(String query) throws DataAccessException;
 }
 

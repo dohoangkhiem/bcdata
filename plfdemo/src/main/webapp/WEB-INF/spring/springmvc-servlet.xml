@@ -23,7 +23,7 @@
   </bean>
  
   <bean id="appStoreService" class="khiem.dataprj.demo.plfdemo.service.ApplicationStoreService">
-    <constructor-arg value="/home/ec2-user/temp/apps"></constructor-arg>
+    <constructor-arg value="/home/khiem/java/temp/apps"></constructor-arg>
   </bean>
   
   <bean id="mainController" class="khiem.dataprj.demo.plfdemo.controller.MainController">
@@ -47,13 +47,31 @@
     <property name="appStoreService" ref="appStoreService"></property>
   </bean>
   
-  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <bean id="searchController" class="khiem.dataprj.demo.plfdemo.controller.SearchController">
+    <property name="datastoreService" ref="datastoreService" />
+    <property name="userDataService" ref="userDataService" />
+  </bean>
+
+  <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+    <property name="definitions">
+      <list>
+        <value>/WEB-INF/spring/tiles.xml</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
+    <property name="order" value="0"></property>
+  </bean> 
+ 
+ <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="prefix">
       <value>/WEB-INF/views/</value>
     </property>
     <property name="suffix">
       <value>.jsp</value>
     </property>
+    <property name="order" value="2"></property>
   </bean>
- 
 </beans>

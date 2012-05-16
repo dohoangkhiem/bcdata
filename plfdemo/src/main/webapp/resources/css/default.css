@@ -1,4 +1,37 @@
 body, html>body {
   margin: 0 auto;
+  width: 1200px;
+}
+
+/** Main Layout **/
+.main-container {
   width: 100%;
+  height: 100%;
+}
+
+.header {
+  height: 120px;
+  width: 100%;
+}
+
+.content {
+  
+}
+
+.content .right-content {
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
+  float: right;
+  width: 320px;
+  height: 100%;
+}
+
+.content .main-content {
+  float: left;
+  width: 870px;
+}
+
+.footer {
+  width: 100%;
+  height: 200px;
 }

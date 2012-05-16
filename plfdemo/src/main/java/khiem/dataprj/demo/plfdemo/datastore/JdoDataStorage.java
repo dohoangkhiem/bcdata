@@ -143,4 +143,24 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     q.deletePersistentAll();
   }
 
+  @Override
+  public List<Application> searchApplication(String query)
+      throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Application.class); 
+    q.setFilter("this.name.matches(\"*" + query + "*\") || " + 
+      "this.description.matches(\"*" + query + "*\")");
+    List<Application> apps = (List<Application>) q.execute();
+    return apps;
+  }
+
+  @Override
+  public List<Dataset> searchDataset(String query) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Dataset.class); 
+    q.setFilter("this.name.matches(\"*" + query + "*\") || " + 
+        "this.description.matches(\"*" + query + "*\")");
+      List<Dataset> datasets = (List<Dataset>) q.execute();
+      return datasets;
+  }
+
 }
+

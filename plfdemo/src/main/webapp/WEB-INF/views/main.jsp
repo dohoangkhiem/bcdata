@@ -2,103 +2,65 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <!-- link rel="stylesheet" type="text/css" href=""-->
-  <!-- script type="text/javascript" src="<script type="text/javascript" src="<c:url value="/resources/js/jquery-1.6.4.min.js" />"></script>"></script-->
-  <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.6.4.min.js" />"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/main.css" />" />
+  <script type="text/javascript" src="<c:url value="/resources/js/plfdemo/application.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/jqconsole-2.7.min.js" />"></script>
   
   <title>Platform Demo</title>
 </head>
-<body style="margin: 0 auto; width: 1000px;">  
-  <div class="main-content">
-    <h3>List of Dataset:</h3>
-    <div>
-      <ul id="datasetList"></ul>
-    </div>
-  </div>
-  
+<body>      
   <script type="text/javascript">
-    ctx = "${pageContext.request.contextPath}"
-  	function getDataset() {
-  	  $(function() {
-  	    $.ajax({ url: "main/dataset", dataType: "json", success: function(json) {
-  	      //$("#datasets").replaceWith('<span id="datasets">' + json[0]['name'] + '</span>');
-  	      var i;
-  	      for (i = 0; i < json.length; i++) {
-	      	  var dataset = json[i];
-	      	  $("#datasetList").append('<li><a href="' + ctx + '/dataset/gui"><span>' + dataset['name'] + '</span></a></li>');
-	      	} 
-  	    }, error: function() { alert("error"); }   
-  	    }); 
-  	  });
-  	}
-  	getDataset();
-  	
-  	function createApp() {
-  	  var data = { 
-  	  	appname: $("#appname").val(),
-  	  	language: $("#language").val(),
-  	    description: $("#description").val(),
-  	   	code: $("#code").val()
-  	  };
-  	  $(function() {
-  	  	$.ajax({ url: "main/createApp", data: data, type: "post", dataType: "json", success: function(json) {
-  	  	  alert("Success");
-  	  	  window.location.href="<c:url value='app/'/>" + $("#appname").val();
-  	  	}, error: function() { alert("Failed"); } });  
-  	  });
-  	}
-  	
-  	function getApplicationList() {
-  	  $(function() {
-  	    $.ajax({
-  	      url: "<c:url value='main/application' />", dataType: "json", success: function(json) {
-  	        var i = 0;
-  	      	for (i = 0; i < json.length; i++) {
-  	      	  var app = json[i];
-  	      	  $("#appList").append('<li><a href="app/' + app['name'] + '"><span>' + app['name'] + '</span></a></li>');
-  	      	}  
-  	      }, error: function() {}
-  	    });
-  	  });
-  	}
-  	getApplicationList();
+  $(function() {
+  	jqconsole = $("#console").jqconsole('Welcome to our console\n', '>>>');
+  	//plfdemo.Application = new Application();
+  }); 
   </script>
-  <div>
-    <h3>List of application</h3>
-    <ul id="appList"></ul>
-  </div>
-  <div id="createForm">
-    <h3>Create new application</h3>
-    <table>
-      <tr>
-        <td><span>Application name</span></td>
-        <td><input type="text" id="appname" /></td>
-      </tr>
-      <tr>
-        <td><span>Language</span></td>
-        <td>
+  <div class="application-container">
+    <div class="application-info">
+      <div class="new-application">
+        <h3>New Application</h3>
+        <div class="language-select">  
+          <span>Language: </span>
           <select id="language">
             <option value="python">Python</option>
             <option value="r">R</option>
           </select>
-        </td>
-      </tr>
-      <tr>
-        <td><span>Description</span></td>
-        <td><textarea id="description" cols="60" rows="5"></textarea></td>
-      </tr>
-      <tr>
-        <td><span>Code</span></td>
-        <td><textarea id="code" cols="60" rows="15"></textarea></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <input type="submit" value="Submit" onclick="createApp();" /> 
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+      <!-- div class="application-summary">
+        <h3>Application summary</h3>
+        <table>
+          <tr>
+            <td><span class="info-label">Application name: </span></td>
+            <td><span id="appname">${app.name}</span></td>
+          </tr>
+          <tr>
+            <td><span class="info-label">Language: </span></td>
+            <td><span>${app.language }</span></td>
+          </tr>
+          <tr>
+            <td><span class="info-label">Description: </span></td>
+            <td><span>${app.description }</span></td>
+          </tr>   
+        </table>
+      </div-->
+    </div>
+    <div class="application-detail">        
+      <div style="width: 550px; display: block;"> 
+        <input id="execute" type="button" value="Execute" onclick="executeApp();">     
+        <input id="save" type="submit" value="Save code" onclick="saveCode();" />
+        <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
+        <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+        <textarea rows="20" cols="80" id="code-editor" >${appcode}</textarea>        
+        <input id="show-console" type="button" value="Show console" onclick="showConsole();" />
+        <input id="clear-console" type="button" value="Clear console" style="display:none;" onclick="clearConsole();" />      
+        <div>
+          <div id="console" class="prompt" style="display: none;"></div>
+        </div>        
+      </div>
+    </div>
   </div>
+  
 </body>
 </html>

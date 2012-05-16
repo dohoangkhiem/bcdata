@@ -12,50 +12,12 @@
     var ctx = "${pageContext.request.contextPath}"
     var jqconsole; 
     
-    function startPrompt() {
-      jqconsole.Prompt(true, function(input) {
-        $.ajax({
-          url: "${app.name}/execute",
-          type: "get",
-          data: {
-            code: input,
-            language: $("#language").val()
-          },
-          success: function(result) {
-            jqconsole.Write(result + '\n', 'jqconsole-output');
-            startPrompt();
-          },
-          error: function(result) {
-            console.info(output);
-            startPrompt();
-          }
-        });
-      });
-    }
+    $(document).ready(function() {
+      jqconsole = $("#console").jqconsole('Welcome to our console\n', getConsoleCaret());
+      ApplicationHandler = new Application(ctx, jqconsole);
+    	startPrompt();
+    });
     
-    function executeApp() {
-      $("#ajax-loading").css("display", "inline");
-      $("#ajax-message").text("Running...");
-      if (!$("#console").is(":visible")) {
-        $("#console").show();
-        $("#clear-console").show();
-        $("#show-console").val("Hide console");
-      }
-      $(function() {
-        $.post($("#appname").text() + "/execute", 
-            { code: $("#code").val(), language: $("#language").val() }, 
-            function(output) { 
-              $("#console").show(); 
-              //$("#console").val($("#console").val() + output + "\n");
-              jqconsole.Write(output + '\n', 'jqconsole-output');
-              startPrompt();
-              $("#ajax-loading").css("display", "none");
-    	  			$("#ajax-message").text("Finished running."); refresh(); 
-    	  	  }
-         );
-      });
-    }
-  	
     function refresh() {
       $.ajax({
         url : "${app.name}/data",
@@ -88,43 +50,7 @@
       });
     }
 
-    function showConsole() {
-      if (!$("#console").is(":visible")) {
-        $("#console").show();
-        $("#clear-console").show();
-        $("#show-console").val("Hide console");
-      } else {
-        $("#console").hide();
-        $("#clear-console").hide();
-        $("#show-console").val("Show console");
-      }
-    }
-
-    function clearConsole() {
-      jqconsole.Reset();
-    }
-
-    function saveCode() {
-      $("#ajax-loading").css("display", "inline");
-      $("#ajax-message").text("Saving...");
-      $.ajax({
-        url : "${app.name}" + "/save",
-        data : {
-          code : $("#code").val()
-        },
-        success : function(json) {
-          console.info("Update code: " + JSON.stringify(json));
-          $("#ajax-loading").css("display", "none");
-          $("#ajax-message").text("Updated!");
-        },
-        error : function(json) {
-          console.info("Update code: " + JSON.stringify(json));
-          $("#ajax-loading").css("display", "none");
-          $("#ajax-message").text("Update code: Failed.");
-        },
-        type : "post"
-      });
-    }
+    
 
     function renderVisualization(name) {
       var vsContainer = $("#visualization-container");
@@ -166,11 +92,6 @@
       refresh();
     }
     
-    function getConsoleCaret() {
-      if ("${app.language}" == "python") return ">>>";
-      else if ("${app.language}" == "r") return ">";
-      else return null;
-    }
   </script>
 </head>
 <body>
@@ -230,8 +151,6 @@
               
             </div>
           </div>
-          
-        <!-- /form-->
         </div>
         
       </div>

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -169,6 +170,57 @@ public class JdbcDataStorage implements DataStorage {
         if (st != null) st.close();
         if (conn != null) conn.close();
       } catch (Exception e) {}
+    }
+  }
+
+  @Override
+  public List<Application> searchApplication(String query)
+      throws DataAccessException {
+    String sql = "select * from Applications where name like '%" + query + "%' or description like '%" + query + "%'";
+    Connection conn = null;
+    try {
+      conn = dataSource.getConnection();
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      List<Application> apps = new ArrayList<Application>();
+      while (rs.next()) {
+        Application app = new Application(rs.getString("name"), rs.getString("description"), rs.getString("language"));
+        apps.add(app);
+      }
+      rs.close();
+      st.close();
+      return apps;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (conn != null) {
+        try { conn.close(); } catch (Exception e) {}
+      }
+    }
+  }
+
+  @Override
+  public List<Dataset> searchDataset(String query) throws DataAccessException {
+    String sql = "select * from Datasets where name like '%" + query + "%' or description like '%" + query + "%'";
+    Connection conn = null;
+    try {
+      conn = dataSource.getConnection();
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      List<Dataset> datasets = new ArrayList<Dataset>();
+      while (rs.next()) {
+        Dataset dataset = new Dataset(rs.getString("name"), rs.getString("description"));
+        datasets.add(dataset);
+      }
+      rs.close();
+      st.close();
+      return datasets;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (conn != null) {
+        try { conn.close(); } catch (Exception e) {}
+      }
     }
   }
 
