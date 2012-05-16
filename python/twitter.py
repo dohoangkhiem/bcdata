@@ -95,4 +95,3 @@ def __get_tweets(screen_name):
     obj = json.loads(result)
     return obj
     
-get_data('nerazz08') 
