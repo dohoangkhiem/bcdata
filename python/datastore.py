@@ -99,7 +99,7 @@ def __persist_json(table_name, jsonlist, field_list):
     cursor.execute("drop table if exists " + table_name)
     fields = []
     for key in jsonlist[0]:
-      if key not in field_list:
+      if str(key) not in field_list:
         continue
       fields.append(key)
     if len(fields) == 0:
