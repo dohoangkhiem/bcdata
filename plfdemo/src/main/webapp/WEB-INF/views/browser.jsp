@@ -6,12 +6,12 @@
     </ul>
     <div id="browser-all">
       <div class="dataset-list-panel">
-        <h4>Datastores</h3>
+        <h4>Datastores</h4>
         <ul id="dataset-list-all"></ul>
       </div>
   
       <div class="application-list-panel">
-        <h4>Applications</h3>
+        <h4>Applications</h4>
         <ul id="application-list-all"></ul>
       </div>
     </div>

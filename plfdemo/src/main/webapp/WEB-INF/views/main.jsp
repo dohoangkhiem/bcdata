@@ -46,12 +46,19 @@
     <div class="application-container" id="app">
       <div class="application-info">
         <div class="new-application">
-          <h3><span id="application-title">
-            <c:choose>
-              <c:when test='${app == null}'>New application  </c:when>
-              <c:otherwise>${app.name } </c:otherwise>
-            </c:choose>
-          </span></h3>
+          <div class="application-title">
+            <h3>
+              <c:choose>
+                <c:when test='${app == null}'>New application</c:when>
+                <c:otherwise>${app.name } </c:otherwise>
+              </c:choose>
+            </h3>
+          </div>
+          <c:if test="${app != null }">
+            <div class="create-new-app">
+              <input type="button" id="create-app-button" value="New application" onclick="window.location.href=plfdemo.Main.ctx + '/#app';" />
+            </div>
+          </c:if>
           <div class="language-select">  
             <span>Language: </span>
             <select id="language">
@@ -70,7 +77,7 @@
         <div style="width: 100%; display: block;">
           <div class="app-actions"> 
             <input id="execute" type="button" value="Execute" onclick="plfdemo.Application.execute($('#code-editor').val(), $('#language').val(), '${app.name}');">     
-            <input id="save" type="submit" value="Save" onclick="plfdemo.Application.saveCode('${app.name}', $('#code-editor').val());" />
+            <input id="save" type="submit" value="Save" onclick="plfdemo.Application.saveCode('${app.name}', $('#code-editor').val(), $('#language').val());" />
             <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
             <span id="ajax-message" style="color: Green; font-style: italic;"></span>
           </div>

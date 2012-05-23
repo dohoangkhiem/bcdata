@@ -16,9 +16,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   public String executePython(String appname, String code) {
     // get execution ticket
     String ticket = Utils.getExecutionId();
-    
+    String tempFile = "/tmp/" + ticket + ".py";
     // invokes Python
-    File temp = new File("/tmp/" + appname + ".py");
+    File temp = new File(tempFile);
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
     
@@ -27,15 +27,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     } catch (Exception e) { e.printStackTrace(); }
     
     //ProcessBuilder pb = new ProcessBuilder("appexecute.sh", appname, code);
-    ProcessBuilder pb = new ProcessBuilder("python", "/tmp/" + appname + ".py");
+    ProcessBuilder pb = new ProcessBuilder("python", tempFile);
     pb.redirectErrorStream(true);
     
-    //return ticket;
-    
-    //Map<String, String> env = pb.environment();
-    //env.put("VAR1", "myValue");
-    //env.remove("OTHERVAR");
-    //env.put("VAR2", env.get("VAR1") + "suffix");
     try {
       Process p = pb.start();   
       InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
@@ -71,7 +65,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
 
   @Override
   public String executeR(String appname, String code) {
-    File temp = new File("/tmp/" + appname + ".R");
+    String ticket = Utils.getExecutionId();
+    String tempFile = "/tmp/" + ticket + ".R";
+    File temp = new File(tempFile);
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
     
@@ -79,24 +75,30 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       writer.close();
     } catch (Exception e) { e.printStackTrace(); }
     
-    ProcessBuilder pb = new ProcessBuilder("Rscript", "/tmp/" + appname + ".R");
+    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile);
     pb.redirectErrorStream(true);
     
+    String output;
+    /* read the console output */ 
     try {
       Process p = pb.start();   
       InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
       int c;
-      StringBuilder output = new StringBuilder();
+      StringBuilder out = new StringBuilder();
       byte[] b = new byte[1024];
       while ((c = appOutputStream.read(b)) != -1) {
         String chunk = new String(b, 0, c);
-        output.append(chunk);
+        out.append(chunk);
       }
-      return output.toString();
+      output = out.toString();
     } catch (IOException e) {
       e.printStackTrace();
       return null;
     }
+    
+    /* read the logs */
+    
+    return output;
   }
 
 }

@@ -31,6 +31,21 @@
   margin: 5px 0px;
 }
 
+.application-container .application-info .application-title {
+  display: inline-block;
+}
+
+.application-info .application-title h3 {
+  margin: 5px 0;  
+}
+
+.application-container .application-info .create-new-app {
+  float: right;
+}
+
+.application-container .application-info .language-select {
+  margin: 5px 0px;
+}
 .visualization-container #visualization-slider {
   max-height: 500px;
   overflow: auto;

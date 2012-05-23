@@ -83,11 +83,11 @@ Application.prototype.startPrompt = function(language) {
       },
       success: function(result) {
         plfdemo.Application.jqconsole.Write(result + '\n', 'jqconsole-output');
-        startPrompt();
+        plfdemo.Application.startPrompt();
       },
       error: function(result) {
         console.info(result);
-        startPrompt();
+        plfdemo.Application.startPrompt();
       }
     });
   });
@@ -110,7 +110,7 @@ Application.prototype.clearConsole = function() {
   this.startPrompt();
 }
 
-Application.prototype.saveCode = function(appname, code) {
+Application.prototype.saveCode = function(appname, code, language) {
   
   if (appname == null || appname == '') {   
     // open dialog
@@ -123,7 +123,8 @@ Application.prototype.saveCode = function(appname, code) {
   $.ajax({
     url : plfdemo.Main.ctx + "/app/" + appname + "/save",
     data : {
-      code : code
+      code : code,
+      language: language
     },
     success : function(json) {
       console.info("Update code: " + JSON.stringify(json));

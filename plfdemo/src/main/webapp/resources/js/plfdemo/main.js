@@ -30,13 +30,16 @@ Main.prototype.getDatasetList = function() {
 Main.prototype.getApplicationList = function() {
   $(function() {
     $.ajax({
-      url: ctx + '/main/application', dataType: "json", success: function(json) {
+      url: ctx + '/main/application', 
+      dataType: "json", 
+      success: function(json) {
         var i = 0;
         for (i = 0; i < json.length; i++) {
           var app = json[i];
-          $("#application-list-all").append('<li><a href="' + ctx + "/app/" + app['name'] + '#app"><span>' + app['name'] + '</span></a></li>');
+          $("#application-list-all").append('<li><a href="' + ctx + "/app/" + encodeURI(app['name']) + '#app"><span>' + app['name'] + '</span></a></li>');
         }  
-      }, error: function() {}
+      }, 
+      error: function() {}
     });
   });
 }
