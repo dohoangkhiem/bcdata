@@ -69,8 +69,8 @@ public class Utils {
   
   public static String getApplicationFilename(String language) {
     String filename = null;
-    if ("python".equals(language)) filename = "appcode.py";
-    else if ("r".equals(language)) filename = "appcode.r";
+    if (ApplicationLanguage.PYTHON.getLanguage().equals(language)) filename = "appcode.py";
+    else if (ApplicationLanguage.R.getLanguage().equals(language)) filename = "appcode.R";
     return filename;
   }
   

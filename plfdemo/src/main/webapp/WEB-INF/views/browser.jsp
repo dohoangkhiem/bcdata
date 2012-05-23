@@ -6,12 +6,12 @@
     </ul>
     <div id="browser-all">
       <div class="dataset-list-panel">
-        <h4>Dataset list</h3>
+        <h4>Datastores</h3>
         <ul id="dataset-list-all"></ul>
       </div>
   
       <div class="application-list-panel">
-        <h4>Application list</h3>
+        <h4>Applications</h3>
         <ul id="application-list-all"></ul>
       </div>
     </div>
@@ -26,7 +26,7 @@
 <script type="text/javascript">
 	$(function() {
 		$("#browser-tabs" ).tabs();
+		plfdemo.Main.getDatasetList();
+		plfdemo.Main.getApplicationList();
 	});
-	plfdemo.Main.getDatasetList();
-	plfdemo.Main.getApplicationList();
 </script>

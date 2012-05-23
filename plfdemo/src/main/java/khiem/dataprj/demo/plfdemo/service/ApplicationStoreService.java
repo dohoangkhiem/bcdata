@@ -37,7 +37,7 @@ public class ApplicationStoreService implements ServletContextAware {
     System.out.println("Successfully write " + appname + "/" + filename);
   }
   
-  public String getAppliationCode(String appname, String language) throws IOException {
+  public String getApplicationCode(String appname, String language) throws IOException {
     String storeAbsPath = storePath; //servletContext.getRealPath(System.getProperty("file.separator") + storePath);
     String filename = Utils.getApplicationFilename(language);
     String code = FileUtils.readFileToString(new File(storeAbsPath + System.getProperty("file.separator") + appname 

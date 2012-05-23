@@ -1,7 +1,42 @@
-function Application(appname, language, description, code) {
+function Application() {
+  this.jqconsole = {}
 }
 
-Application.prototype.execute = function() {
+Application.prototype.initConsole = function(language) {
+  this.jqconsole = $("#console").jqconsole('Welcome to our console\n', this.getConsoleCaret(language));
+  this.startPrompt();
+}
+
+Application.prototype.initPopup = function() {
+  $(function() {
+    $('#save-app-dialog').dialog({
+      autoOpen: false,
+      height: 300,
+      width: 350,
+      modal: true,
+      buttons: {
+        "Save": function() {
+          //
+          //alert("Save the app");
+          plfdemo.Application.createApp($('#new-app-name', $(this)).val(), $('#language').val() ,$('#new-app-description', $(this)).val(), $('#code-editor').val());
+        }, 
+        "Cancel": function() {
+          $(this).dialog("close");
+        }
+      },
+      close: function() {
+        
+      }
+    });
+    
+    // open popup event
+    //$('#save').button().click(function() {
+      //$('#save-app-dialog').dialog("open");
+    //});
+  });
+}
+
+Application.prototype.execute = function(code, language, appname) {
   $("#ajax-loading").css("display", "inline");
   $("#ajax-message").text("Running...");
   if (!$("#console").is(":visible")) {
@@ -9,37 +44,49 @@ Application.prototype.execute = function() {
     $("#clear-console").show();
     $("#show-console").val("Hide console");
   }
+  var url;
+  if (appname && (appname != null)) {
+    url = plfdemo.Main.ctx + "/app/" + appname + "/execute";
+  } else {
+    url = plfdemo.Main.ctx + "/main/execute"; 
+  }
   $(function() {
-    $.post($("#appname").text() + "/execute", 
-        { code: $("#code").val(), language: $("#language").val() }, 
-        function(output) { 
-          $("#console").show(); 
-          //$("#console").val($("#console").val() + output + "\n");
-          jqconsole.Write(output + '\n', 'jqconsole-output');
-          startPrompt();
-          $("#ajax-loading").css("display", "none");
-          $("#ajax-message").text("Finished running."); refresh(); 
-        }
-     );
+    $.ajax({
+      url: url,
+      type: "post",
+      data: {
+        code: code,
+        language: language
+      },
+      success: function(result) {
+        $("#console").show(); 
+        //$("#console").val($("#console").val() + output + "\n");
+        plfdemo.Application.jqconsole.Write(result + '\n', 'jqconsole-output');
+        plfdemo.Application.startPrompt();
+        $("#ajax-loading").css("display", "none");
+        $("#ajax-message").text("Finished running."); 
+        //refresh(); 
+      }
+    });
   });
 };
 
 
-Application.prototype.startPrompt = function() {
-  jqconsole.Prompt(true, function(input) {
+Application.prototype.startPrompt = function(language) {
+  this.jqconsole.Prompt(true, function(input) {
     $.ajax({
-      url: "${app.name}/execute",
+      url: plfdemo.Main.ctx + "/shell/execute",
       type: "get",
       data: {
         code: input,
-        language: $("#language").val()
+        language: language
       },
       success: function(result) {
-        jqconsole.Write(result + '\n', 'jqconsole-output');
+        plfdemo.Application.jqconsole.Write(result + '\n', 'jqconsole-output');
         startPrompt();
       },
       error: function(result) {
-        console.info(output);
+        console.info(result);
         startPrompt();
       }
     });
@@ -59,17 +106,24 @@ Application.prototype.showConsole = function() {
 }
 
 Application.prototype.clearConsole = function() {
-  jqconsole.Reset();
-  startPrompt();
+  this.jqconsole.Reset();
+  this.startPrompt();
 }
 
-Application.prototype.saveCode = function() {
+Application.prototype.saveCode = function(appname, code) {
+  
+  if (appname == null || appname == '') {   
+    // open dialog
+    $('#save-app-dialog').dialog("open");
+    return;
+  }
+  
   $("#ajax-loading").css("display", "inline");
   $("#ajax-message").text("Saving...");
   $.ajax({
-    url : "${app.name}" + "/save",
+    url : plfdemo.Main.ctx + "/app/" + appname + "/save",
     data : {
-      code : $("#code").val()
+      code : code
     },
     success : function(json) {
       console.info("Update code: " + JSON.stringify(json));
@@ -85,9 +139,9 @@ Application.prototype.saveCode = function() {
   });
 }
 
-Application.prototype.getConsoleCaret = function() {
-  if ("${app.language}" == "python") return ">>>";
-  else if ("${app.language}" == "r") return ">";
+Application.prototype.getConsoleCaret = function(language) {
+  if (language == "python") return ">>>";
+  else if (language == "r") return ">";
   else return null;
 }
 
@@ -99,9 +153,27 @@ Application.prototype.createApp = function(appname, language, description, code)
     code: code
   };
   $(function() {
-    $.ajax({ url: "main/createApp", data: data, type: "post", dataType: "json", success: function(json) {
-      alert("Success");
-      window.location.href=ctx = "/app/" + appname;
-    }, error: function() { alert("Failed"); } });  
+    $.ajax({ 
+      url: plfdemo.Main.ctx + "/main/createApp", 
+      data: data, 
+      type: "post", 
+      dataType: "json", 
+      success: function(json) {
+        window.location.href = plfdemo.Main.ctx + "/app/" + appname + "#app";
+      }, 
+      error: function() { alert("Failed to create new application!"); } });  
   });
 }
+
+Application.prototype.renderVisualization = function(name, appname) {
+  $(function() {
+    var vsSlider = $("#visualization-slider");
+    var vsItem = $('<div class="visualization-item" id="visualization-item-' + name + '"></div>');
+    vsItem.load().appendTo(vsSlider);
+    $('<iframe class="visualization-item-frame" id="visualize-' + name + '" src="' + plfdemo.Main.ctx + '/visualize/' + appname + '/' + name + '">').load().appendTo(vsItem);
+    $('<span class="visualization-item-title">' + name + '</span>').load().appendTo(vsItem);
+  });
+}
+
+plfdemo.Application = new Application();
+plfdemo.Application.initPopup();

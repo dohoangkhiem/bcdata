@@ -1,6 +1,5 @@
 package khiem.dataprj.demo.plfdemo.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +69,7 @@ public class DatasetController {
   }
   
   @RequestMapping(value="/query", method = RequestMethod.GET)
-  public @ResponseBody String query(String query) {
-    
+  public @ResponseBody String query(String query) {   
     return userDataService.executeQueryWithResult(query);
   }
   

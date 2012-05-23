@@ -1,35 +1,5 @@
-/**** LAYOUT  *****/
-.main-container {
-  width: 100%;
-  margin: 5px 0px 0px 5px;
-}
-
-.top-content {
-  width: 100%;
-}
-
-.main-content-container {
-  width: 100%;
-  overflow: hidden;
-}
-
-.left-content {
-  width: 700px;
-  float: left;
-}
-
-.right-content {
-  width: 600px;
-  float: left;
-  overflow: auto;
-}
-
 .info-label {
   font-weight: bold;
-}
-
-.right-content-lower {
-  margin-top: 5px;
 }
 
 .visualization-frame {
@@ -37,15 +7,48 @@
   height: 400px;
 }
 
-#code {
+.content-container .main-tabs .ui-tabs .ui-tabs-panel {
+  padding: 1em 0.8em;
+}
+
+.application-container .application-detail {
+  padding: 10px 0px 0px 0px;  
+}
+
+.code-editor, #page #code-editor {
   font-family: monospace;
+  width: 100%;
+  font-size: 13px;
+  resize: none;
+  color: #000000;
+}
+
+.application-container .app-actions .ui-widget button, .application-container .console-actions .ui-widget button {
+  
+}
+
+.application-container .app-actions, .application-container .console-actions {
+  margin: 5px 0px;
+}
+
+.visualization-container #visualization-slider {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.save-app-dialog {
+  width: 300px;
+  height: 200px;
+}
+
+.save-app-dialog input, .save-app-dialog textarea, .save-app-dialog label {
+  display: block;
 }
 
 /* The console container element */
 #console {
-  position: absolute;
-  width: 600px;
-  height: 500px;
+  position: relative;
+  height: 300px;
   background-color: black;
 }
 

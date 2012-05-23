@@ -11,6 +11,7 @@ import khiem.dataprj.demo.plfdemo.datastore.pojo.Visualization;
 import khiem.dataprj.demo.plfdemo.service.ApplicationExecutor;
 import khiem.dataprj.demo.plfdemo.service.ApplicationStoreService;
 import khiem.dataprj.demo.plfdemo.service.DatastoreService;
+import khiem.dataprj.demo.plfdemo.utils.ApplicationLanguage;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -51,7 +52,9 @@ public class AppController {
   public String getApp(@PathVariable String appname, ModelMap model) {    
     // get application name, code
     Application application = datastoreService.getApplication(appname);
-    if (application == null) return "app";
+    if (application == null) {
+      return "main";
+    }
     
     model.addAttribute("app", application);
     
@@ -69,15 +72,15 @@ public class AppController {
     model.addAttribute("visualizations", visualizations);
     
     try {
-      String code = appStoreService.getAppliationCode(appname, "python");
+      String code = appStoreService.getApplicationCode(appname, application.getLanguage());
       model.addAttribute("appcode", code);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return "app";
+    return "main";
   }
   
-  @RequestMapping(value="/{appname}/execute")
+  @RequestMapping(value="/{appname}/execute", method = RequestMethod.POST)
   public @ResponseBody String executeApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
     // invoke executor to execute code, pass the appname as parameter
     String output = null;
@@ -86,7 +89,7 @@ public class AppController {
     } else if ("r".equals(language)) {
       output = appExecutor.executeR(appname, code);
     } else {
-      
+      output = "Not support!";
     }
     
     // return the output console
@@ -94,10 +97,12 @@ public class AppController {
   }
   
   @RequestMapping(value="/{appname}/save", method = RequestMethod.POST)
-  public @ResponseBody String saveApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, ModelMap model) {
+  public @ResponseBody String saveApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
     try {
-      appStoreService.saveApplicationCode(appname, "python", code);
-      return "OK";
+      if (ApplicationLanguage.PYTHON.getLanguage().equals(language) || ApplicationLanguage.R.getLanguage().equals(language)) {
+        appStoreService.saveApplicationCode(appname, language, code);
+        return "OK";
+      } else return "Not support language";
     } catch (IOException e) {
       return "Failed";
     }

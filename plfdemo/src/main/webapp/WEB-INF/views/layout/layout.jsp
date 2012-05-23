@@ -10,34 +10,46 @@
   <script type="text/javascript" src="<c:url value="/resources/js/plfdemo/main.js" />"></script>
   
   <script>
-  	var ctx = '${pageContext.request.contextPath}';
-  	plfdemo.Main = new Main(ctx);
+    var ctx = '${pageContext.request.contextPath}';
+    plfdemo.Main = new Main(ctx);
+    $(function() {
+      plfdemo.Main.initUI();
+    });
   </script>
 </head>
 <body>
+<div id="page">
   <div class="main-container">
-    <div class="header">
-      <tiles:insertAttribute name="header-content" />
+    <div class="header-container">
+      <div class="header">
+        <tiles:insertAttribute name="header-content" />
+      </div>
     </div>
-    <div class="content">
-      <div class="main-content"><tiles:insertAttribute name="main-content" /></div>
-      <div class="right-content">
-        <div class="search-box">
-          <div class="search-form">
-            <form method="get" action="<c:url value="/search" />">
+    <div class="content-container">
+      <div class="content">
+        <div class="main-content"><tiles:insertAttribute name="main-content" /></div>
+        <div class="right-content">
+          <div class="search-box">
+            <form id="search-form" method="get" action="<c:url value="/search" />">
               <input type="text" class="search-input" id="query" name="query" /> 
               <input type="submit" value="Search" />
             </form>
+            <div style="clear: both;"></div>
           </div>
-        </div>
-        <div class="browser-panel">
-          <tiles:insertAttribute name="right-content" />
-        </div>
-        <div style="clear:both;"></div>
+          <div class="browser-panel">
+            <tiles:insertAttribute name="right-content" />
+          </div>
+          <div style="clear:both;"></div>
+          </div>
+        <div style="clear: both;"></div>
       </div>
-      <div style="clear: both;"></div>
     </div>
-    <div class="footer"><tiles:insertAttribute name="footer-content" /></div>
+    <div class="footer-container">
+      <div class="footer">
+        <tiles:insertAttribute name="footer-content" />
+      </div>
+    </div>
   </div>
+</div>
 </body>
 </html>

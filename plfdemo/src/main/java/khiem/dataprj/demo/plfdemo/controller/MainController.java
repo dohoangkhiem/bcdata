@@ -6,8 +6,10 @@ import java.util.List;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Application;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Dataset;
 import khiem.dataprj.demo.plfdemo.datastore.pojo.Table;
+import khiem.dataprj.demo.plfdemo.service.ApplicationExecutor;
 import khiem.dataprj.demo.plfdemo.service.ApplicationStoreService;
 import khiem.dataprj.demo.plfdemo.service.DatastoreService;
+import khiem.dataprj.demo.plfdemo.utils.Utils;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,6 +25,7 @@ public class MainController {
   
   private DatastoreService datastoreService;
   private ApplicationStoreService appStoreService;
+  private ApplicationExecutor appExecutor;
   
   public void setDatastoreService(DatastoreService ds) {
     this.datastoreService = ds;
@@ -30,6 +33,10 @@ public class MainController {
   
   public void setAppStoreService(ApplicationStoreService appStoreService) {
     this.appStoreService = appStoreService;
+  }
+  
+  public void setAppExecutor(ApplicationExecutor appExecutor) {
+    this.appExecutor = appExecutor;
   }
   
   @RequestMapping(method = RequestMethod.GET)
@@ -92,6 +99,24 @@ public class MainController {
     }
     
     return "";
+  }
+  
+  @RequestMapping(value="/execute", method = RequestMethod.POST)
+  public @ResponseBody String executeApp(@RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
+    // generate the id
+    String exeId = Utils.getExecutionId();
+    // invoke executor to execute code, pass the id as parameter
+    String output = null;
+    if ("python".equals(language)) {
+      output = appExecutor.executePython(exeId, code);
+    } else if ("r".equals(language)) {
+      output = appExecutor.executeR(exeId, code);
+    } else {
+      output = "Not support";
+    }
+    
+    // return the output console
+    return output;
   }
   
 }
