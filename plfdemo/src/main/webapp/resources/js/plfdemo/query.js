@@ -4,12 +4,22 @@ function Query() {
 
 Query.prototype.init = function() {
   $(function() {
-    $('#query-input').keypress(function(event) {
-      var keycode = (event.keyCode ? event.keyCode : event.which);
-      if(keycode == '13') {
-        plfdemo.Query.execute($('#query-input').val());
+    var searchFunc = function() {
+      var query = $.trim($('#search-form #query').val()); 
+      if (query.length > 0) {
+        plfdemo.Query.execute(query); 
+      }
+    }
+    $('#search-form #query').keypress(function(e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if(code == 13) {
+        searchFunc();
         return false;
       } else return true;
+    });
+    $('#search-form #search-submit').click(function() {
+      searchFunc();
+      return false;
     });
   });
 }
@@ -18,21 +28,26 @@ Query.prototype.init = function() {
  * 
  */
 Query.prototype.execute = function(query) {
-  if (query) {
+  $(function() {
     $.ajax({
-      url: plfdemo.Main.ctx + "/dataset/query",
-      data: { query: query },
-      success: function(result) {
-        console.info("Query OK, result: " + result);
-        // render result
-        $("#data-raw-view").text(result);
+      url: plfdemo.Main.ctx + '/main/search',
+      data: {
+        query: query
       },
-      error: function(result) {
-        // notify about error
-        $("#data-raw-view").text("Error occurs: " + result);
+      success: function(json) {
+        var datastores = json['datastores'];
+        var apps = json['applications'];
+        var tables = json['datasets'];
+        plfdemo.Browser.setMode("search");
+        plfdemo.Browser.loadItems(tables, "dataset");
+        plfdemo.Browser.loadItems(datastores, "datastore");
+        plfdemo.Browser.loadItems(apps, "application");
+      }, 
+      error: function() {
+        console.debug("Failed to execute search request.");
       }
     });
-  }
+  });
 }
 
 plfdemo.Query = new Query();

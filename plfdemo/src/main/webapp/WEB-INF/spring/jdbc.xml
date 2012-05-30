@@ -14,11 +14,11 @@
     <property name="password" value="a" />
   </bean>
   
-  <bean id="jdbcDataStorage" class="khiem.dataprj.demo.plfdemo.datastore.JdbcDataStorage">
+  <bean id="jdbcDataStorage" class="com.bouncingdata.plfdemo.datastore.JdbcDataStorage">
     <property name="dataSource" ref="dataSource"></property>
   </bean>
   
-  <bean id="userDataService" class="khiem.dataprj.demo.plfdemo.service.UserDataService">
+  <bean id="userDataService" class="com.bouncingdata.plfdemo.service.UserDataService">
     <property name="dataStorage" ref="jdbcDataStorage"></property>
   </bean>
   

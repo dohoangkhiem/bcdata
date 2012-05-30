@@ -81,7 +81,7 @@
             <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
             <span id="ajax-message" style="color: Green; font-style: italic;"></span>
           </div>
-          <textarea rows="15" id="code-editor" class="code-editor"><c:if test="${app != null }">${appcode }</c:if></textarea>    
+          <textarea rows="15" id="code-editor" class="code-editor" spellcheck='false'><c:if test="${app != null }">${appcode }</c:if></textarea>    
           
           <div style="clear:both;"></div>
         </div>

@@ -1,27 +1,28 @@
-function Main(ctx) {
+function Main() {
+}
+
+Main.prototype.setContext = function(ctx) {
   this.ctx = ctx;
 }
 
 Main.prototype.initUI = function() {
-  $('input:button').button();
-  $('input:submit').button();
+  $(function() {
+    $('input:button').button();
+    $('input:submit').button();
+  });
 }
 
-Main.prototype.getDatasetList = function() {
+Main.prototype.getDatastoreList = function() {
   $(function() {
     $.ajax({
-      url : ctx + "/main/dataset",
+      url : ctx + "/main/datastore",
       dataType : "json",
       success : function(json) {
-        var i;
-        for (i = 0; i < json.length; i++) {
-          var dataset = json[i];
-          $("#dataset-list-all").append('<li><a href="' + ctx + '/dataset/gui"><span>' + dataset['name']
-                  + '</span></a></li>');
-        }
+        plfdemo.Browser.setDatastoreAll(json);
+        plfdemo.Browser.loadItems(json, "datastore");
       },
       error : function() {
-        alert("error");
+        console.debug('Failed to load list of datastore');
       }
     });
   });
@@ -33,15 +34,15 @@ Main.prototype.getApplicationList = function() {
       url: ctx + '/main/application', 
       dataType: "json", 
       success: function(json) {
-        var i = 0;
-        for (i = 0; i < json.length; i++) {
-          var app = json[i];
-          $("#application-list-all").append('<li><a href="' + ctx + "/app/" + encodeURI(app['name']) + '#app"><span>' + app['name'] + '</span></a></li>');
-        }  
+        plfdemo.Browser.setApplicationAll(json);
+        plfdemo.Browser.loadItems(json, "application");
       }, 
-      error: function() {}
+      error: function() {
+        console.debug('Failed to load list of application');
+      }
     });
   });
-}
+} 
 
 plfdemo = {};
+plfdemo.Main = new Main();

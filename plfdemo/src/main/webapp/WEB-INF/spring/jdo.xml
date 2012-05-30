@@ -30,14 +30,14 @@
   </bean-->
 
   <!-- Typical DAO -->
-  <bean id="dataStorage" class="khiem.dataprj.demo.plfdemo.datastore.JdoDataStorage">
+  <bean id="dataStorage" class="com.bouncingdata.plfdemo.datastore.JdoDataStorage">
     <property name="persistenceManagerFactory">
       <ref local="pmf" />
     </property>
   </bean>
 
   <!-- Typical Business Service --> 
-  <bean id="datastoreService" class="khiem.dataprj.demo.plfdemo.service.DatastoreServiceImpl">
+  <bean id="datastoreService" class="com.bouncingdata.plfdemo.service.DatastoreServiceImpl">
     <property name="dataStorage">
       <ref local="dataStorage" />
     </property>

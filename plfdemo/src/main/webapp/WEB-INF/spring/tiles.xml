@@ -10,13 +10,24 @@
     <put-attribute name="footer-content" value="/WEB-INF/views/layout/footer.jsp" />
   </definition>
 
-  <definition name="main" extends="baseLayout">
+  <definition name="main" extends="fullWidth">
+    <put-attribute name="main-content" value="/WEB-INF/views/main-two-columns.jsp" />
+  </definition>
+  
+  <definition name="main-two-columns" extends="baseLayout">
     <put-attribute name="main-content" value="/WEB-INF/views/main.jsp" />
   </definition>
 
   <definition name="app" extends="baseLayout">
     <put-attribute name="title" value="Application" />
     <put-attribute name="main-content" value="/WEB-INF/views/app.jsp" />
+  </definition>
+  
+  <definition name="fullWidth" template="/WEB-INF/views/layout/full-width.jsp">
+    <put-attribute name="title" value="Data Project Demo"></put-attribute>
+    <put-attribute name="header-content" value="/WEB-INF/views/layout/header.jsp" />
+    <put-attribute name="left-content" value="/WEB-INF/views/browser.jsp" />
+    <put-attribute name="footer-content" value="/WEB-INF/views/layout/footer.jsp" />
   </definition>
   
 </tiles-definitions>

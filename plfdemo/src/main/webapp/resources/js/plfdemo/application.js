@@ -61,8 +61,13 @@ Application.prototype.execute = function(code, language, appname) {
       success: function(result) {
         $("#console").show(); 
         //$("#console").val($("#console").val() + output + "\n");
-        plfdemo.Application.jqconsole.Write(result + '\n', 'jqconsole-output');
+        plfdemo.Application.jqconsole.Write(result['output'] + '\n', 'jqconsole-output');
         plfdemo.Application.startPrompt();
+        var visualizations = result['visualizations'];
+        var index;
+        for (index in visualizations) {
+          plfdemo.Application.renderBase64PNG('', visualizations[index]);
+        }
         $("#ajax-loading").css("display", "none");
         $("#ajax-message").text("Finished running."); 
         //refresh(); 
@@ -172,6 +177,16 @@ Application.prototype.renderVisualization = function(name, appname) {
     var vsItem = $('<div class="visualization-item" id="visualization-item-' + name + '"></div>');
     vsItem.load().appendTo(vsSlider);
     $('<iframe class="visualization-item-frame" id="visualize-' + name + '" src="' + plfdemo.Main.ctx + '/visualize/' + appname + '/' + name + '">').load().appendTo(vsItem);
+    $('<span class="visualization-item-title">' + name + '</span>').load().appendTo(vsItem);
+  });
+}
+
+Application.prototype.renderBase64PNG = function(name, source) {
+  $(function() {
+    var vsSlider = $("#visualization-slider");
+    var vsItem = $('<div class="visualization-item" id="visualization-item-' + name + '"></div>');
+    vsItem.load().appendTo(vsSlider);
+    $('<img src="data:image/png;base64,' + source + '" />').load().appendTo(vsItem);
     $('<span class="visualization-item-title">' + name + '</span>').load().appendTo(vsItem);
   });
 }

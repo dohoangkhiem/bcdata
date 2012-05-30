@@ -3,7 +3,7 @@
 <html>
 <head>
   <title><tiles:insertAttribute name="title" ignore="true" /></title>
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/default.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/full-width.css" />" />
   <link type="text/css" href="<c:url value="/resources/css/jquery-ui/smoothness/jquery-ui-1.8.20.custom.css" />" rel="stylesheet" />
   <script type="text/javascript" src="<c:url value="/resources/js/jquery/jquery-1.7.2.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery/jquery-ui-1.8.20.custom.min.js" />"></script>
@@ -11,7 +11,7 @@
   
   <script>
     var ctx = '${pageContext.request.contextPath}';
-    plfdemo.Main = new Main(ctx);
+    plfdemo.Main.setContext(ctx);
     $(function() {
       plfdemo.Main.initUI();
     });
@@ -26,23 +26,23 @@
       </div>
     </div>
     <div class="content-container">
-      <div class="content">
-        <div class="main-content"><tiles:insertAttribute name="main-content" /></div>
-        <div class="right-content">
-          <div class="search-box">
-            <div id="search-form">
-              <input type="text" class="search-input" id="query" name="query" /> 
-              <input type="submit" value="Search" id="search-submit" />
-            </div>
-            <div style="clear: both;"></div>
+      <div class="left-panel">
+        <div class="search-box">
+          <div id="search-form">
+            <input type="text" class="search-input" id="query" name="query" /> 
+            <input type="submit" value="Search" id="search-submit" />
           </div>
-          <div class="browser-panel">
-            <tiles:insertAttribute name="right-content" />
-          </div>
-          <div style="clear:both;"></div>
-          </div>
-        <div style="clear: both;"></div>
+          <div class="clear"></div>
+        </div>
+        <div class="left-content">
+          <tiles:insertAttribute name="left-content" />
+        </div>
+        <div class="clear"></div>
       </div>
+      <div class="main-content">
+        <tiles:insertAttribute name="main-content" />
+      </div>
+      <div class="clear"></div>
     </div>
     <div class="footer-container">
       <div class="footer">
@@ -50,6 +50,8 @@
       </div>
     </div>
   </div>
+
 </div>
+
 </body>
 </html>
