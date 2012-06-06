@@ -82,6 +82,25 @@
       <!--scope>provided</scope-->
     </dependency>
     
+    <!-- Spring Security -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    
     <!-- Apache Tiles -->
     <dependency>
       <groupId>org.apache.tiles</groupId>
@@ -224,6 +243,8 @@
         <version>3.0.1</version>
         <configuration>
           <api>JDO</api>
+          <props>${basedir}/datanucleus.properties</props>
+          <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
           <verbose>true</verbose>
           <!-- props>${basedir}/datanucleus.properties</props-->
         </configuration>

@@ -1,0 +1,102 @@
+/** Browser CSS */
+.browser-container {
+  margin: 10px 0 0 0;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.browser-container #browser-tabs {
+  overflow: auto;
+}
+
+.browser-container #browser-tabs #browser-mystuff {
+  padding: 0.6em;
+}
+
+.browser-container #browser-tabs #browser-mystuff .show-all {
+  float: right;
+}
+
+.browser-container #browser-tabs #browser-mystuff .show-all a {
+  color: #0084B4;
+  text-decoration: none;
+}
+
+.browser-container #browser-tabs #browser-mystuff .show-all a:hover {
+  text-decoration: underline;
+}
+
+.browser-container .browser-separator {
+  border-bottom: 1px solid #FFFFFF;
+  border-top: 1px solid #DDDDDD;
+  height: 0;
+  margin: 10px 0;
+  z-index: -99;
+}
+
+.browser-container .dataset-list-panel h4, .browser-container .application-list-panel h4 {
+  margin: 5px 0;
+  text-decoration: underline;
+}
+
+/* Browser item styles */
+.browser-item {
+  padding: 6px;  
+}
+
+.browser-item .browser-item-header {
+  cursor: pointer;
+  padding: 0;
+}
+
+.browser-item:hover {
+  background: none repeat scroll 0 0 #F6F6F6;
+}
+
+.browser-item .browser-item-detail {
+  padding: 5px;
+  background: none repeat scroll 0 0 #F6F6F6;
+}
+
+.browser-item-header a, .browser-item-header a:visited, .browser-item-header a:active, .browser-item-header a:link {
+  text-decoration: none;  
+  outline: none; 
+}
+
+.browser-item .browser-item-header a:hover, .browser-item .browser-item-footer a:hover, .browser-item .datastore-item-detail .datastore-item-datasets a:hover {
+  text-decoration: underline;
+}
+
+.browser-item .browser-item-footer {
+  font-size: 0.75em;
+  color: #999999;
+  display: block;
+  margin-top: 5px;
+}
+
+.browser-item .browser-item-footer a {
+  margin: 0 6px 0 0;  
+  color: #999999;
+  text-decoration: none;
+}
+
+.browser-item .datastore-item-detail .datastore-item-datasets a {
+  margin: 0 6px 0 0;  
+  color: #0084B4;
+  text-decoration: none;
+}
+
+.browser-item:hover .browser-item-footer a, .browser-item:hover .browser-item-footer .browser-item-action {
+  opacity: 1;
+  color: #0084B4;
+}
+
+.browser-item-footer a, .browser-item-footer .browser-item-action {
+  opacity: 1;
+}
+
+.browser-item .datastore-item-dataset .datastore-item-dataset-info {
+  padding-left: 4px;
+  word-wrap: break-word;
+}

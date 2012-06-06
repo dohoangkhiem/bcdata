@@ -1,5 +1,7 @@
 package com.bouncingdata.plfdemo.datastore.pojo.model;
 
+import java.util.Date;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -14,12 +16,13 @@ public class Application {
   private String name;
   private String description;
   private String language;
-  
-  public Application(String name, String description, String language) {
-    this.name = name;
-    this.description = description;
-    this.language = language;
-  }
+  private String guid;
+  private int author;
+  private int lineCount;
+  private boolean isPublished;
+  private Date createAt;
+  private Date lastUpdate;
+  private String tags;
   
   public int getId() {
     return id;
@@ -45,5 +48,49 @@ public class Application {
   public void setLanguage(String language) {
     this.language = language;
   }
-
+  public String getGuid() {
+    return guid;
+  }
+  public void setGuid(String guid) {
+    this.guid = guid;
+  }
+  public int getAuthor() {
+    return author;
+  }
+  public void setAuthor(int author) {
+    this.author = author;
+  }
+  public int getLineCount() {
+    return lineCount;
+  }
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
+  }
+  public Date getCreateAt() {
+    return createAt;
+  }
+  public void setCreateAt(Date createAt) {
+    this.createAt = createAt;
+  }
+  public Date getLastUpdate() {
+    return lastUpdate;
+  }
+  public void setLastUpdate(Date lastUpdate) {
+    this.lastUpdate = lastUpdate;
+  }
+  public boolean isPublished() {
+    return isPublished;
+  }
+  public void setPublished(boolean isPublished) {
+    this.isPublished = isPublished;
+  }
+  public String getTags() {
+    return tags;
+  }
+  public void setTags(String tags) {
+    this.tags = tags;
+  }
+  
+  
+  
 }

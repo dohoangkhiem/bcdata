@@ -12,11 +12,11 @@ import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;
 
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Datastore;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
+import com.bouncingdata.plfdemo.datastore.pojo.old.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
 
 public class JdbcDataStorage implements DataStorage {

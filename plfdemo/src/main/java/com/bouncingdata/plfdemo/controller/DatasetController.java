@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Datastore;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.service.UserDataService;
 

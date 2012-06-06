@@ -4,70 +4,206 @@
     "http://java.sun.com/dtd/orm_2_0.dtd">
 <orm>
   <package name="com.bouncingdata.plfdemo.datastore.pojo.model">
-    <class name="Datastore" identity-type="datastore" table="Datastores">
+    <class name="Dataset" identity-type="datastore" table="datasets">
       <inheritance strategy="new-table" />
       <field name="id" primary-key="true">
         <column name="id" jdbc-type="INTEGER" />
       </field>
       <field name="name">
-        <column name="name" length="255" jdbc-type="VARCHAR" />
+        <column name="name" jdbc-type="VARCHAR" length="100" />
       </field>
       <field name="description">
-        <column name="description" length="2000" jdbc-type="VARCHAR" />
+        <column name="description" jdbc-type="LONGVARCHAR" />
+      </field>
+      <field name="schema">
+        <column name="schema" jdbc-type="VARCHAR" length="2000" />
+      </field>
+      <field name="guid">
+        <column name="guid" jdbc-type="VARCHAR" length="32" />
+      </field>
+      <field name="author">
+        <column name="author" jdbc-type="INTEGER" />
+      </field>
+      <field name="tags">
+        <column name="tags" jdbc-type="VARCHAR" length="1000" />
+      </field>
+      <field name="createAt">
+        <column name="create_at" jdbc-type="DATETIME" />
+      </field>
+      <field name="lastUpdate">
+        <column name="last_update" jdbc-type="DATETIME" />
+      </field>
+      <field name="rowCount">
+        <column name="row_count" jdbc-type="INTEGER" />
+      </field>
+      <field name="appId">
+        <column name="app_id" jdbc-type="INTEGER" />
       </field>
     </class>
     
-    <class name="Application" identity-type="datastore" table="Applications">
+    <class name="Application" identity-type="datastore" table="applications">
       <inheritance strategy="new-table" />
       <field name="id" primary-key="true">
         <column name="id" jdbc-type="INTEGER" />
       </field>
       <field name="name">
-        <column name="name" length="255" jdbc-type="VARCHAR" />
+        <column name="name" jdbc-type="VARCHAR" length="100" />
       </field>
       <field name="description">
-        <column name="description" length="2000" jdbc-type="VARCHAR" />
+        <column name="description" jdbc-type="LONGVARCHAR" />
       </field>
       <field name="language">
-        <column name="language" length="40" jdbc-type="VARCHAR" />
+        <column name="language" jdbc-type="VARCHAR" length="20" />
+      </field>
+      <field name="guid">
+        <column name="guid" jdbc-type="VARCHAR" length="32" />
+      </field>
+      <field name="author">
+        <column name="author" jdbc-type="INTEGER" />
+      </field>
+      <field name="tags">
+        <column name="tags" jdbc-type="VARCHAR" length="1000" />
+      </field>
+      <field name="createAt">
+        <column name="create_at" jdbc-type="DATETIME" />
+      </field>
+      <field name="lastUpdate">
+        <column name="last_update" jdbc-type="DATETIME" />
+      </field>
+      <field name="lineCount">
+        <column name="line_count" jdbc-type="INTEGER" />
+      </field>
+      <field name="isPublished">
+        <column name="is_published" jdbc-type="BOOLEAN" />
       </field>
     </class>
     
-    <class name="Dataset" identity-type="datastore" table="Datasets">
+    <class name="User" identity-type="datastore" table="spring_users">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="username">
+        <column name="username" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="firstName">
+        <column name="first_name" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="lastName">
+        <column name="last_name" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="email">
+        <column name="email" jdbc-type="VARCHAR" length="100" />
+      </field>
+      <field name="password">
+        <column name="password" jdbc-type="VARCHAR" length="100" />
+      </field>
+      <field name="groupId">
+        <column name="group_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="joinedDate">
+        <column name="joined_date" jdbc-type="DATETIME" />
+      </field>
+      <field name="lastLogin">
+        <column name="last_login" jdbc-type="DATETIME" />
+      </field>
+      <field name="enabled">
+        <column name="enabled" jdbc-type="BOOLEAN" />
+      </field>
+    </class>
+    
+    <class name="Visualization" identity-type="datastore" table="visualizations">
       <inheritance strategy="new-table" />
       <field name="id" primary-key="true">
         <column name="id" jdbc-type="INTEGER" />
       </field>
       <field name="name">
-        <column name="name" length="255" jdbc-type="VARCHAR" />
+        <column name="name" jdbc-type="VARCHAR" length="100" />
       </field>
       <field name="description">
-        <column name="description" length="2000" jdbc-type="VARCHAR" />
+        <column name="description" jdbc-type="LONGVARCHAR" />
       </field>
-      <field name="datastore">
-        <column name="datastore" length="255" jdbc-type="VARCHAR" />
-      </field>
-      <field name="fieldList">
-        <column name="field_list" length="1000" jdbc-type="VARCHAR" />
-      </field>
-    </class>
-    
-    <class name="Visualization" identity-type="datastore" table="Visualizations">
-      <inheritance strategy="new-table" />
-      <field name="id" primary-key="true">
-        <column name="id" jdbc-type="INTEGER" />
-      </field>
-      <field name="name">
-        <column name="name" length="255" jdbc-type="VARCHAR" />
-      </field>
-      <field name="description">
-        <column name="description" length="2000" jdbc-type="VARCHAR" />
-      </field>
-      <field name="appname">
-        <column name="appname" length="255" jdbc-type="VARCHAR" />
+      <field name="guid">
+        <column name="guid" jdbc-type="VARCHAR" length="32" />
       </field>
       <field name="type">
-        <column name="type" length="20" jdbc-type="VARCHAR" />
+        <column name="type" jdbc-type="VARCHAR" length="20" />
+      </field>
+      <field name="appId">
+        <column name="app_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="author">
+        <column name="author" jdbc-type="INTEGER" />
+      </field>
+    </class>
+    
+    <class name="ExecutionLog" identity-type="datastore" table="execution_logs">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="executionId">
+        <column name="name" jdbc-type="VARCHAR" length="32" />
+      </field>
+      <field name="appId">
+        <column name="app_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="startedTime">
+        <column name="started_time" jdbc-type="DATETIME" />
+      </field>
+      <field name="endedTime">
+        <column name="ended_time" jdbc-type="DATETIME" />
+      </field>
+      <field name="persistedRowCount">
+        <column name="persisted_row_count" jdbc-type="INTEGER" />
+      </field>
+      <field name="visualizationCount">
+        <column name="visualization_count" jdbc-type="INTEGER" />
+      </field>
+      <field name="output">
+        <column name="output" jdbc-type="LONGVARCHAR" />
+      </field>
+    </class>
+    
+    <class name="Group" identity-type="datastore" table="spring_groups">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="name">
+        <column name="group_name" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="createAt">
+        <column name="create_at" jdbc-type="DATETIME" />
+      </field>
+      <field name="lastUpdate">
+        <column name="last_update" jdbc-type="DATETIME" />
+      </field>
+    </class>
+    
+    <class name="GroupAuthority" identity-type="datastore" table="spring_group_authorities">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="groupId">
+        <column name="group_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="authority">
+        <column name="authority" jdbc-type="VARCHAR" length="50" />
+      </field>
+    </class>
+    
+    <class name="Membership" identity-type="datastore" table="spring_memberships">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="groupId">
+        <column name="group_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="username">
+        <column name="username" jdbc-type="VARCHAR" length="40" />
       </field>
     </class>
   </package>

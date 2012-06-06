@@ -1,26 +1,24 @@
-package com.bouncingdata.plfdemo.datastore.pojo.model;
-
-import java.util.List;
+package com.bouncingdata.plfdemo.datastore.pojo.model.old;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class Datastore {
+public class Application {
   
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
   private int id;
   private String name;
   private String description;
-  @NotPersistent private List<Dataset> datasets;
-
-  public Datastore(String name, String description) {
+  private String language;
+  
+  public Application(String name, String description, String language) {
     this.name = name;
     this.description = description;
+    this.language = language;
   }
   
   public int getId() {
@@ -41,10 +39,11 @@ public class Datastore {
   public void setDescription(String description) {
     this.description = description;
   }
-  public List<Dataset> getDatasets() {
-    return datasets;
+  public String getLanguage() {
+    return language;
   }
-  public void setDatasets(List<Dataset> datasets) {
-    this.datasets = datasets;
+  public void setLanguage(String language) {
+    this.language = language;
   }
+
 }

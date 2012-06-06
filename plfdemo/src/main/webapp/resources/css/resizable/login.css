@@ -1,0 +1,101 @@
+body, html>body {
+  margin: 0 auto;
+  font-size: 13px;
+  background-color: #EBEBEB;
+  font-family: Helvetica,Arial,sans-serif; 
+}
+
+body #page {
+  
+}
+
+#page .ui-widget input, #page .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-size: 0.9em;
+}
+
+div.clear {
+  clear: both;
+}
+
+#page .top-content {
+  margin: 40px auto;
+  width: 360px;
+  text-align: center;
+}
+
+#page .login-main-container {
+  width: 360px;
+  margin: 0 auto;
+  background-color: #FFFFFF;
+}
+
+.login-form {
+  margin: 10px 0 5px 0;
+}
+
+.login-form form label {
+  margin-bottom: 2px;  
+}
+
+.login-form form label {
+  display: block;
+}
+
+.login-form form input#username, .login-form form input#password {
+  font-size: 1.2em;
+  margin-bottom: 12px;
+  display: block;
+  width: 300px;
+  border: 1px solid #CCCCCC;
+  height: 1.5em;
+  padding: 1px 0 0 5px;
+  color: #333333; 
+}
+
+.login-form .login-actions input.ui-button {
+  padding: 0.4em 1.4em;
+}
+
+.login-form .login-actions a, .login-form .login-actions a:visited, .login-form .login-actions a:active {
+  text-decoration: none;
+  margin-left: 10px;
+  color: #0000EE;
+}
+
+.login-form .login-actions a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  margin: 0 auto;
+  padding: 0 5px;
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+  right: 20px;
+  min-width: 600px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 11px;
+}
+
+.footer-content a, .footer-content a:visited, .footer-content a:active {
+  text-decoration: none;
+  margin-right: 10px;
+  color: #0000EE;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
+
+.footer-content .footer-right {
+  float: right;
+}
+
+.top-horizontal-rule {
+  border-bottom: 1px solid #FFFFFF;
+  border-top: 1px solid #DDDDDD;
+  height: 0;
+  margin: 20px 0;
+  z-index: -99;
+}

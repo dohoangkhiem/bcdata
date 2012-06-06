@@ -1,0 +1,218 @@
+body, html>body {
+  margin: 0 0.3%;
+  font-size: 0.95em;
+  background-color: #EBEBEB;
+  font-family: Helvetica,Arial,sans-serif; 
+}
+
+/** Global styles **/
+body .ui-widget {
+  font-size: 0.9em;
+  font-family: Helvetica,Arial,sans-serif;
+}
+
+#page input.ui-button {
+  padding: 0.25em 1em;
+}
+
+#page .ui-tabs .ui-tabs-nav li a {
+  padding: 0.25em 1em;
+}
+
+#page .ui-widget input, #page .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-size: 0.9em;
+}
+
+div.clear {
+  clear: both;
+}
+
+/** Layout **/
+
+#page .main-container {
+  padding: 0;  
+}
+
+#page, .main-content {
+  margin: 0 auto;  
+  background: none repeat scroll 0 0 transparent;
+}
+
+.header-container {
+  background-color: #EBEBEB;
+}
+
+.content-container {
+  margin: 0;
+  position: relative;
+}
+
+.footer-container {
+  width: 100%;
+  background-color: #EBEBEB;
+}
+
+.header {
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.left-panel {
+  /*position: absolute;
+  left: 0;
+  top: 0;*/
+  float: left;
+  width: 21%;
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
+}
+
+.left-panel .search-box #search-form {
+  margin: 10px 0;
+  padding-left: 5px;
+}
+
+.search-box #search-form .search-input {
+  width: 190px;
+  border: 1px solid #D3D3D3;
+  height: 1.9em;
+  padding-left: 5px;
+}
+
+.search-box #search-form input.ui-button {
+  padding: 0.15em 0.5em;
+}
+
+.main-content {
+  margin: 0;
+  padding-bottom: 30px;
+  width: 78.2%;
+  margin-left: 0.2%;
+  float: left;
+}
+
+.footer {
+  margin: 0 auto;
+  padding: 3em 0 7em 0;
+  color: #333333;
+}
+
+.header .header-content {
+  color: #333333;
+}
+
+.header .header-content a:link, .header .header-content a:hover, .header .header-content a:active, .header .header-content a:visited {
+  text-decoration: none;
+  color: #333333;
+}
+
+.footer .footer-content {
+  text-align: center;
+  padding-top: 3em;
+  font-size: 0.9em;
+}
+
+.footer .footer-horizontal-rule {
+  border-bottom: 1px solid #FFFFFF;
+  border-top: 1px solid #DDDDDD;
+  height: 0;
+  margin: 0;
+  z-index: -99;
+}
+
+
+/** Browser CSS */
+
+.browser-container #browser-tabs #browser-all {
+  padding: 1em;
+}
+
+.browser-container #browser-tabs #browser-all .show-all {
+  float: right;
+}
+
+.browser-container #browser-tabs #browser-all .show-all a {
+  color: #0084B4;
+  text-decoration: none;
+}
+
+.browser-container #browser-tabs #browser-all .show-all a:hover {
+  text-decoration: underline;
+}
+
+.browser-container .browser-separator {
+  border-bottom: 1px solid #FFFFFF;
+  border-top: 1px solid #DDDDDD;
+  height: 0;
+  margin: 10px 0;
+  z-index: -99;
+}
+
+.browser-container .datastore-list-panel h4, .browser-container .dataset-list-panel h4, .browser-container .application-list-panel h4 {
+  margin: 5px 0;
+  text-decoration: underline;
+}
+
+
+.browser-item {
+  padding: 6px;  
+}
+
+.browser-item .browser-item-header {
+  cursor: pointer;
+  padding: 0;
+}
+
+.browser-item:hover {
+  background: none repeat scroll 0 0 #F6F6F6;
+}
+
+.browser-item .browser-item-detail {
+  padding: 5px;
+  background: none repeat scroll 0 0 #F6F6F6;
+}
+
+.browser-item-header a, .browser-item-header a:visited, .browser-item-header a:active, .browser-item-header a:link {
+  text-decoration: none;  
+  outline: none; 
+}
+
+.browser-item .browser-item-header a:hover, .browser-item .browser-item-footer a:hover, .browser-item .datastore-item-detail .datastore-item-datasets a:hover {
+  text-decoration: underline;
+}
+
+.browser-item .browser-item-footer {
+  font-size: 0.75em;
+  color: #999999;
+  display: block;
+  margin-top: 5px;
+}
+
+.browser-item .browser-item-footer a {
+  margin: 0 6px 0 0;  
+  color: #999999;
+  text-decoration: none;
+}
+
+.browser-item .datastore-item-detail .datastore-item-datasets a {
+  margin: 0 6px 0 0;  
+  color: #0084B4;
+  text-decoration: none;
+}
+
+.browser-item:hover .browser-item-footer a, .browser-item:hover .browser-item-footer .browser-item-action {
+  opacity: 1;
+  color: #0084B4;
+}
+
+.browser-item-footer a, .browser-item-footer .browser-item-action {
+  opacity: 1;
+}
+
+.browser-item .datastore-item-dataset {
+  padding-left: 2px;
+}
+.browser-item .datastore-item-dataset .datastore-item-dataset-info {
+  padding-left: 4px;
+  word-wrap: break-word;
+}

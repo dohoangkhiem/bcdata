@@ -1,6 +1,7 @@
 package com.bouncingdata.plfdemo.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Datastore;
+import com.bouncingdata.plfdemo.datastore.pojo.old.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
@@ -42,8 +43,10 @@ public class MainController {
   }
     
   @RequestMapping(method = RequestMethod.GET)
-  public String main(ModelMap model) {
+  public String main(ModelMap model, Principal principal) {
     model.addAttribute("app", null);
+    String username = principal.getName();
+    model.addAttribute("username", username);
     return "main";
   }
   

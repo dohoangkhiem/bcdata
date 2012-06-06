@@ -1,0 +1,115 @@
+.workspace-container, .workspace-container .workspace-layout {
+  width: 100%;
+  height: 100%;
+}
+
+.workspace-main-panel .app-editor-tabs .app-actions {
+  margin: 10px 0;
+  margin-right: 1.4em;
+  float: right;
+}
+
+.workspace-main-panel .app-editor-tabs .app-editor-item {
+  padding: 1em;
+}
+
+.app-editor-tabs li .ui-icon-close { 
+  float: left; 
+  margin: 0.2em 0.2em 0 0; 
+  cursor: pointer; 
+  border: 1px solid transparent;
+}
+
+.app-editor-tabs li .ui-icon-close:hover {
+  border-radius: 3px;
+  border: 1px solid #BEBEBE;
+}
+
+.app-editor-tabs .editor-tabs-bar {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.app-editor-tabs .editor-tabs-bar li a {
+  outline: none;
+}
+
+.workspace-container .editor-tab-content .app-code-editor {
+  border: 1px solid #D3D3D3;
+  margin: 1em 0 0 0;
+}
+
+.code-editor, .workspace-container #code-editor {
+  font-family: monospace;
+  width: 100%;
+  font-size: 13px;
+  resize: none;
+  color: #000000;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.workspace-container .workspace-info-tabs {
+  margin-top: 10px;
+}
+
+.workspace-container .workspace-info-tabs .console-actions {
+  margin-top: 5px;
+}
+
+/** Console styles **/
+
+/* The console container element */
+#console {
+  position: relative;
+  height: 300px;
+  background-color: black;
+  font-size: .9em;
+}
+
+/* The inner console element. */
+.jqconsole {
+  padding: 10px;
+}
+
+/* The cursor. */
+.jqconsole-cursor {
+  background-color: gray;
+}
+
+/* The cursor color when the console looses focus. */
+.jqconsole-blurred .jqconsole-cursor {
+  background-color: #666;
+}
+
+/* The current prompt text color */
+.jqconsole-prompt {
+  color: #0d0;
+}
+
+/* The command history */
+.jqconsole-old-prompt {
+  color: #0b0;
+  font-weight: normal;
+}
+
+/* The text color when in input mode. */
+.jqconsole-input {
+  color: #dd0;
+}
+
+/* Previously entered input. */
+.jqconsole-old-input {
+  color: #bb0;
+  font-weight: normal;
+}
+
+/* The text color of the output. */
+.jqconsole-header, .jqconsole-output {
+  color: white;
+}

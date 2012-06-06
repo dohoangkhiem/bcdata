@@ -44,8 +44,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     } catch (Exception e) { 
       e.printStackTrace(); 
     }
-    
-    ProcessBuilder pb = new ProcessBuilder("python", tempFile, ticket);
+    if (appname == null) appname = "";
+    ProcessBuilder pb = new ProcessBuilder("python", tempFile, ticket, appname);
     pb.redirectErrorStream(true);
     
     String output = null;
@@ -94,7 +94,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       e.printStackTrace(); 
     }
     
-    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket);
+    if (appname == null) appname = "";
+    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket, appname);
     pb.redirectErrorStream(true);
     pb.directory(temp.getParentFile());
     

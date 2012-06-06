@@ -3,11 +3,11 @@ package com.bouncingdata.plfdemo.service;
 import java.util.List;
 
 import com.bouncingdata.plfdemo.datastore.DataStorage;
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Datastore;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
+import com.bouncingdata.plfdemo.datastore.pojo.old.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
+import com.bouncingdata.plfdemo.datastore.pojo.model.old.Visualization;
 
 
 public class UserDataService implements DatastoreService {

@@ -7,42 +7,25 @@ Main.prototype.setContext = function(ctx) {
 
 Main.prototype.initUI = function() {
   $(function() {
+    $('.content-container #main-layout').layout({
+      center__paneSelector: ".main-layout-center",
+      west__paneSelector:   ".main-layout-west",
+      west__size:       240,
+      applyDefaultStyles: true
+    });
+    
+    $('.workspace-container #workspace-layout').layout({
+      center__paneSelector: ".workspace-layout-center",
+      east__paneSelector:   ".workspace-layout-east",
+      east__size: 400,
+      applyDefaultStyles: true
+    });
+    
     $('input:button').button();
     $('input:submit').button();
   });
 }
-
-Main.prototype.getDatastoreList = function() {
-  $(function() {
-    $.ajax({
-      url : ctx + "/main/datastore",
-      dataType : "json",
-      success : function(json) {
-        plfdemo.Browser.setDatastoreAll(json);
-        plfdemo.Browser.loadItems(json, "datastore");
-      },
-      error : function() {
-        console.debug('Failed to load list of datastore');
-      }
-    });
-  });
-}
-
-Main.prototype.getApplicationList = function() {
-  $(function() {
-    $.ajax({
-      url: ctx + '/main/application', 
-      dataType: "json", 
-      success: function(json) {
-        plfdemo.Browser.setApplicationAll(json);
-        plfdemo.Browser.loadItems(json, "application");
-      }, 
-      error: function() {
-        console.debug('Failed to load list of application');
-      }
-    });
-  });
-} 
-
+ 
 plfdemo = {};
 plfdemo.Main = new Main();
+plfdemo.Main.initUI();
