@@ -111,9 +111,11 @@ Workspace.prototype.execute = function(tabIndex) {
         // if this app. has ran (not sure successful or not)
         if (result['statusCode'] >= 0) {          
           ide.sessions[tabIndex].output += ('\n' + result['output']);
-          if (tabIndex == ide.getSelectedIndex) {
+          ide.sessions[tabIndex].status = "finished-running";
+          if (tabIndex == ide.getSelectedIndex()) {
             me.jqconsole.Write(result['output'], 'jqconsole-output');
             me.startPrompt();
+            me.setStatus("finished-running");
           }
           
           var visualizations = result['visualizations'];
@@ -121,17 +123,12 @@ Workspace.prototype.execute = function(tabIndex) {
           for (index in visualizations) {
             me.renderBase64PNG('', visualizations[index]);
           }
-          
-          ide.sessions[tabIndex].status = "finished-running";
-          if (tabIndex == ide.getSelectedIndex()) {
-            this.setStatus("finished-running");
-          }
-          
+                    
         } else {
           console.debug(result);
           ide.sessions[tabIndex].status = "error";
           if (tabIndex == ide.getSelectedIndex()) {
-            this.setStatus("error");
+            me.setStatus("error");
           }
         }     
         
@@ -140,7 +137,7 @@ Workspace.prototype.execute = function(tabIndex) {
       error: function() {
         ide.sessions[tabIndex].status = "error";
         if (tabIndex == ide.getSelectedIndex()) {
-          this.setStatus("error");
+          me.setStatus("error");
         }
       }
     });

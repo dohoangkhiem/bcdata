@@ -37,7 +37,8 @@
 
 .browser-container .dataset-list-panel h4, .browser-container .application-list-panel h4 {
   margin: 5px 0;
-  text-decoration: underline;
+  padding: 5px 0 5px 5px;
+  background-color: #DDDDDD;
 }
 
 /* Browser item styles */
