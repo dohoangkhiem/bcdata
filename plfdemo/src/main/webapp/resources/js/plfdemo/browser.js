@@ -13,6 +13,20 @@ Browser.prototype.init = function() {
     me.getApplicationList();
     me.setMode("all");
     
+    $('#browser-tabs .dataset-list-panel h4').click(function() {
+      if (!$(this).next().is(':empty')) {
+        $(this).next().toggle('fast');
+      }
+      return false;
+    });
+    
+    $('#browser-tabs .application-list-panel h4').click(function() {
+      if (!$(this).next().is(':empty')) {
+        $(this).next().toggle('fast');
+      }
+      return false;
+    })
+    
     // initializes search
     var searchFunc = function() {
       var query = $.trim($('#search-form #query').val()); 
@@ -48,12 +62,12 @@ Browser.prototype.setMode = function(mode) {
   }
 }
 
-Browser.prototype.setDatasetAll = function(datasetList) {
-  this.datasetAll = datasetList;
+Browser.prototype.setMyDatasets = function(datasetList) {
+  this.myDatasets = datasetList;
 }
 
-Browser.prototype.setApplicationAll = function(applicationList) {
-  this.applicationAll = applicationList;
+Browser.prototype.setMyApplications = function(applicationList) {
+  this.myApplications = applicationList;
 }
 
 
@@ -61,10 +75,10 @@ Browser.prototype.getDatasetList = function() {
   var me = this;
   $(function() {
     $.ajax({
-      url : ctx + "/main/datastore",
+      url : ctx + "/main/dataset",
       dataType : "json",
       success : function(json) {
-        me.setDatasetAll(json);
+        me.setMyDatasets(json);
         me.loadItems(json, "dataset");
       },
       error : function() {
@@ -81,7 +95,7 @@ Browser.prototype.getApplicationList = function() {
       url: ctx + '/main/application', 
       dataType: "json", 
       success: function(json) {
-        me.setApplicationAll(json);
+        me.setMyApplications(json);
         me.loadItems(json, "application");
       }, 
       error: function() {
@@ -106,39 +120,31 @@ Browser.prototype.loadItems = function(itemList, type) {
     $item.addClass(type + "-item");
     
     var $itemHeader = $('<div class="browser-item-header"></div>');
-    var link;
-    if (type == "application") { 
-      link = plfdemo.Main.ctx + "/app/" + encodeURI(itemObj['name']) + "/#app" 
-    } else link = "#";
     
     $itemHeader.append('<a href="#"><span class="browser-item-title"><strong>' + itemObj['name'] + '</strong></span></a>');
     var $itemFooter = $('<div class="browser-item-footer"></div>');
     var $expandLink = $('<a class="browser-item-footer-link expand-link" href="javascript:void(0);">Expand</a>');
     $itemFooter.append($expandLink);
-    $itemFooter.append('<a class="browser-item-footer-link browser-item-action" href="' + link + '">Open</a>');
+    var $openLink = $('<a class="browser-item-footer-link browser-item-action" href="javascript:void(0)">Open</a>');
+    $itemFooter.append($openLink);
     $itemHeader.append($itemFooter);
     $item.append($itemHeader);
     
     var $itemDetail = $('<div class="browser-item-detail"></div>');
     $itemDetail.addClass(type + "-item-detail");
-    var $description = $('<div class="browser-item-description"><strong>Description: </strong></div>');
+    var $description = $('<div class="browser-item-description browser-item-info"><strong>Description: </strong></div>');
     $description.addClass(type + "-item-description");
     $description.append('<span>' + itemObj['description'] + '</span>');
     $itemDetail.append($description);
     
-    /*if (type == "datastore") {
-      var $datasetList = $('<div class="datastore-item-datasets"><strong>Datasets: </strong></div>');
-      var dsList = itemObj['datasets'];
-      var j;
-      for (j in dsList) {
-        var ds = dsList[j];
-        var $dsItem = $('<a href="#"><span class="datastore-dataset-title">' + ds['name'] + '</span></a>');
-        $datasetList.append($dsItem);
-      }
-      $itemDetail.append($datasetList);
-    } else */
     if (type == "application") {
-      $itemDetail.append('<div class="application-language"><strong>Language: </strong>' + itemObj['language'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info application-language"><strong>Language: </strong>' + itemObj['language'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info"><strong>Author: </strong>' + itemObj['authorName'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info"><strong>Line count: </strong>' + itemObj['lineCount'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info"><strong>Is public: </strong>' + itemObj['published'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info"><strong>Create date: </strong>' + new Date(itemObj['createAt']) + '</div>');
+      $itemDetail.append('<div class="browser-item-info"><strong>Last update: </strong>' + new Date(itemObj['lastUpdate']) + '</div>');
+      $itemDetail.append('<div class="browser-item-info browser-item-tags"><strong>Tags: </strong>' + itemObj['tags'] + '</div>');
     } else if (type == "dataset") {
       //$itemDetail.append('<div class="dataset-detail-datastore"><strong>Datastore: </strong>' + itemObj['datastore'] + '</div>');
       $itemDetail.append('<div class="dataset-detail-schema"><strong>Schema: </strong>' + itemObj['schema']  + '</div>');   
@@ -159,13 +165,48 @@ Browser.prototype.loadItems = function(itemList, type) {
     $itemHeader.click(expandFunc($itemDetail, $expandLink));
     $expandLink.click(expandFunc($itemDetail, $expandLink));
     $itemDetail.hide();
+    
+    $openLink.click(function(itemObj, type) {
+      return function() {
+        if (type == "application") {
+          var ide = plfdemo.workspace.IDE;
+          // check if this action about to open an existing app. or blank tab for new app.
+          if (itemObj && (itemObj.guid in ide.tabsInfo)) {
+            ide.$tabs.tabs('select', '#' + ide.tabsInfo[itemObj.guid].tabId);
+            ide.currentApp = ide.tabsInfo[itemObj.guid];
+            return false;
+          }
+          
+          // get the code, open application in a new tab on editor
+          $.ajax({
+            url: plfdemo.Main.ctx + "/app/" + itemObj['guid'],
+            success: function(json) {
+              // 
+              itemObj.code = json;
+              ide.createTab(itemObj);
+            },
+            error: function() {
+              //
+              console.debug("Error occurs when retrieve application code.");
+            }
+          });
+          
+        }
+        return false;
+      }
+    }(itemObj, type));
   }
 }
 
 Browser.prototype.showAll = function() {
   this.setMode("all");
-  this.loadItems(this.datasetAll, 'dataset');
-  this.loadItems(this.applicationAll, 'application');
+  this.loadItems(this.myDatasets, 'dataset');
+  this.loadItems(this.myApplications, 'application');
+}
+
+Browser.prototype.refreshMyStuff = function() {
+  this.getApplicationList();
+  this.getDatasetList();
 }
 
 /**

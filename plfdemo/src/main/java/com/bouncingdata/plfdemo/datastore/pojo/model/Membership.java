@@ -10,7 +10,7 @@ public class Membership {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
   private int id;
-  private String username;
+  private int userId;
   private int groupId;
   
   public int getId() {
@@ -19,11 +19,11 @@ public class Membership {
   public void setId(int id) {
     this.id = id;
   }
-  public String getUsername() {
-    return username;
+  public int getUserId() {
+    return userId;
   }
-  public void setUsername(String username) {
-    this.username = username;
+  public void setUserId(int userId) {
+    this.userId = userId;
   }
   public int getGroupId() {
     return groupId;

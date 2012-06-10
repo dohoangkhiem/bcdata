@@ -4,18 +4,19 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>dataprj-parent</artifactId>
-    <groupId>khiem.dataprj</groupId>
+    <groupId>dataprj</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>khiem.dataprj.demo</groupId>
-  <artifactId>plfdemo</artifactId>
+  <groupId>dataprj.com.bouncingdata.demo</groupId>
+  <artifactId>bouncingdata</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>plfdemo Maven Webapp</name>
+  <name>Bouncing Data demo</name>
   <url>http://maven.apache.org</url>
   
   <properties>
     <spring.version>3.0.5.RELEASE</spring.version>
+    <datanucleus-jdo.version>3.0.5</datanucleus-jdo.version>
   </properties>
   
   <dependencies>
@@ -44,13 +45,13 @@
       <groupId>javax.servlet.jsp.jstl</groupId>
       <artifactId>jstl-api</artifactId>
       <version>1.2</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish.web</groupId>
       <artifactId>jstl-impl</artifactId>
       <version>1.2</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     
     <!-- Spring 3 dependencies -->
@@ -58,28 +59,28 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
  
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <version>${spring.version}</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
  
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${spring.version}</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
       <version>${spring.version}</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     
     <!-- Spring Security -->
@@ -87,18 +88,21 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
       <version>${spring.version}</version>
+      <scope>provided</scope>
     </dependency>
  
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <version>${spring.version}</version>
+      <scope>provided</scope>
     </dependency>
  
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <version>${spring.version}</version>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Apache Tiles -->
@@ -106,31 +110,31 @@
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-core</artifactId>
       <version>2.2.2</version>
-      <!-- scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-api</artifactId>
       <version>2.2.2</version>
-      <!-- scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-jsp</artifactId>
       <version>2.2.2</version>
-      <!-- scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-servlet</artifactId>
       <version>2.2.2</version>
-      <!-- scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>        
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-template</artifactId>
       <version>2.2.2</version>
-      <!-- scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     
     <!-- Datastore libraries -->
@@ -144,28 +148,31 @@
       <groupId>javax.jdo</groupId>
       <artifactId>jdo-api</artifactId>
       <version>3.0</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-core</artifactId>
       <version>3.0.5</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-api-jdo</artifactId>
       <version>3.0.5</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-rdbms</artifactId>
       <version>3.0.5</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-enhancer</artifactId>
       <version>3.0.1</version>
+      <scope>provided</scope>
     </dependency>
   
     <!-- Apache Commons -->
@@ -173,12 +180,13 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.0.1</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.6</version>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Jackson JSON Processor -->
@@ -186,14 +194,14 @@
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.8.1</version>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>    
     <dependency>
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
       <version>2.4</version>
       <classifier>jdk15</classifier>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     
     <!-- Logging framework -->    
@@ -202,25 +210,25 @@
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
       <type>jar</type>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.5.8</version>
       <type>jar</type>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.8</version>
       <type>jar</type>
-      <!--scope>provided</scope-->
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
-    <finalName>plfdemo</finalName>
+    <finalName>bouncingdata</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/java</directory>
@@ -243,10 +251,9 @@
         <version>3.0.1</version>
         <configuration>
           <api>JDO</api>
-          <props>${basedir}/datanucleus.properties</props>
-          <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
-          <verbose>true</verbose>
           <!-- props>${basedir}/datanucleus.properties</props-->
+          <!-- log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration-->
+          <verbose>true</verbose>
         </configuration>
         <executions>
           <execution>
@@ -256,6 +263,14 @@
             </goals>
           </execution>
         </executions>
+        <!-- Force the Datanucleus plugin to use datanucleus-core-3.0.5 instead of the newest version  -->
+        <dependencies>
+          <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-core</artifactId>
+            <version>3.0.5</version>
+          </dependency>
+        </dependencies>
       </plugin>
       
       <plugin>

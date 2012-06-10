@@ -1,12 +1,9 @@
 package com.bouncingdata.plfdemo.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.Principal;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,14 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Visualization;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.utils.ApplicationLanguage;
+import com.bouncingdata.plfdemo.utils.Utils;
 
 @Controller
 @RequestMapping("/app")
@@ -50,7 +45,17 @@ public class AppController {
     this.userDataService = userDataService;
   }
   
-  @RequestMapping(value="/{appname}", method = RequestMethod.GET)
+  @RequestMapping(value="/{guid}", method = RequestMethod.GET)
+  public @ResponseBody String getApplication(@PathVariable String guid) {
+    try {
+      return appStoreService.getApplicationCode(guid, null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  /*@RequestMapping(value="/{appname}", method = RequestMethod.GET)
   public String getApp(@PathVariable String appname, ModelMap model) {    
     // get application name, code
     Application application = datastoreService.getApplication(appname);
@@ -80,42 +85,90 @@ public class AppController {
       e.printStackTrace();
     }
     return "main";
-  }
+  }*/
   
-  @RequestMapping(value="/{appname}/execute", method = RequestMethod.POST)
-  public @ResponseBody ExecutionResult executeApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
-    // invoke executor to execute code, pass the appname as parameter
-    if ("python".equals(language)) {
+  @RequestMapping(value="/{appGuid}/execute", method = RequestMethod.POST)
+  public @ResponseBody ExecutionResult executeApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, ModelMap model, Principal principal) {
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) return new ExecutionResult(null, null, -1, "User not found.");
+    try {
+      Application app = datastoreService.getApplication(appGuid);
+      if (app == null) return new ExecutionResult(null, null, -1, "Application not found.");
+      
+      if (app.getAuthor() != user.getId()) {
+        return new ExecutionResult(null, null, -1, "No permission to run this app.");
+      }
+      
+      try {
+        appStoreService.saveApplicationCode(appGuid, app.getLanguage(), code);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      
+      if ("python".equals(app.getLanguage())) {
+        return appExecutor.executePython(app.getName(), code);
+      } else if ("r".equals(app.getLanguage())) {
+        return appExecutor.executeR(app.getName(), code);
+      } else {
+        return new ExecutionResult(null, null, -1, "Not supported language.");
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ExecutionResult(null, null, -3, "Unknown error");
+    }
+    
+    /*if ("python".equals(language)) {
       return appExecutor.executePython(appname, code);
     } else if ("r".equals(language)) {
       return appExecutor.executeR(appname, code);
     } else {
       return new ExecutionResult("Not support!", null);
-    }
+    }*/
   }
   
-  @RequestMapping(value="/{appname}/save", method = RequestMethod.POST)
-  public @ResponseBody String saveApp(@PathVariable String appname, @RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
+  @RequestMapping(value="/{appGuid}/save", method = RequestMethod.POST)
+  public @ResponseBody String saveApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, 
+      @RequestParam(value="language", required=false) String language, ModelMap model, Principal principal) {
+    
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) return null;
+    
     try {
-      Application application = datastoreService.getApplication(appname);
-      if (application == null) {
-        return "Failed";
+      Application app = datastoreService.getApplication(appGuid);
+      if (app == null) {
+        return "Cannot find application";
       }
-      if (ApplicationLanguage.PYTHON.getLanguage().equals(language) || ApplicationLanguage.R.getLanguage().equals(language)) {
-        appStoreService.saveApplicationCode(application.getId(), language, code);
+      
+      if (app.getAuthor() != user.getId()) {
+        return "No permission";
+      }
+      
+      try {
+        appStoreService.saveApplicationCode(appGuid, app.getLanguage(), code);
         return "OK";
-      } else return "Not support language";
-    } catch (IOException e) {
-      return "Failed";
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      
+      int lines = Utils.countLines(code);
+      app.setLineCount(lines);
+      datastoreService.updateApplication(app);
+      
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+    
+    
+    return null;
   }
   
-  @RequestMapping(value="/{appname}/data/{tablename}", method = RequestMethod.GET)
+  /*@RequestMapping(value="/{appname}/data/{tablename}", method = RequestMethod.GET)
   public @ResponseBody String getData(@PathVariable String appname, @PathVariable String tablename, ModelMap model) {
     return userDataService.getDatasetData(appname, tablename);
-  }
+  }*/
   
-  @RequestMapping(value="/{appname}/data/{tablename}/delete", method = RequestMethod.POST)
+  /*@RequestMapping(value="/{appname}/data/{tablename}/delete", method = RequestMethod.POST)
   public @ResponseBody String deleteTable(@PathVariable String appname, @PathVariable String tablename) {
     try {
       datastoreService.deleteDataset(appname, tablename);
@@ -125,9 +178,9 @@ public class AppController {
       e.printStackTrace();
       return "Failed";
     }  
-  }
+  }*/
   
-  @RequestMapping(value="/{appname}/visualize", method = RequestMethod.GET) 
+  /*@RequestMapping(value="/{appname}/visualize", method = RequestMethod.GET) 
   public @ResponseBody List<String> getVisualization(@PathVariable String appname) {
     List<Visualization> visuals = datastoreService.getVisualizationList(appname);
     List<String> results = new ArrayList<String>();
@@ -150,9 +203,9 @@ public class AppController {
     } catch(IOException e) {
       return "Failed to load this visualization";
     }
-  }
+  }*/
   
-  @RequestMapping(value="/{appname}/visualize/{visualName}/delete", method = RequestMethod.POST)
+  /*@RequestMapping(value="/{appname}/visualize/{visualName}/delete", method = RequestMethod.POST)
   public @ResponseBody String deleteVisualization(@PathVariable String appname, @PathVariable String visualName) {
     try {
       Application app = datastoreService.getApplication(appname);
@@ -180,9 +233,9 @@ public class AppController {
       e.printStackTrace();
       return "Error";
     }
-  }
+  }*/
   
-  @RequestMapping(value="/{appname}/data")
+  /*@RequestMapping(value="/{appname}/data")
   public @ResponseBody String getApplicationData(@PathVariable String appname) {
     List<Dataset> tableList = datastoreService.getDatasetList(appname);
     JSONArray tableListJson = new JSONArray();
@@ -207,6 +260,6 @@ public class AppController {
     result.element("tables", tableListJson.toString());
     result.element("visualizations", visualizationListJson.toString());
     return result.toString();
-  }
+  }*/
   
 }

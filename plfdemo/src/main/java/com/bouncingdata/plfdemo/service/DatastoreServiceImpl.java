@@ -1,105 +1,92 @@
 package com.bouncingdata.plfdemo.service;
 
+import java.util.Date;
 import java.util.List;
 
-
-import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bouncingdata.plfdemo.datastore.DataStorage;
-import com.bouncingdata.plfdemo.datastore.pojo.old.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Visualization;
+import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
+import com.bouncingdata.plfdemo.utils.Utils;
 
-@Transactional
 public class DatastoreServiceImpl implements DatastoreService {
   
-  DataStorage dataStorage;
+  private Logger logger = LoggerFactory.getLogger(DatastoreServiceImpl.class);
   
-  public void setDataStorage(DataStorage dataStorage) {
-    this.dataStorage = dataStorage;
+  private DataStorage dataStorage;
+  
+  public void setDataStorage(DataStorage ds) {
+    this.dataStorage = ds;
   }
 
   @Override
-  public List<Datastore> getDatastoreList() {
-    return dataStorage.getDatastoreList();
+  public List<Dataset> getDatasetList(int userId) throws Exception {
+    return dataStorage.getDatasetList(userId);
   }
 
   @Override
-  public List<Application> getApplicationList() {
-    return dataStorage.getApplicationList();
+  public List<Application> getApplicationList(int userId) throws Exception {
+    return dataStorage.getApplicationList(userId);
   }
 
   @Override
-  public Application getApplication(String appname) {
-    return dataStorage.getApplication(appname);
+  public String createApplication(String name, String description, String language, int author, String authorName, int lineCount, boolean isPublished, String tags) throws Exception {
+    Application application = new Application();
+    application.setName(name);
+    application.setDescription(description);
+    application.setLanguage(language);
+    application.setAuthor(author);
+    application.setLineCount(lineCount);
+    application.setPublished(isPublished);
+    application.setTags(tags);
+    // generate guid
+    application.setGuid(Utils.generateGuid());
+    Date date = Utils.getCurrentDate();
+    application.setCreateAt(date);
+    application.setLastUpdate(date);
+    application.setAuthorName(authorName);
+    dataStorage.createApplication(application);
+    return application.getGuid();
   }
 
   @Override
-  public Datastore getDatastore(String datastore) {
-    return dataStorage.getDatastore(datastore);
-  }
-
-  @Override
-  public int createApplication(String appname, String description, String language) {
-    return dataStorage.createApplication(appname, description, language);
-
-  }
-
-  @Override
-  public void createDatastore(String name, String description) {
-    dataStorage.createDatastore(name, description);
-  }
-
-  @Override
-  public List<Dataset> getDatasetList(String datastoreName) {
-    return dataStorage.getDatasetList(datastoreName);
-  }
-
-  @Override
-  public String getDatasetData(String appname, String tablename) {
-    return dataStorage.getDatasetDataInJson(appname, tablename);
-  }
-
-  @Override
-  public List<Visualization> getVisualizationList(String appname) {
-    return dataStorage.getVisualization(appname);
-  }
-
-  @Override
-  public void executeQuery(String query) {
-  }
-
-  @Override
-  public String executeQueryWithResult(String query) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void deleteVisualization(String appname, String visualizationName) {
-    dataStorage.deleteVisualization(appname, visualizationName);
+  public void updateApplication(Application application) throws Exception {
     
   }
 
   @Override
-  public void deleteDataset(String appname, String datasetName) {
-    dataStorage.deleteDataset(appname, datasetName);
-  }
-
-  @Override
-  public List<Application> searchApplication(String query) {
-    return dataStorage.searchApplication(query);
-  }
-
-  @Override
-  public List<Datastore> searchDatastore(String query) {
-    return dataStorage.searchDatastore(query);
-  }
-
-  @Override
-  public SearchResult search(String query) {
+  public SearchResult search(String query) throws Exception {
     return dataStorage.search(query);
   }
+
+  @Override
+  public Application getApplication(String guid) throws Exception {
+    return dataStorage.getApplicationByGuid(guid);
+  }
+
+  @Override
+  public void createUser(User user) throws Exception {
+    // 
+    // check if user was existed
+    User us = dataStorage.findUserByUsername(user.getUsername());
+    if (us != null) {
+      // loging
+      logger.debug("The username {} was existed. Skip user creation.", us.getUsername());
+      // throw custom exception
+      throw new IllegalArgumentException("The username was existed.");
+    }
+    // check email
+    
+    user.setEnabled(true);
+    user.setJoinedDate(new Date());
+    
+    // hash password
+    // persist data
+    dataStorage.createUser(user);
+  }
+
 }

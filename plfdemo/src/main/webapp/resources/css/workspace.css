@@ -88,8 +88,19 @@
   height: 200px;
 }
 
-.save-app-dialog input, .save-app-dialog textarea, .save-app-dialog label {
+.new-app-dialog input, .new-app-dialog textarea, .new-app-dialog label {
   display: block;
+  float: left;
+  margin-bottom: 10px;
+}
+
+#new-app-dialog label {
+  text-align: right;
+  padding-right: 10px;  
+}
+
+#new-app-dialog br {
+  clear: left;
 }
 
 /* The console container element */

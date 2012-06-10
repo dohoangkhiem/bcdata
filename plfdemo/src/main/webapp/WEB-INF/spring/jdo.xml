@@ -42,6 +42,17 @@
       <ref local="dataStorage" />
     </property>
   </bean>
+  
+  <bean id="customUserDetailsService" class="com.bouncingdata.plfdemo.service.CustomUserDetailsService">
+    <property name="dataStorage">
+      <ref local="dataStorage" />
+    </property>
+  </bean>
+  
+  <bean id="dataInitializingService" class="com.bouncingdata.plfdemo.service.DataInitializingService"
+    init-method="init" >
+    <property name="dataStorage" ref="dataStorage"></property>
+  </bean>
 
   <!-- Transaction Interceptor for Business Services -->
   <!-- bean id="transactionInterceptor"

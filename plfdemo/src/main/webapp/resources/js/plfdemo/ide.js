@@ -3,14 +3,14 @@
  */
 function IDE() {
   
-  // the tabs counter, always increase
+  // the tabs counter, always increase, = the number of tabs which was created
   this.tabsCounter = 0;
   
-  // current opening applications (only saved apps), key: app id, value: tab info { index, app info }
-  this.tabsApp = {};
+  // current opening applications (only saved apps), key: app guid, value: tab info { tabId, app info }
+  this.tabsInfo = {};
   
-  // key: index (1, 2, 3, ...), value: app id, if the tab belongs to new app., value = null 
-  this.tabsIndex = {};
+  // key: index (0, 1, 2, ...), value: app guid, if the tab belongs to new app., value = null 
+  this.tabsIndex = [];
   
   // current working app 
   this.currentApp = {};
@@ -20,8 +20,8 @@ function IDE() {
   // use to name untitled tabs
   this.untitledCounter = 0;
   
-  // key: tab id (tabs-1, tabs-2, ...), value: session info {output, variables}
-  this.sessions = {};
+  // key: tab index (0, 1, 2, ...), value: session info {output, variables, status}
+  this.sessions = [];
   
 }
 
@@ -47,11 +47,15 @@ IDE.prototype.init = function() {
         		"class='code-editor' spellcheck='false'></textarea></div>");
         $tabContentContainer.append($appInfo);
         $tabContentContainer.append($appEditor);
-        if (me.currentApp) {
-          $appInfo.append("<div class='app-title'>" + me.currentApp.name + "</div>"); 
-          $appInfo.append("<div class='app-language' id='app-language'>" + me.currentApp.language + "</div>");
-          $appInfo.append("<div class='app-author'>" + me.currentApp.author + "</div>");
-          $('#code-editor', $appEditor).val(me.currentApp.code);
+        var guid = me.tabsIndex[ui.index];
+        if (guid) {
+          var app = me.tabsInfo[guid].app;
+          if (app) {
+            $appInfo.append("<div class='app-title'><label style='font-weight: bold;'>Application name: </label>" + app.name + "</div>"); 
+            $appInfo.append("<div class='app-language' id='app-language'><label style='font-weight: bold;'>Language: </label>" + app.language + "</div>");
+            $appInfo.append("<div class='app-author'><label style='font-weight: bold;'>Author: </label>" + app.authorName + "</div>");
+            $('#code-editor', $appEditor).val(app.code);
+          }
         } else {
           $appInfo.append("<div class='language-select'><span>Language: </span><select id='app-language' class='app-language-select'><option value='python'>Python</option><option value='r'>R</option></select></div>");
         }
@@ -83,9 +87,38 @@ IDE.prototype.init = function() {
     
     // bind corresponding session when select a tab
     me.$tabs.bind("tabsselect", function(event, ui) {
-      var index = ui.index + 1;
-      plfdemo.Workspace.setSession("tabs-" + index);
-      $('#code-editor', $('#tabs-' + index)).focus();
+      // the ui.index or 'selected' option does not work in the case this tab is auto-selected after delete the 
+      // previous tab, as the ui.index value still is the old index of current tab (it should be ui.index - 1)
+      var index = $("li", me.$tabs).index($(ui.tab).parent());
+      console.debug("Selected tab index: " + ui.index);
+      plfdemo.Workspace.setSession(index);
+      $('#code-editor', me.getTabContainer(index)).focus();
+      
+    });
+    
+    // when a tab is showed
+    me.$tabs.bind("tabsshow", function(event, ui) {
+      var index = ui.index; 
+      console.debug("Show tab index: " + index);
+      
+      //$('.app-actions #save-app').removeAttr('disabled');
+      //$('.app-actions #run-app').removeAttr('disabled');
+      $('.app-actions #save-app').show();
+      $('.app-actions #run-app').show();
+      $('.app-actions #copy-app').hide();
+      
+      // in case of open app. of other user, disable the 'Save' button 
+      var guid = me.tabsIndex[index];
+      if (guid) {
+        var app = me.tabsInfo[guid].app;
+        if (app && (app.authorName != plfdemo.Main.username)) {
+          //$('.app-actions #save-app').attr('disabled', 'disabled');
+          //$('.app-actions #run-app').attr('disabled', 'disabled');
+          $('.app-actions #save-app').hide();
+          $('.app-actions #run-app').hide();
+          $('.app-actions #copy-app').show();
+        }
+      }
     });
     
     // handles tab closing
@@ -94,9 +127,15 @@ IDE.prototype.init = function() {
         return;
       }
       var index = $("li", me.$tabs).index($(this).parent());
+      var guid = me.tabsIndex[index];
+      me.tabsIndex.splice(index, 1);
+      me.sessions.splice(index, 1);
+      if (guid) {
+        delete me.tabsInfo[guid];
+      }
+      
       me.$tabs.tabs("remove", index);
-      //me.tabsCounter;
-      delete me.tabsIndex[index+1];
+      
     });
     
     me.createTab(null);
@@ -109,30 +148,27 @@ IDE.prototype.init = function() {
  * @param app object
  */
 IDE.prototype.createTab = function(app) {
-  // check if this action about to open an existing app. or blank tab for new app.
-  if (app && app.id in this.tabs_info) {
-    this.$tabs.tabs('select', '#tabs-' + this.tabs_info[appid].index);
-    this.currentApp = this.tabs_info[appid].app;
-    return;
-  }
+
+  // index (zero-based) of the newly created tab
+  var index = this.getNumberOfTabs();
   
   // new tab
   if (!app) {
     this.tabsCounter++;
     this.untitledCounter++;
     this.currentApp = null;
-    this.tabsIndex[this.tabsCounter] = null;
+    this.tabsIndex[index] = null;
     this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, 'Untitled' + this.untitledCounter);
   } else {
     // 
     this.currentApp = app;
     this.tabsCounter++;
-    this.tabsIndex[this.tabsCounter] = app.id
-    this.tabsInfo[app.id] = { index: this.tabsCounter, app: app };
-    this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, 'Untitled' + this.untitledCounter);
+    this.tabsIndex[index] = app.guid
+    this.tabsInfo[app.guid] = { tabId: 'tabs-' + this.tabsCounter, app: app };
+    this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, app.name);
   }
   
-  this.sessions['tabs-' + this.tabsCounter] = {};
+  this.sessions[index] = {};
   this.$tabs.tabs('select', '#tabs-' + this.tabsCounter);
  
 }
@@ -158,6 +194,24 @@ IDE.prototype.getSelectedTabId = function() {
  */
 IDE.prototype.getSelectedTabContainer = function() {
   return $('#' + this.getSelectedTabId(), this.$tabs);
+}
+
+/**
+ * Get id of tab content's container
+ * @param index: zero-based tab index
+ * @return id of the div element which contains the content of the corresponding tab, i.e: tabs-1 at index 0
+ */
+IDE.prototype.getTabId = function(index) {
+  var href = $('li.tab-header a', this.$tabs)[index].href;
+  return href.substring(href.indexOf('#') + 1)
+}
+
+/**
+ * Gets the div element contains the tab at index (0, 1, 2, ...) 
+ */
+IDE.prototype.getTabContainer = function(index) {
+  var tabId = this.getTabId(index);
+  return $('#' + tabId, this.$tabs);
 }
 
 /**

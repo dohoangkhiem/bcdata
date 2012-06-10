@@ -2,67 +2,56 @@ package com.bouncingdata.plfdemo.service;
 
 import java.util.List;
 
-import com.bouncingdata.plfdemo.datastore.pojo.old.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Visualization;
+import org.springframework.dao.DataAccessException;
 
+import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 public interface DatastoreService {
-
-  /**
-   * Gets list of all datastores
-   * @return
-   */
-  public List<Datastore> getDatastoreList();
   
   /**
-   * Gets list of all applications
-   * @return
-   */
-  public List<Application> getApplicationList();
-  
-  public Application getApplication(String appname);
-  
-  /**
-   * @param appname
-   * @return
-   */
-  public Datastore getDatastore(String datastore);
-  
-  /**
-   * @param appname
-   * @param description
-   * @param language
    * 
-   * @return application id, or -1 if failed
+   * @param userId the user id
+   * @return <code>List</code> of <code>Dataset</code>s
+   * @throws DataAccessException
    */
-  public int createApplication(String appname, String description, String language);
+  public List<Dataset> getDatasetList(int userId) throws Exception;
   
   /**
-   * @param name
-   * @param description
+   * @param userId the user id
+   * @return <code>List</code> of <code>Application</code>s
+   * @throws DataAccessException
    */
-  public void createDatastore(String name, String description);
+  public List<Application> getApplicationList(int userId) throws Exception;
   
-  public List<Dataset> getDatasetList(String datasetName);
+  /**
+   * @param guid
+   * @return
+   * @throws Exception
+   */
+  public Application getApplication(String guid) throws Exception;
   
-  public String getDatasetData(String appname, String datasetName);
+  /**
+   * Stores new application
+   * @param application the <code>Application</code> to save
+   * @throws Exception
+   */
+  public String createApplication(String name, String description, String language, int author, String authorName, int lineCount, boolean isPublished, String tags) throws Exception;
   
-  public List<Visualization> getVisualizationList(String appname);
+  /**
+   * @param application
+   * @throws Exception
+   */
+  public void updateApplication(Application application) throws Exception;
+    
+  /**
+   * @param query
+   * @return
+   * @throws Exception
+   */
+  public SearchResult search(String query) throws Exception;
   
-  public void executeQuery(String query);
-  
-  public String executeQueryWithResult(String query);
-  
-  public void deleteVisualization(String appname, String visualizationName);
-  
-  public void deleteDataset(String appname, String datasetName);
-  
-  public List<Application> searchApplication(String query);
-  
-  public List<Datastore> searchDatastore(String query);
-  
-  public SearchResult search(String query);
+  public void createUser(User user) throws Exception;
 }

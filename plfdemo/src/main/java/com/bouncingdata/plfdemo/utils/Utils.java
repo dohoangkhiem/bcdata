@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import net.sf.json.JSONArray;
@@ -70,14 +72,30 @@ public class Utils {
   }
   
   public static String getExecutionId() {
-    return UUID.randomUUID().toString();
+    return UUID.randomUUID().toString().substring(0, 32);
   }
   
+  public static String generateGuid() {
+    return UUID.randomUUID().toString().substring(0, 32);
+  }
+  
+  public static Date getCurrentDate() {
+    Calendar cal = Calendar.getInstance();
+    return cal.getTime();
+  }
+    
   public static String getApplicationFilename(String language) {
-    String filename = null;
+    /*String filename = null;
     if (ApplicationLanguage.PYTHON.getLanguage().equals(language)) filename = "appcode.py";
-    else if (ApplicationLanguage.R.getLanguage().equals(language)) filename = "appcode.R";
-    return filename;
+    else if (ApplicationLanguage.R.getLanguage().equals(language)) filename = "appcode.R";*/
+    //return filename;
+    return "appcode";
+  }
+  
+  public static int countLines(String str) {
+    if (str == null || str.isEmpty()) return 0;
+    String[] lines = str.split("\n");
+    return lines.length;
   }
   
   public static void main(String args[]) {

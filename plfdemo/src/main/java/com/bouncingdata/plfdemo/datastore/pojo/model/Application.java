@@ -3,6 +3,7 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -23,6 +24,8 @@ public class Application {
   private Date createAt;
   private Date lastUpdate;
   private String tags;
+  
+  private String authorName;
   
   public int getId() {
     return id;
@@ -89,6 +92,12 @@ public class Application {
   }
   public void setTags(String tags) {
     this.tags = tags;
+  }
+  public String getAuthorName() {
+    return authorName;
+  }
+  public void setAuthorName(String authorName) {
+    this.authorName = authorName;
   }
   
   

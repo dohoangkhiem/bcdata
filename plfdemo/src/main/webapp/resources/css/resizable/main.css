@@ -11,12 +11,12 @@ body .ui-widget {
   font-family: Helvetica,Arial,sans-serif;
 }
 
-#page input.ui-button {
-  padding: 0.25em 1em;
+#page input.ui-button, #page button.ui-button .ui-button-text {
+  padding: 0.3em 1.5em;
 }
 
 #page .ui-tabs .ui-tabs-nav li a {
-  padding: 0.25em 1em;
+  padding: 0.3em 1em;
 }
 
 #page .ui-widget input, #page .ui-widget select, .ui-widget textarea, .ui-widget button {
@@ -27,6 +27,9 @@ div.clear {
   clear: both;
 }
 
+.ui-tab-nav li a {
+  outline: none;
+}
 
 /** Layout **/
 #page, #page .main-container {
@@ -90,7 +93,7 @@ div.clear {
 }
 
 .search-container #search-form input.ui-button {
-  padding: 0.15em 0.5em;
+  padding: 0.2em 0.5em;
   position: absolute;
   top: 0;
   right: 0;

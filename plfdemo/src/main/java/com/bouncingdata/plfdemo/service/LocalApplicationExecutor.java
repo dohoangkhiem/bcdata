@@ -64,7 +64,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       e.printStackTrace();
     }
     List<String> encodedSnapshots = getEncodedVisualizations(ticket);
-    return new ExecutionResult(output, encodedSnapshots);
+    return new ExecutionResult(output, encodedSnapshots, 0, "OK");
   }
   
   public static void main(String args[]) {
@@ -118,7 +118,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     
     /* read the logs */
     List<String> encodedSnapshots = getEncodedVisualizations(ticket);
-    return new ExecutionResult(output, encodedSnapshots);
+    return new ExecutionResult(output, encodedSnapshots, 0, "OK");
   }
   
   /**

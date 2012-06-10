@@ -1,4 +1,4 @@
-package com.bouncingdata.plfdemo.controller;
+/*package com.bouncingdata.plfdemo.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
-import com.bouncingdata.plfdemo.service.DatastoreService;
+import com.bouncingdata.plfdemo.service.DatastoreService__;
 import com.bouncingdata.plfdemo.service.UserDataService;
 
 @Controller
 @RequestMapping("/dataset")
 public class DatasetController {
   private DatastoreService datastoreService;
-  private UserDataService userDataService;
+  //private UserDataService userDataService;
   
   public void setDatastoreService(DatastoreService datastoreService) {
     this.datastoreService = datastoreService;
@@ -75,3 +75,4 @@ public class DatasetController {
   }
   
 }
+*/

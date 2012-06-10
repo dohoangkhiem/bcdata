@@ -1,14 +1,25 @@
 package com.bouncingdata.plfdemo.datastore.pojo.model;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @PersistenceCapable
-public class User {
+public class User implements UserDetails {
+  
+  private static final long serialVersionUID = -1319577184342896023L;
+  
   @PrimaryKey
   @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
   private int id;
@@ -21,6 +32,8 @@ public class User {
   private int groupId;
   private Date joinedDate;
   private Date lastLogin;
+  
+  @NotPersistent private Set<GrantedAuthority> authorities;
   
   public int getId() {
     return id;
@@ -76,10 +89,38 @@ public class User {
   public void setGroupId(int groupId) {
     this.groupId = groupId;
   }
-  public boolean isEnabled() {
+  
+  public boolean getEnabled() {
     return enabled;
   }
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+  
+  @Override 
+  public boolean isEnabled() {
+    return enabled;
+  }
+  @Override
+  public Collection<GrantedAuthority> getAuthorities() {
+    return authorities;
+  }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+  public void setAuthorities(Collection<String> authorities) {
+    this.authorities = new HashSet<GrantedAuthority>();
+    for (String s : authorities) {
+      this.authorities.add(new GrantedAuthorityImpl(s));
+    }
   }
 }

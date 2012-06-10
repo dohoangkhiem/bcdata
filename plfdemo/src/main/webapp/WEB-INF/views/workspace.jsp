@@ -16,6 +16,7 @@
         <div class="app-actions">
           <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
           <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+          <input type="button" value="Clone" class="app-action" id="copy-app" />
           <input type="button" value="Save" class="app-action" id="save-app" />
           <input type="button" value="Run" class="app-action" id="run-app"  />
         </div>
@@ -73,11 +74,25 @@
       </div>
     </div>
 
-    <div class="popup save-app-dialog" id="save-app-dialog" title="Save your application">
+    <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
       <form>
         <fieldset>
-          <label>Application name</label> <input type="text" id="new-app-name" maxlength="255"></input> <label>Description</label>
-          <textarea rows="3" id="new-app-description" style="resize: none;"></textarea>
+          <label for="new-app-name">Application name</label>
+          <input type="text" id="new-app-name" maxlength="40"></input><br>
+          <label for="new-app-language">Language</label>
+          <select id="new-app-language">
+            <option value="python">Python</option>
+            <option value="r">R</option>
+          </select> <br>
+          <label for="new-app-description">Description</label>
+          <textarea rows="3" id="new-app-description" style="resize: none;"></textarea><br>
+          <label for="new-app-public">Published this application?</label>
+          <select id="new-app-public">
+            <option value="1">Public</option>
+            <option value="0">Private</option>
+          </select><br>
+          <label for="new-app-tags">Tags</label>
+          <input type="text" id="new-app-tags"></input><br>
         </fieldset>
       </form>
     </div>

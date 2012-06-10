@@ -1,16 +1,22 @@
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 body, html>body {
   margin: 0 auto;
   font-size: 13px;
   background-color: #EBEBEB;
-  font-family: Helvetica,Arial,sans-serif; 
+  font-family: Helvetica,Arial,sans-serif;
+  height: 100%; 
 }
 
 body #page {
-  
+  min-height: 100%;
+  position: relative;
 }
 
 #page .ui-widget input, #page .ui-widget select, .ui-widget textarea, .ui-widget button {
-  font-size: 0.9em;
 }
 
 div.clear {
@@ -18,30 +24,29 @@ div.clear {
 }
 
 #page .top-content {
-  margin: 40px auto;
+  padding-top: 40px;
+  margin: 0 auto;
   width: 360px;
   text-align: center;
 }
 
+
 #page .login-main-container {
   width: 360px;
   margin: 0 auto;
-  background-color: #FFFFFF;
+  padding-bottom: 30px;
 }
 
-.login-form {
+.login-form, .register-form {
   margin: 10px 0 5px 0;
 }
 
-.login-form form label {
+.login-form form label, .register-form form label {
   margin-bottom: 2px;  
-}
-
-.login-form form label {
   display: block;
 }
 
-.login-form form input#username, .login-form form input#password {
+.login-form form input#username, .login-form form input#password , .register-form form input.input-field {
   font-size: 1.2em;
   margin-bottom: 12px;
   display: block;
@@ -52,8 +57,8 @@ div.clear {
   color: #333333; 
 }
 
-.login-form .login-actions input.ui-button {
-  padding: 0.4em 1.4em;
+.login-form .login-actions input.ui-button, .register-form .reg-actions input.ui-button {
+  padding: 0.3em 1.4em;
 }
 
 .login-form .login-actions a, .login-form .login-actions a:visited, .login-form .login-actions a:active {

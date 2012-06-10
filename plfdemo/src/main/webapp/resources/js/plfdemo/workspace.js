@@ -17,17 +17,27 @@ Workspace.prototype.init = function() {
       var $currentTab =  plfdemo.workspace.IDE.getSelectedTabContainer();
       var code = $('#code-editor', $currentTab).val();
       if (!code || $.trim(code).length == 0) return;
-      console.info('Saving app.');
-      me.saveCode(null, $('.app-code-editor #code-editor').val(), $('.language-select #app-language').val());
+      var index = plfdemo.workspace.IDE.getSelectedIndex();
+      var guid = plfdemo.workspace.IDE.tabsIndex[index];
+      if (guid && guid.length > 0) {
+        var authorName = plfdemo.workspace.IDE.tabsInfo[guid].app.authorName;
+        if (authorName && (authorName != plfdemo.Main.username)) {
+          console.debug('No permission to save this application.');
+          return false;
+        } else {
+          me.saveCode(guid, code, '');
+        }
+      } else {
+        me.saveCode(null, code, '');
+      }
+      
       return false;
     });
     
     $('.app-actions #run-app').click(function() {
       // get current selected tab from IDE
-      var $currentTab =  plfdemo.workspace.IDE.getSelectedTabContainer();
-      var code = $('#code-editor', $currentTab).val();
-      if (!code || $.trim(code).length == 0) return;
-      me.execute($('#code-editor', $currentTab).val(), $('#app-language', $currentTab).val(), null);
+      var index = plfdemo.workspace.IDE.getSelectedIndex();
+      me.execute(index);
       return false;
     });
     
@@ -36,16 +46,19 @@ Workspace.prototype.init = function() {
     $('#app-output-tabs').tabs();
     
     // Init popup dialog
-    $('#save-app-dialog').dialog({
+    $('#new-app-dialog').dialog({
       autoOpen: false,
-      height: 300,
-      width: 350,
+      height: 350,
+      width: 460,
       modal: true,
+      resizable: false,
       buttons: {
         "Save": function() {
           //
-          //alert("Save the app");
-          me.createApp($('#new-app-name', $(this)).val(), $('#language').val() ,$('#new-app-description', $(this)).val(), $('#code-editor').val());
+          console.info('Creating app.');
+          me.createApp($('#new-app-name', $(this)).val(), $('#new-app-language', $(this)).val(), 
+              $('#new-app-description', $(this)).val(), $('#code-editor').val(), 
+              $('#new-app-public', $(this)).val(), $('#new-app-tags', $(this)).val());
         }, 
         "Cancel": function() {
           $(this).dialog("close");
@@ -63,19 +76,25 @@ Workspace.prototype.init = function() {
 /**
  * Executes an application or code
  */
-Workspace.prototype.execute = function(code, language, appname) {
+Workspace.prototype.execute = function(tabIndex) {
   var me = this;
   var ide = plfdemo.workspace.IDE;
-  $("#ajax-loading").css("display", "inline");
-  $("#ajax-message").text("Running...");
-  if (!$("#console").is(":visible")) {
-    $("#console").show();
-    $("#clear-console").show();
-    $("#show-console").val("Hide console");
+  
+  var appGuid = ide.tabsIndex[tabIndex];
+  var $tab =  ide.getTabContainer(tabIndex);
+  var code = $('#code-editor', $tab).val();
+  if (!code || $.trim(code).length == 0) return;
+  
+  var language = $('#app-language', $tab).val();
+  
+  ide.sessions[tabIndex].status = "running";
+  if (tabIndex == ide.getSelectedIndex()) {
+    this.setStatus("running");
   }
+    
   var url;
-  if (appname && (appname != null)) {
-    url = plfdemo.Main.ctx + "/app/" + appname + "/execute";
+  if (appGuid) {
+    url = plfdemo.Main.ctx + "/app/" + appGuid + "/execute";
   } else {
     url = plfdemo.Main.ctx + "/main/execute"; 
   }
@@ -89,38 +108,94 @@ Workspace.prototype.execute = function(code, language, appname) {
       },
       success: function(result) {
         $("#console").show(); 
-        //$("#console").val($("#console").val() + output + "\n");
-        me.jqconsole.Write(result['output'] + '\n', 'jqconsole-output');
-        me.startPrompt();
+        // if this app. has ran (not sure successful or not)
+        if (result['statusCode'] >= 0) {          
+          ide.sessions[tabIndex].output += ('\n' + result['output']);
+          if (tabIndex == ide.getSelectedIndex) {
+            me.jqconsole.Write(result['output'], 'jqconsole-output');
+            me.startPrompt();
+          }
+          
+          var visualizations = result['visualizations'];
+          var index;
+          for (index in visualizations) {
+            me.renderBase64PNG('', visualizations[index]);
+          }
+          
+          ide.sessions[tabIndex].status = "finished-running";
+          if (tabIndex == ide.getSelectedIndex()) {
+            this.setStatus("finished-running");
+          }
+          
+        } else {
+          console.debug(result);
+          ide.sessions[tabIndex].status = "error";
+          if (tabIndex == ide.getSelectedIndex()) {
+            this.setStatus("error");
+          }
+        }     
         
-        ide.sessions['tabs-' + (ide.getSelectedIndex() + 1)].output = me.jqconsole.Dump();
-        
-        var visualizations = result['visualizations'];
-        var index;
-        for (index in visualizations) {
-          me.renderBase64PNG('', visualizations[index]);
-        }
-        $("#ajax-loading").css("display", "none");
-        $("#ajax-message").text("Finished running."); 
         //refresh(); 
+      },
+      error: function() {
+        ide.sessions[tabIndex].status = "error";
+        if (tabIndex == ide.getSelectedIndex()) {
+          this.setStatus("error");
+        }
       }
     });
   });
 };
 
 /**
- * Sets session info to workspace info
+ * Sets session info to workspace info: console, status, variables
  */
-Workspace.prototype.setSession = function(sessionId) {
-  var session = plfdemo.workspace.IDE.sessions[sessionId];
+Workspace.prototype.setSession = function(index) {
+  var session = plfdemo.workspace.IDE.sessions[index];
   if (!session) return;
-  //$('#code-editor').val(session.code);
+  
+  // set status
+  var status = session.status;
+  this.setStatus(status);
+  
   var console = this.jqconsole;
   console.Reset();
   console.Write(session.output, 'jqconsole-output');
   this.startPrompt();
+  
   // set variables from session
+  
 }
+
+Workspace.prototype.setStatus = function(status) {
+  if (status) {
+    switch(status) {
+    case "running":
+      $("#ajax-message").text("Running...");
+      $("#ajax-loading").css("display", "inline");
+      break;
+    case "finished-running":
+      $("#ajax-message").text("Finished running.");
+      $("#ajax-loading").css("display", "none");
+      break;
+    case "updating":
+      $("#ajax-message").text("Updating...");
+      $("#ajax-loading").css("display", "inline");
+      break;
+    case "finished-save":
+      $("#ajax-loading").css("display", "none");
+      $("#ajax-message").text("Updated.");
+      break;
+    case "error":
+      $("#ajax-loading").css("display", "none");
+      $("#ajax-message").text("Error");
+    }
+  } else {
+    $("#ajax-message").text("");
+    $("#ajax-loading").css("display", "none");
+  }
+}
+
 
 /**
  * Initializes the console
@@ -182,7 +257,7 @@ Workspace.prototype.clearConsole = function() {
   this.jqconsole.Reset();
   this.startPrompt();
   var ide = plfdemo.workspace.IDE;
-  ide.sessions['tabs-' + (ide.getSelectedIndex() + 1)].output = '';
+  ide.sessions[ide.getSelectedIndex()].output = '';
 }
 
 Workspace.prototype.getConsoleCaret = function(language) {
@@ -195,19 +270,24 @@ Workspace.prototype.getConsoleCaret = function(language) {
 /**
  * Saves the application code
  */
-Workspace.prototype.saveCode = function(appname, code, language) {
+Workspace.prototype.saveCode = function(appGuid, code, language) {
   
-  if (appname == null || appname == '') {   
+  if (appGuid == null || appGuid == '') {   
     // open dialog
-    $('#save-app-dialog').dialog("open");
+    var $dialog = $('#new-app-dialog'); 
+    $dialog.dialog("open");
+    $('#new-app-language', $dialog).val(language);
+    
     return;
   }
+  var ide = plfdemo.workspace.IDE;
   
   $("#ajax-loading").css("display", "inline");
   $("#ajax-message").text("Saving...");
   $.ajax({
-    url : plfdemo.Main.ctx + "/app/" + appname + "/save",
+    url : plfdemo.Main.ctx + "/app/" + appGuid + "/save",
     data : {
+      
       code : code,
       language: language
     },
@@ -228,21 +308,24 @@ Workspace.prototype.saveCode = function(appname, code, language) {
 /**
  * Creates new application
  */
-Workspace.prototype.createApp = function(appname, language, description, code) {
+Workspace.prototype.createApp = function(appname, language, description, code, isPublic, tags) {
   var data = { 
     appname: appname,
     language: language,
     description: description,
-    code: code
+    code: code,
+    isPublic: isPublic,
+    tags: tags
   };
   $(function() {
     $.ajax({ 
-      url: plfdemo.Main.ctx + "/main/createApp", 
+      url: plfdemo.Main.ctx + "/main/createapp", 
       data: data, 
       type: "post", 
       dataType: "json", 
       success: function(json) {
-        window.location.href = plfdemo.Main.ctx + "/app/" + appname + "#app";
+        //window.location.href = plfdemo.Main.ctx + "/app/" + appname + "#app";
+        window.location.reload(true);
       }, 
       error: function() { alert("Failed to create new application!"); } });  
   });

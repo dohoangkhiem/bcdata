@@ -1,10 +1,11 @@
 package com.bouncingdata.plfdemo.controller;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,17 +15,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
-import com.bouncingdata.plfdemo.datastore.pojo.old.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
+import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
+import com.bouncingdata.plfdemo.utils.Utils;
 
 @Controller
 @RequestMapping(value = "/main")
 public class MainController {
+  
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
   
   private DatastoreService datastoreService;
   private ApplicationStoreService appStoreService;
@@ -44,28 +48,23 @@ public class MainController {
     
   @RequestMapping(method = RequestMethod.GET)
   public String main(ModelMap model, Principal principal) {
-    model.addAttribute("app", null);
     String username = principal.getName();
     model.addAttribute("username", username);
     return "main";
   }
   
-  @RequestMapping(value = "/datastore", method = RequestMethod.GET)
-  public @ResponseBody List<Datastore> getAllDatastore(ModelMap model) {
-    // get list of dataset
+  @RequestMapping(value = "/dataset", method = RequestMethod.GET)
+  public @ResponseBody List<Dataset> getDatasets(ModelMap model, Principal principal) {
+    User user = (User) ((Authentication) principal).getPrincipal();
     try {
-      List<Datastore> datastores = datastoreService.getDatastoreList();
-      if (datastores != null) {
-        for (Datastore ds : datastores) {
-          ds.setDatasets(datastoreService.getDatasetList(ds.getName()));
-        }
-      }
-      return datastores;
+      if (user == null) return null;
+      int userId = user.getId();
+      return datastoreService.getDatasetList(userId);
     } catch (Exception e) {
-      // log
-      e.printStackTrace();
+      logger.error("Failed to retrieve dataset list for user " + user.getUsername(), e);
       return null;
     }
+    
   }
   
   @RequestMapping(value="/table/{datastore}")
@@ -75,35 +74,49 @@ public class MainController {
   
   @RequestMapping(value="/application", method = RequestMethod.GET)
   @ResponseBody
-  public List<Application> getAllApplication() {
+  public List<Application> getApplications(ModelMap model, Principal principal) {
+    User user = (User) ((Authentication) principal).getPrincipal();
     try {
-      List<Application> applications = datastoreService.getApplicationList();
-      return applications;
+      if (user == null) return null;
+      int userId = user.getId();
+      return datastoreService.getApplicationList(userId);
     } catch (Exception e) {
-      // log
-      e.printStackTrace();
-      return null; 
+      logger.error("Failed to retrieve application list for user " + user.getUsername(), e);
+      return null;
     }
   }
   
-  @RequestMapping(value = "/createApp", method = RequestMethod.POST)
+  @RequestMapping(value = "/createapp", method = RequestMethod.POST)
   @ResponseBody
   public String createApplication(@RequestParam(value = "appname", required = true) String appname,
       @RequestParam(value = "language", required = true) String language,
       @RequestParam(value = "description", required = true) String description,
-      @RequestParam(value = "code", required = true) String code, ModelMap model) {
+      @RequestParam(value = "code", required = true) String code, 
+      @RequestParam(value = "isPublic", required = true) int isPublic,
+      @RequestParam(value = "tags", required = false) String tags, ModelMap model, Principal principal) {
+    User user = (User) ((Authentication) principal).getPrincipal();
+    if (user == null) {
+      logger.debug("Can't get the user. Skip application creation.");
+      return null;
+    }
+    int userId = user.getId();
+    String guid = null;
+    try {
+      guid = datastoreService.createApplication(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tags);     
+    } catch (Exception e) {
+      logger.error("Failed to create application " + appname + " for user " + user.getUsername(), e);
+    }
     
-    // store app info
-    int appId = datastoreService.createApplication(appname, description, language);
+    if (guid == null) {
+      logger.debug("Can't get the guid of application {} so the code cannot saved", appname);
+      return null;
+    }
     
-    // store app code file
-    if (appId >= 0) {
-      try {
-        appStoreService.createApplicationFile(appId, language, code);
-      } catch (IOException e) {
-        // loggin
-        e.printStackTrace();
-      }
+    // store application code
+    try {
+      appStoreService.createApplicationFile(guid, language, code);
+    } catch (Exception e) {
+      logger.error("Error occurs when save application code, guid {}", guid);
     }
     
     return "";
@@ -127,7 +140,7 @@ public class MainController {
     try {
       result = datastoreService.search(query);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Failed to execute search with query: " + query, e);
     }
     return result;
   }

@@ -1,15 +1,8 @@
 package com.bouncingdata.plfdemo.controller;
 
-import java.io.IOException;
-
-
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Application;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 
@@ -28,7 +21,7 @@ public class VisualizeController {
     this.datastoreService = dsService;
   }
   
-  @RequestMapping(value="/{appname}/{visualization}", method = RequestMethod.GET)
+  /*@RequestMapping(value="/{appname}/{visualization}", method = RequestMethod.GET)
   public String get(@PathVariable String appname, @PathVariable String visualization, ModelMap model) {
     try { 
       Application app = datastoreService.getApplication(appname);
@@ -42,5 +35,5 @@ public class VisualizeController {
       model.addAttribute("content", "Not found!");
     }
     return "visualize";
-  }
+  }*/
 }

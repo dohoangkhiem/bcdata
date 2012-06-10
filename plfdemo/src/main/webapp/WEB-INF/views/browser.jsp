@@ -14,13 +14,13 @@
     </ul>
     <div id="browser-mystuff">
       <div class="dataset-list-panel">
-        <h4>Datasets</h4>
+        <h4 style="cursor: pointer;">Datasets</h4>
         <div id="dataset-list">
         </div>
       </div>
       <div class="browser-separator"></div>
       <div class="application-list-panel">
-        <h4>Applications</h4>
+        <h4 style="cursor: pointer;">Applications</h4>
         <div id="application-list"></div>
       </div>
       <div class="show-all"><a id="show-all-button" href="javascript:void(0)">Back</a></div>

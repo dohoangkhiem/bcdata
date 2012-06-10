@@ -9,6 +9,7 @@
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/resizable/browser.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/resizable/workspace.css" />" />
   <link type="text/css" href="<c:url value="/resources/css/jquery-ui/smoothness/jquery-ui-1.8.20.custom.css" />" rel="stylesheet" />
+  <!-- link type="text/css" href="<c:url value="/resources/css/jquery-ui/redmond/jquery-ui-1.8.21.custom.css" />" rel="stylesheet" /-->
   <!-- script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="resources/js/jquery/jquery-1.7.2.min.js"><\/script>')</script-->
   <script type="text/javascript" src="<c:url value="/resources/js/jquery/jquery-1.7.2.min.js" />"></script>
@@ -19,6 +20,7 @@
   <script>
     var ctx = '${pageContext.request.contextPath}';
     plfdemo.Main.setContext(ctx);
+    plfdemo.Main.username = '${username}';
   </script>
 </head>
 <body>

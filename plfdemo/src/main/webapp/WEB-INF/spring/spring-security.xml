@@ -10,6 +10,7 @@
     <intercept-url pattern="/auth/*" access="permitAll" />
     <intercept-url pattern="/plfdemo/*" access="permitAll" />
     <intercept-url pattern="/resources/**" access="permitAll" />
+    <intercept-url pattern="/favicon.ico" access="permitAll"/>
     <intercept-url pattern="/**" access="isAuthenticated()" />
     <form-login login-page="/auth/login" default-target-url="/main"
       authentication-failure-url="/auth/failed" login-processing-url="/auth/j_spring_security_check"  />
@@ -18,12 +19,13 @@
   </http>
  
   <authentication-manager>
-    <authentication-provider>
-      <jdbc-user-service data-source-ref="dataSource"
+    <authentication-provider user-service-ref="customUserDetailsService">
+    
+      <!-- jdbc-user-service data-source-ref="dataSource"
        users-by-username-query="select username, password, enabled from spring_users where username = ?"
        authorities-by-username-query="select u.username, ga.authority from spring_users u, spring_memberships m, 
             spring_group_authorities ga where u.username = m.username and m.group_id = ga.group_id and u.username=?" 
-      />
+      /-->
       <!-- group-authorities-by-username-query=
           "select m.username, ga.authority from spring_group_authorities ga, 
           spring_memberships m where m.group_id = ga.id and m.username = ?" -->
