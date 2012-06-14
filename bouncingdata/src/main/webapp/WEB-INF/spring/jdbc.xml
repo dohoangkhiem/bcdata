@@ -14,12 +14,13 @@
     <property name="password" value="a" />
   </bean>
   
-  <!-- bean id="jdbcDataStorage" class="com.bouncingdata.plfdemo.datastore.JdbcDataStorage">
+  <bean id="jdbcUserStorage" class="com.bouncingdata.plfdemo.datastore.JdbcUserStorage">
     <property name="dataSource" ref="dataSource"></property>
   </bean>
-  
+
   <bean id="userDataService" class="com.bouncingdata.plfdemo.service.UserDataService">
-    <property name="dataStorage" ref="jdbcDataStorage"></property>
-  </bean-->
+    <property name="dataStorage" ref="dataStorage"></property>
+    <property name="jdbcUserStorage" ref="jdbcUserStorage"></property>
+  </bean>
   
 </beans>

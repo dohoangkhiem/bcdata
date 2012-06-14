@@ -67,13 +67,12 @@
 }
 
 #new-app-dialog form {
-  min-width: 400px;  
 }
 
 #new-app-dialog form input, #new-app-dialog form textarea, #new-app-dialog form label, #new-app-dialog form select {
   display: block;
   float: left;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 #new-app-dialog form label {
@@ -83,7 +82,7 @@
 }
 
 #new-app-dialog fieldset {
-  padding: 9px;
+  padding: 12px;
   border: 1px solid #DDDDDD;
   border-radius: 1px;
 }

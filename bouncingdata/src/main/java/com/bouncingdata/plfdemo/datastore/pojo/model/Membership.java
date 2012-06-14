@@ -8,7 +8,7 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable
 public class Membership {
   @PrimaryKey
-  @Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
+  @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
   private int userId;
   private int groupId;

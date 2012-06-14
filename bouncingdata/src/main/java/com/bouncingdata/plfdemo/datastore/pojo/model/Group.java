@@ -10,7 +10,7 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable
 public class Group {
   @PrimaryKey
-  @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
+  @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
   private int id;
   private String name;
   private Date createAt;

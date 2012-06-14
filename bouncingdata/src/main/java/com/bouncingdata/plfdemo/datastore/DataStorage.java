@@ -128,4 +128,5 @@ public interface DataStorage {
    */
   public Collection<String> getUserAuthorities(int userId) throws DataAccessException;
   
+  public List<Object> readDataset(String dataset) throws DataAccessException;
 }

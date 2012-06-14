@@ -1,5 +1,7 @@
 package com.bouncingdata.plfdemo.service;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ public class DataInitializingService {
       demo.setUsername("demo");
       demo.setEnabled(true);
       demo.setPassword("demo");
+      demo.setJoinedDate(new Date());
       dataStorage.createUser(demo);
     }
     logger.info("Finished CustomUserDetailService.");

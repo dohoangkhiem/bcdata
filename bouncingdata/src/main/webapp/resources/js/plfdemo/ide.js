@@ -20,15 +20,10 @@ function IDE() {
   // use to name untitled tabs
   this.untitledCounter = 0;
   
-  // key: tab index (0, 1, 2, ...), value: session info {output, variables, status}
-  this.sessions = [];
-  
+  // Updated: change key to tabId (tabs-1, tabs-3, ...) as the tab index is too transiently & not consistent.
+  // From tabId we can easily find the index and vice-versa
+  this.sessions_ = {};
 }
-
-var workspaceInfoTemplate = "<div class=\"workspace-info-tabs\" id=\"{tab_id}-workspace-info-tabs\"><ul><li><a href=\"#{tab_id}-workspace-output\">Output</a></li>"
-  + "<li><a href=\"#{tab_id}-workspace-variables\">Variables</a></li></ul><div id=\"{tab_id}-workspace-output\"><div id=\"{tab_id}-console\" class=\"prompt\" style=\"display: block;\"></div>" 
-  + "<div class=\"console-actions\"><input class=\"clear-console\" type=\"button\" value=\"Clear console\" onclick=\"plfdemo.Workspace.clearConsole();\" />"
-  + "</div></div><div id=\"{tab_id}-workspace-variables\">Workspace variables</div></div>";
 
 /**
  * Initializes the IDE with multiple tabs
@@ -91,7 +86,7 @@ IDE.prototype.init = function() {
       // previous tab, as the ui.index value still is the old index of current tab (it should be ui.index - 1)
       var index = $("li", me.$tabs).index($(ui.tab).parent());
       console.debug("Selected tab index: " + ui.index);
-      plfdemo.Workspace.setSession(index);
+      plfdemo.Workspace.setSession(me.getTabId(index));
       $('#code-editor', me.getTabContainer(index)).focus();
       
     });
@@ -101,8 +96,6 @@ IDE.prototype.init = function() {
       var index = ui.index; 
       console.debug("Show tab index: " + index);
       
-      //$('.app-actions #save-app').removeAttr('disabled');
-      //$('.app-actions #run-app').removeAttr('disabled');
       $('.app-actions #save-app').show();
       $('.app-actions #run-app').show();
       $('.app-actions #copy-app').hide();
@@ -112,8 +105,6 @@ IDE.prototype.init = function() {
       if (guid) {
         var app = me.tabsInfo[guid].app;
         if (app && (app.authorName != plfdemo.Main.username)) {
-          //$('.app-actions #save-app').attr('disabled', 'disabled');
-          //$('.app-actions #run-app').attr('disabled', 'disabled');
           $('.app-actions #save-app').hide();
           $('.app-actions #run-app').hide();
           $('.app-actions #copy-app').show();
@@ -123,19 +114,8 @@ IDE.prototype.init = function() {
     
     // handles tab closing
     $(".tab-header span.ui-icon-close", me.$tabs).live("click", function() {
-      if (me.getNumberOfTabs() == 1) {
-        return;
-      }
       var index = $("li", me.$tabs).index($(this).parent());
-      var guid = me.tabsIndex[index];
-      me.tabsIndex.splice(index, 1);
-      me.sessions.splice(index, 1);
-      if (guid) {
-        delete me.tabsInfo[guid];
-      }
-      
-      me.$tabs.tabs("remove", index);
-      
+      me.removeTab(index);
     });
     
     me.createTab(null);
@@ -168,9 +148,50 @@ IDE.prototype.createTab = function(app) {
     this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, app.name);
   }
   
-  this.sessions[index] = {};
+  this.sessions_['tabs-' + this.tabsCounter] = {};
   this.$tabs.tabs('select', '#tabs-' + this.tabsCounter);
  
+}
+
+IDE.prototype.removeTab = function(index) {
+  if (this.getNumberOfTabs() == 1) {
+    return;
+  }
+  var guid = this.tabsIndex[index];
+  this.tabsIndex.splice(index, 1);
+  delete this.sessions_[this.getTabId(index)];
+  if (guid) {
+    delete this.tabsInfo[guid];
+  }
+  
+  this.$tabs.tabs("remove", index);
+}
+
+/**
+ * 
+ */
+IDE.prototype.bindAppToTab = function(index, app) {
+  if (!app) return;
+  var tabId = this.getTabId(index);
+  this.tabsIndex[index] = app.guid;
+  this.tabsInfo[app.guid] = { tabId: tabId, app: app};
+  
+  // change tab's title
+  $($('li.tab-header a', this.$tabs)[index]).text(app.name);
+  
+  // append app. info
+  var $tabContainer = this.getTabContainer(index);
+  var $tabContentContainer = $(".editor-tab-content", $tabContainer);
+  if ($('.app-info', $tabContentContainer)) {
+    $('.app-info', $tabContentContainer).remove();
+  }
+  var $appInfo = $("<div class='app-info'></div>");
+  var $appEditor = $(".app-code-editor", $tabContentContainer);
+   
+  $appInfo.append("<div class='app-title'><label style='font-weight: bold;'>Application name: </label>" + app.name + "</div>"); 
+  $appInfo.append("<div class='app-language' id='app-language'><label style='font-weight: bold;'>Language: </label>" + app.language + "</div>");
+  $appInfo.append("<div class='app-author'><label style='font-weight: bold;'>Author: </label>" + app.authorName + "</div>");
+  $appInfo.insertBefore($appEditor);
 }
 
 /**
@@ -212,6 +233,14 @@ IDE.prototype.getTabId = function(index) {
 IDE.prototype.getTabContainer = function(index) {
   var tabId = this.getTabId(index);
   return $('#' + tabId, this.$tabs);
+}
+
+/**
+ * Gets the index of a tab with specific id
+ */
+IDE.prototype.getTabIndex = function(tabId) {
+  //var a = $("a")
+  //var index = $("li", me.$tabs).index($(ui.tab).parent());  
 }
 
 /**

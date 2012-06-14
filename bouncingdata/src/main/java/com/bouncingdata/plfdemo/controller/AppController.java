@@ -3,6 +3,7 @@ package com.bouncingdata.plfdemo.controller;
 import java.io.IOException;
 import java.security.Principal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bouncingdata.plfdemo.datastore.pojo.ApplicationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
+import com.bouncingdata.plfdemo.service.UserDataService;
 import com.bouncingdata.plfdemo.utils.Utils;
 
 @Controller
@@ -27,7 +30,7 @@ public class AppController {
   private DatastoreService datastoreService;
   private ApplicationExecutor appExecutor;
   private ApplicationStoreService appStoreService;
-  private DatastoreService userDataService;
+  @Autowired private UserDataService userDataService;
   
   public void setDatastoreService(DatastoreService dsService) {
     this.datastoreService = dsService;
@@ -41,14 +44,19 @@ public class AppController {
     this.appStoreService = appStoreService;
   }
   
-  public void setUserDataService(DatastoreService userDataService) {
+  public void setUserDataService(UserDataService userDataService) {
     this.userDataService = userDataService;
   }
   
   @RequestMapping(value="/{guid}", method = RequestMethod.GET)
-  public @ResponseBody String getApplication(@PathVariable String guid) {
+  public @ResponseBody ApplicationDetail getApplication(@PathVariable String guid) {
     try {
-      return appStoreService.getApplicationCode(guid, null);
+      //return appStoreService.getApplicationCode(guid, null);
+      Application app = datastoreService.getApplication(guid);
+      if (app == null) return null;
+      ApplicationDetail detail = appStoreService.getApplicationDetail(guid, null);
+      detail.setDatasets(userDataService.getApplicationDataset(guid));
+      return detail;
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -90,13 +98,13 @@ public class AppController {
   @RequestMapping(value="/{appGuid}/execute", method = RequestMethod.POST)
   public @ResponseBody ExecutionResult executeApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, ModelMap model, Principal principal) {
     User user = (User) ((Authentication)principal).getPrincipal();
-    if (user == null) return new ExecutionResult(null, null, -1, "User not found.");
+    if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
     try {
       Application app = datastoreService.getApplication(appGuid);
-      if (app == null) return new ExecutionResult(null, null, -1, "Application not found.");
+      if (app == null) return new ExecutionResult(null, null, null, -1, "Application not found.");
       
       if (app.getAuthor() != user.getId()) {
-        return new ExecutionResult(null, null, -1, "No permission to run this app.");
+        return new ExecutionResult(null, null, null, -1, "No permission to run this app.");
       }
       
       try {
@@ -106,16 +114,16 @@ public class AppController {
       }
       
       if ("python".equals(app.getLanguage())) {
-        return appExecutor.executePython(app.getName(), code);
+        return appExecutor.executePython(app, code, user.getUsername());
       } else if ("r".equals(app.getLanguage())) {
-        return appExecutor.executeR(app.getName(), code);
+        return appExecutor.executeR(app, code, user.getUsername());
       } else {
-        return new ExecutionResult(null, null, -1, "Not supported language.");
+        return new ExecutionResult(null, null, null, -1, "Not supported language.");
       }
       
     } catch (Exception e) {
       e.printStackTrace();
-      return new ExecutionResult(null, null, -3, "Unknown error");
+      return new ExecutionResult(null, null, null, -3, "Unknown error");
     }
     
     /*if ("python".equals(language)) {

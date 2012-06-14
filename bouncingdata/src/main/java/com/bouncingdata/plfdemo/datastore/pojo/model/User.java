@@ -21,7 +21,7 @@ public class User implements UserDetails {
   private static final long serialVersionUID = -1319577184342896023L;
   
   @PrimaryKey
-  @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
+  @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
   private int id;
   private String username;
   private String firstName;

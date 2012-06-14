@@ -118,19 +118,21 @@ public class MainController {
     } catch (Exception e) {
       logger.error("Error occurs when save application code, guid {}", guid);
     }
-    
-    return "";
+   
+    return guid;
   }
   
   @RequestMapping(value="/execute", method = RequestMethod.POST)
-  public @ResponseBody ExecutionResult executeApp(@RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model) {
+  public @ResponseBody ExecutionResult executeApp(@RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model, Principal principal) {
     // invoke executor to execute code, pass the id as parameter
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
     if ("python".equals(language)) {
-      return appExecutor.executePython(null, code);
+      return appExecutor.executePython(null, code, user.getUsername());
     } else if ("r".equals(language)) {
-      return appExecutor.executeR(null, code);
+      return appExecutor.executeR(null, code, user.getUsername());
     } else {
-      return new ExecutionResult("Not support", null); 
+      return new ExecutionResult("Not support", null, null, -1, "Not support"); 
     }
   }
   

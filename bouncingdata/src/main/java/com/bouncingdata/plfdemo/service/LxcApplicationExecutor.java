@@ -1,4 +1,4 @@
-package com.bouncingdata.plfdemo.service;
+/*package com.bouncingdata.plfdemo.service;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -10,9 +10,9 @@ import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
 public class LxcApplicationExecutor implements ApplicationExecutor {
 
   @Override
-  public ExecutionResult executePython(String appname, String code) {
+  public ExecutionResult executePython(int appId, String code, String username) {
     
-    ProcessBuilder pb = new ProcessBuilder("sudo lxc-execute -n lxc-2 -f /home/khiem/lxc-2.conf echo " + code + " > " + appname + ".py" + "| python");
+    ProcessBuilder pb = new ProcessBuilder("sudo lxc-execute -n lxc-2 -f /home/khiem/lxc-2.conf echo " + code + " > " + appId + ".py" + "| python");
     pb.redirectErrorStream(true);
     
     try {
@@ -54,9 +54,10 @@ public class LxcApplicationExecutor implements ApplicationExecutor {
   }
 
   @Override
-  public ExecutionResult executeR(String appname, String code) {
+  public ExecutionResult executeR(int appId, String code, String username) {
     // TODO Auto-generated method stub
     return null;
   }
 
 }
+*/

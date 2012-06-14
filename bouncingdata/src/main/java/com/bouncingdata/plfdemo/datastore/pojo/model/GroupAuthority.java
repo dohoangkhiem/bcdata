@@ -8,7 +8,7 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable
 public class GroupAuthority {
   @PrimaryKey
-  @Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
+  @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
   private int groupId;
   private String authority;

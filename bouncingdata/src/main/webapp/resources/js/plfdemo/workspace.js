@@ -14,23 +14,8 @@ Workspace.prototype.init = function() {
   $(function() {
     // App. actions
     $('.app-actions #save-app').click(function() {
-      var $currentTab =  plfdemo.workspace.IDE.getSelectedTabContainer();
-      var code = $('#code-editor', $currentTab).val();
-      if (!code || $.trim(code).length == 0) return;
       var index = plfdemo.workspace.IDE.getSelectedIndex();
-      var guid = plfdemo.workspace.IDE.tabsIndex[index];
-      if (guid && guid.length > 0) {
-        var authorName = plfdemo.workspace.IDE.tabsInfo[guid].app.authorName;
-        if (authorName && (authorName != plfdemo.Main.username)) {
-          console.debug('No permission to save this application.');
-          return false;
-        } else {
-          me.saveCode(guid, code, '');
-        }
-      } else {
-        me.saveCode(null, code, '');
-      }
-      
+      me.saveCode(index);      
       return false;
     });
     
@@ -48,7 +33,7 @@ Workspace.prototype.init = function() {
     // Init popup dialog
     $('#new-app-dialog').dialog({
       autoOpen: false,
-      height: 350,
+      height: 345,
       width: 460,
       modal: true,
       resizable: false,
@@ -57,8 +42,9 @@ Workspace.prototype.init = function() {
           //
           console.info('Creating app.');
           me.createApp($('#new-app-name', $(this)).val(), $('#new-app-language', $(this)).val(), 
-              $('#new-app-description', $(this)).val(), $('#code-editor').val(), 
+              $('#new-app-description', $(this)).val(), $('#code-editor', plfdemo.workspace.IDE.getSelectedTabContainer()).val(), 
               $('#new-app-public', $(this)).val(), $('#new-app-tags', $(this)).val());
+          $(this).dialog("close");
         }, 
         "Cancel": function() {
           $(this).dialog("close");
@@ -87,7 +73,15 @@ Workspace.prototype.execute = function(tabIndex) {
   
   var language = $('#app-language', $tab).val();
   
-  ide.sessions[tabIndex].status = "running";
+  //ide.sessions[tabIndex].status = "running";
+  var tabId = ide.getTabId(tabIndex);
+  if (tabId) {
+    ide.sessions_[tabId].status = "running";
+  } else {
+    console.debug('The tab has been closed, skip executing');
+    return;
+  }
+  
   if (tabIndex == ide.getSelectedIndex()) {
     this.setStatus("running");
   }
@@ -109,24 +103,45 @@ Workspace.prototype.execute = function(tabIndex) {
       success: function(result) {
         $("#console").show(); 
         // if this app. has ran (not sure successful or not)
-        if (result['statusCode'] >= 0) {          
-          ide.sessions[tabIndex].output += ('\n' + result['output']);
-          ide.sessions[tabIndex].status = "finished-running";
+        if (result['statusCode'] >= 0) {
+          //if (!ide.sessions[tabIndex].output) ide.sessions[tabIndex].output = "";
+          //ide.sessions[tabIndex].output += (result['output']);
+          //ide.sessions[tabIndex].status = "finished-running";
+          if (!ide.sessions_[tabId].output) ide.sessions_[tabId].output = "";
+          ide.sessions_[tabId].output += (result['output']);
+          ide.sessions_[tabId].status = "finished-running";
           if (tabIndex == ide.getSelectedIndex()) {
             me.jqconsole.Write(result['output'], 'jqconsole-output');
             me.startPrompt();
             me.setStatus("finished-running");
           }
           
-          var visualizations = result['visualizations'];
-          var index;
-          for (index in visualizations) {
-            me.renderBase64PNG('', visualizations[index]);
+          var datasets = result['datasets'];
+          console.debug(datasets);
+          var $dsContainer = $(".app-output-tabs #app-datasets");
+          $dsContainer.empty();
+          // render datasets
+          for (d in datasets) {
+            me.renderDataset(d, JSON.parse(datasets[d]));
+          }
+          
+          var visuals = result['visualizations'];
+          console.debug(visuals);
+          var $vsSlider = $("#visualization-slider");
+          $vsSlider.empty();
+          for (v in visuals) {
+            var type = visuals[v].type;
+            if (type == "png" || type == "PNG") {
+              me.renderBase64PNG('', visuals[v].source);
+            } else if (type == "html" || type == "HTML") {
+              //
+              console.info("Render HTML visualization:" + v);
+            }
           }
                     
         } else {
           console.debug(result);
-          ide.sessions[tabIndex].status = "error";
+          ide.sessions_[tabId].status = "error";
           if (tabIndex == ide.getSelectedIndex()) {
             me.setStatus("error");
           }
@@ -135,7 +150,8 @@ Workspace.prototype.execute = function(tabIndex) {
         //refresh(); 
       },
       error: function() {
-        ide.sessions[tabIndex].status = "error";
+        //ide.sessions_[tabIndex].status = "error";
+        ide.sessions_[tabId].status = "error";
         if (tabIndex == ide.getSelectedIndex()) {
           me.setStatus("error");
         }
@@ -147,8 +163,11 @@ Workspace.prototype.execute = function(tabIndex) {
 /**
  * Sets session info to workspace info: console, status, variables
  */
-Workspace.prototype.setSession = function(index) {
-  var session = plfdemo.workspace.IDE.sessions[index];
+Workspace.prototype.setSession = function(tabId) {
+  //var session = plfdemo.workspace.IDE.sessions[index];
+  //var tabId = plfdemo.workspace.IDE.getTabId(index);
+  if (!tabId) return;
+  var session = plfdemo.workspace.IDE.sessions_[tabId];
   if (!session) return;
   
   // set status
@@ -170,22 +189,27 @@ Workspace.prototype.setStatus = function(status) {
     case "running":
       $("#ajax-message").text("Running...");
       $("#ajax-loading").css("display", "inline");
+      $("#ajax-message").css("color", "green");
       break;
     case "finished-running":
       $("#ajax-message").text("Finished running.");
       $("#ajax-loading").css("display", "none");
+      $("#ajax-message").css("color", "green");
       break;
     case "updating":
       $("#ajax-message").text("Updating...");
       $("#ajax-loading").css("display", "inline");
+      $("#ajax-message").css("color", "green");
       break;
     case "finished-save":
       $("#ajax-loading").css("display", "none");
       $("#ajax-message").text("Updated.");
+      $("#ajax-message").css("color", "green");
       break;
     case "error":
       $("#ajax-loading").css("display", "none");
       $("#ajax-message").text("Error");
+      $("#ajax-message").css("color", "red");
     }
   } else {
     $("#ajax-message").text("");
@@ -254,7 +278,8 @@ Workspace.prototype.clearConsole = function() {
   this.jqconsole.Reset();
   this.startPrompt();
   var ide = plfdemo.workspace.IDE;
-  ide.sessions[ide.getSelectedIndex()].output = '';
+  //ide.sessions[ide.getSelectedIndex()].output = '';
+  ide.sessions_[ide.getSelectedTabId()].output = '';
 }
 
 Workspace.prototype.getConsoleCaret = function(language) {
@@ -265,41 +290,78 @@ Workspace.prototype.getConsoleCaret = function(language) {
 
 
 /**
- * Saves the application code
+ * Saves the application code at the tab tabIndex
  */
-Workspace.prototype.saveCode = function(appGuid, code, language) {
+Workspace.prototype.saveCode = function(tabIndex) {
+  var me = this;
+  var ide = plfdemo.workspace.IDE;
+  var $currentTab =  ide.getTabContainer(tabIndex);
+  var tabId = ide.getTabId(tabIndex);
   
-  if (appGuid == null || appGuid == '') {   
-    // open dialog
-    var $dialog = $('#new-app-dialog'); 
-    $dialog.dialog("open");
-    $('#new-app-language', $dialog).val(language);
-    
+  if(!tabId) {
     return;
   }
-  var ide = plfdemo.workspace.IDE;
   
-  $("#ajax-loading").css("display", "inline");
-  $("#ajax-message").text("Saving...");
-  $.ajax({
-    url : plfdemo.Main.ctx + "/app/" + appGuid + "/save",
-    data : {
+  var code = $('#code-editor', $currentTab).val();
+  if (!code || $.trim(code).length == 0) {
+    console.debug("No code to save.");
+    return;
+  }
+  
+  var guid = ide.tabsIndex[tabIndex];
+  if (guid && guid.length > 0) {
+    var authorName = ide.tabsInfo[guid].app.authorName;
+    if (authorName && (authorName != plfdemo.Main.username)) {
+      console.debug('No permission to save this application.');
+      return false;
+    } else {
+      // save app. code
       
-      code : code,
-      language: language
-    },
-    success : function(json) {
-      console.info("Update code: " + JSON.stringify(json));
-      $("#ajax-loading").css("display", "none");
-      $("#ajax-message").text("Updated!");
-    },
-    error : function(json) {
-      console.info("Update code: " + JSON.stringify(json));
-      $("#ajax-loading").css("display", "none");
-      $("#ajax-message").text("Update code: Failed.");
-    },
-    type : "post"
-  });
+      //ide.sessions[tabIndex].status = "running";
+      ide.sessions_[tabId].status = "running";
+      if (tabIndex == ide.getSelectedIndex()) {
+        this.setStatus("running");
+      }
+      
+      $.ajax({
+        url : plfdemo.Main.ctx + "/app/" + guid + "/save",
+        data : {         
+          code : code,
+          language: language
+        },
+        success : function(json) {
+          console.info("Update code: " + JSON.stringify(json));
+          //ide.sessions[tabIndex].status = "finished-save";
+          ide.sessions_[tabId].status = "finished-save";
+          if (tabIndex == ide.getSelectedIndex()) {
+            me.setStatus("finished-save");
+          }
+        },
+        error : function(json) {
+          console.info("Update code: " + JSON.stringify(json));
+          //ide.sessions[tabIndex].status = "error";
+          ide.sessions_[tabId].status = "error";
+          if (tabIndex == ide.getSelectedIndex()) {
+            me.setStatus("error");
+          }
+        },
+        type : "post"
+      });
+    }
+  } else {
+    // create new app.
+    var $dialog = $('#new-app-dialog');
+    $dialog.dialog("open");
+    // reset form
+    $('form', $dialog).each(function() {
+      this.reset();
+    });
+    var language = $('.app-info .language-select #app-language', $currentTab).val();
+    $('#new-app-language', $dialog).val(language?language:'python');
+    $('#new-app-name', $dialog).focus();
+    return;
+  }
+  
 }
 
 /**
@@ -319,10 +381,15 @@ Workspace.prototype.createApp = function(appname, language, description, code, i
       url: plfdemo.Main.ctx + "/main/createapp", 
       data: data, 
       type: "post", 
-      dataType: "json", 
       success: function(json) {
-        //window.location.href = plfdemo.Main.ctx + "/app/" + appname + "#app";
-        window.location.reload(true);
+        // returned json as guid
+        if (json) {
+          //refresh browser
+          plfdemo.Browser.refreshMyStuff();
+          var app = {name: appname, description: description, language: language, tags: tags, authorName: plfdemo.Main.username, guid: json};
+          plfdemo.workspace.IDE.bindAppToTab(plfdemo.workspace.IDE.getSelectedIndex(), app);
+        }
+        
       }, 
       error: function() { alert("Failed to create new application!"); } });  
   });
@@ -345,6 +412,39 @@ Workspace.prototype.renderBase64PNG = function(name, source) {
     $vsItem.load().appendTo($vsSlider);
     $('<img src="data:image/png;base64,' + source + '" />').load().appendTo($vsItem);
     $('<span class="visualization-item-title">' + name + '</span>').load().appendTo($vsItem);
+  });
+}
+
+Workspace.prototype.renderDataset = function(name, data) {
+  if (data.length <= 0) return;
+  $(function() {
+    var $dsContainer = $(".app-output-tabs #app-datasets");
+    var $dsItem = $('<div class="dataset-item" style="margin-top: 2em;"></div>');
+    $dsItem.load().appendTo($dsContainer);
+    $dsItem.append('<span class="dataset-item-title"><strong>' + name + '</strong></span>');
+    var $table = $('<table class="dataset-item-table"></table>');
+    $dsItem.append($table);
+    
+    // prepare data
+    var first = data[0];
+    var aoColumns = [];
+    for (key in first) {
+      aoColumns.push({ "sTitle": key});
+    }
+    
+    var aaData = [];
+    for (index in data) {
+      var item = data[index];
+      var arr = [];
+      for (key in first) {
+        arr.push(item[key]);
+      }
+      aaData.push(arr);
+    }
+    
+    $table.dataTable({
+      "aaData": aaData, "aoColumns": aoColumns
+    });
   });
 }
 

@@ -1,5 +1,7 @@
 function Browser() {
   this.mode = "all";
+  this.myDatasets = {};
+  this.myApplications = {};
 }
 
 Browser.prototype.init = function() {
@@ -63,11 +65,19 @@ Browser.prototype.setMode = function(mode) {
 }
 
 Browser.prototype.setMyDatasets = function(datasetList) {
-  this.myDatasets = datasetList;
+  //this.myDatasets = datasetList;
+  for (index in datasetList) {
+    var item = datasetList[index];
+    this.myDatasets[item.guid] = item;
+  }
 }
 
 Browser.prototype.setMyApplications = function(applicationList) {
-  this.myApplications = applicationList;
+  //this.myApplications = applicationList;
+  for (index in applicationList) {
+    var item = applicationList[index];
+    this.myApplications[item.guid] = item;
+  }
 }
 
 
@@ -79,7 +89,7 @@ Browser.prototype.getDatasetList = function() {
       dataType : "json",
       success : function(json) {
         me.setMyDatasets(json);
-        me.loadItems(json, "dataset");
+        me.loadItems(me.myDatasets, "dataset");
       },
       error : function() {
         console.debug('Failed to load list of dataset');
@@ -96,7 +106,7 @@ Browser.prototype.getApplicationList = function() {
       dataType: "json", 
       success: function(json) {
         me.setMyApplications(json);
-        me.loadItems(json, "application");
+        me.loadItems(me.myApplications, "application");
       }, 
       error: function() {
         console.debug('Failed to load list of application');
@@ -105,17 +115,15 @@ Browser.prototype.getApplicationList = function() {
   });
 }
 
-Browser.prototype.loadItems = function(itemList, type) {
-  var i;
-  var json = itemList;
+Browser.prototype.loadItems = function(itemMap, type) {
   var $container;
   if (type == "application") $container = $('#application-list');
   else if (type == 'dataset') $container = $('#dataset-list');
   else return;
   
   $container.empty();
-  for (i = 0; i < json.length; i++) {
-    var itemObj = json[i];
+  for (key in itemMap) {
+    var itemObj = itemMap[key];
     var $item = $('<div class="browser-item"></div>');
     $item.addClass(type + "-item");
     
@@ -182,8 +190,31 @@ Browser.prototype.loadItems = function(itemList, type) {
             url: plfdemo.Main.ctx + "/app/" + itemObj['guid'],
             success: function(json) {
               // 
-              itemObj.code = json;
+              console.debug(json);
+              itemObj.code = json.code;
               ide.createTab(itemObj);
+              
+              var datasets = json['datasets'];
+              var $dsContainer = $(".app-output-tabs #app-datasets");
+              $dsContainer.empty();
+              // render datasets
+              for (d in datasets) {
+                plfdemo.Workspace.renderDataset(d, JSON.parse(datasets[d]));
+              }
+              
+              var visuals = json['visualizations'];
+              var $vsSlider = $("#visualization-slider");
+              $vsSlider.empty();
+              for (v in visuals) {
+                var type = visuals[v].type;
+                if (type == "png" || type == "PNG") {
+                  plfdemo.Workspace.renderBase64PNG('', visuals[v].source);
+                } else if (type == "html" || type == "HTML") {
+                  //
+                  console.info("Render HTML visualization:" + v);
+                }
+              }
+              
             },
             error: function() {
               //

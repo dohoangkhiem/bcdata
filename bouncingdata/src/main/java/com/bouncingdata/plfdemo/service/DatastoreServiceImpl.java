@@ -1,18 +1,23 @@
 package com.bouncingdata.plfdemo.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bouncingdata.plfdemo.datastore.DataStorage;
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
 
+@Transactional
 public class DatastoreServiceImpl implements DatastoreService {
   
   private Logger logger = LoggerFactory.getLogger(DatastoreServiceImpl.class);
@@ -87,6 +92,37 @@ public class DatastoreServiceImpl implements DatastoreService {
     // hash password
     // persist data
     dataStorage.createUser(user);
+  }
+
+  @Override
+  public List<Dataset> getApplicationDataset(int appId) throws Exception {
+    return dataStorage.getApplicationDataset(appId);
+  }
+
+  @Override
+  public List<Visualization> getApplicationVisualization(int appId) throws Exception {
+    return dataStorage.getApplicationVisualization(appId);
+  }
+
+  @Override
+  public String readDataset(String dataset) throws Exception {
+    List<Object> objects = dataStorage.readDataset(dataset);
+    System.out.println (objects);
+    return "";
+  }
+
+  @Override
+  public Map<String, String> getDataSetMap(int appId) throws Exception {
+    List<Dataset> datasets = getApplicationDataset(appId);
+    if (datasets != null) {
+      Map<String, String> result = new HashMap<String, String>();
+      for (Dataset ds : datasets) {
+        String s = readDataset(ds.getName());
+        result.put(ds.getName(), s);
+      }
+      return result;
+    }
+    return null;
   }
 
 }

@@ -72,11 +72,11 @@ public class Utils {
   }
   
   public static String getExecutionId() {
-    return UUID.randomUUID().toString().substring(0, 32);
+    return UUID.randomUUID().toString();
   }
   
   public static String generateGuid() {
-    return UUID.randomUUID().toString().substring(0, 32);
+    return UUID.randomUUID().toString();
   }
   
   public static Date getCurrentDate() {

@@ -3,9 +3,11 @@ package com.bouncingdata.plfdemo.datastore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
@@ -197,5 +199,23 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       }
       logger.error("Failed to update application " + application.getGuid(), e);
     }
+  }
+
+  @Override
+  public List<Object> readDataset(String dataset) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    
+    Query q = getPersistenceManager().newQuery("javax.jdo.query.SQL", "select * from `" + dataset + "`");
+    
+    List<Object> result = (List<Object>) q.execute();
+    return result;
+    
+    /*Collection results = (Collection) q.execute();
+    
+    for (Iterator itr = results.iterator (); itr.hasNext ();) {
+      Object[] data = (Object[]) itr.next ();  
+      
+    }*/
+
   }
 }

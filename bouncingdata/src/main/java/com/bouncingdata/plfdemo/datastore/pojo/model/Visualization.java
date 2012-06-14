@@ -9,7 +9,7 @@ import javax.jdo.annotations.PrimaryKey;
 public class Visualization {
 
   @PrimaryKey
-  @Persistent(valueStrategy=IdGeneratorStrategy.INCREMENT)
+  @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
   private String name;
   private String description;

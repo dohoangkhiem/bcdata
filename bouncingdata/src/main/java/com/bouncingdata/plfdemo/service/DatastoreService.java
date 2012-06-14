@@ -1,6 +1,7 @@
 package com.bouncingdata.plfdemo.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
 
@@ -8,6 +9,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 
 public interface DatastoreService {
   
@@ -45,6 +47,20 @@ public interface DatastoreService {
    * @throws Exception
    */
   public void updateApplication(Application application) throws Exception;
+  
+  /**
+   * @param appId
+   * @return
+   * @throws Exception
+   */
+  public List<Dataset> getApplicationDataset(int appId) throws Exception;
+  
+  /**
+   * @param appId
+   * @return
+   * @throws Exception
+   */
+  public List<Visualization> getApplicationVisualization(int appId) throws Exception;
     
   /**
    * @param query
@@ -53,5 +69,14 @@ public interface DatastoreService {
    */
   public SearchResult search(String query) throws Exception;
   
+  /**
+   * Creates new user.
+   * @param user the <code>User</code> instance
+   * @throws Exception
+   */
   public void createUser(User user) throws Exception;
+  
+  public String readDataset(String dataset) throws Exception;
+  
+  public Map<String, String> getDataSetMap(int appId) throws Exception;
 }
