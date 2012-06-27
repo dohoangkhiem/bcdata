@@ -228,7 +228,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>bouncingdata</finalName>
+    <finalName>old</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/java</directory>
