@@ -3,11 +3,9 @@ package com.bouncingdata.plfdemo.datastore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
@@ -197,11 +195,13 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       if (tx.isActive()) {
         tx.rollback();
       }
-      logger.error("Failed to update application " + application.getGuid(), e);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Exception occurs when update application " + application.getGuid(), e);
+      }
     }
   }
 
-  @Override
+  /*@Override
   public List<Object> readDataset(String dataset) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
     
@@ -210,12 +210,28 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     List<Object> result = (List<Object>) q.execute();
     return result;
     
-    /*Collection results = (Collection) q.execute();
+    Collection results = (Collection) q.execute();
     
     for (Iterator itr = results.iterator (); itr.hasNext ();) {
       Object[] data = (Object[]) itr.next ();  
       
-    }*/
+    }
+
+  }*/
+
+  @Override
+  public void createVisualization(Visualization visualization) throws DataAccessException {
+    List<Visualization> visuals = new ArrayList<Visualization>();
+    visuals.add(visualization);
+    persistData(visuals);    
+  }
+
+  @Override
+  public Dataset getDatasetByGuid(String guid) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Dataset.class);
+    q.setFilter("guid == \"" + guid + "\"");
+    List<Dataset> ds = (List<Dataset>) q.execute();
+    return (ds!= null && ds.size() > 0)?ds.get(0):null;
 
   }
 }

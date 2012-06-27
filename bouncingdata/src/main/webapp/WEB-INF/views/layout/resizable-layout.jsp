@@ -5,12 +5,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title><tiles:insertAttribute name="title" ignore="true" /></title>
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/resizable/main.css" />" />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/resizable/browser.css" />" />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/resizable/workspace.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/main.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/browser.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/workspace.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/jquery-ui/smoothness/jquery-ui-1.8.20.custom.css" />" rel="stylesheet" />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/demo_page.css" />" />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/jquery.dataTables.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/css/demo_page.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/css/jquery.dataTables.css" />" />
   <!-- link type="text/css" href="<c:url value="/resources/css/jquery-ui/redmond/jquery-ui-1.8.21.custom.css" />" rel="stylesheet" /-->
   <!-- script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="resources/js/jquery/jquery-1.7.2.min.js"><\/script>')</script-->
@@ -18,12 +18,13 @@
   <script type="text/javascript" src="<c:url value="/resources/js/jquery/jquery-ui-1.8.20.custom.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.layout-1.3.0.rc30.4.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.dataTables.min.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/resources/js/plfdemo/main.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/jquery.tmpl.min.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/main.js" />"></script>
   
   <script>
     var ctx = '${pageContext.request.contextPath}';
-    plfdemo.Main.setContext(ctx);
-    plfdemo.Main.username = '${username}';
+    com.bouncingdata.Main.setContext(ctx);
+    com.bouncingdata.Main.username = '${username}';
   </script>
 </head>
 <body>

@@ -128,9 +128,9 @@ public class MainController {
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
     if ("python".equals(language)) {
-      return appExecutor.executePython(null, code, user.getUsername());
+      return appExecutor.executePython(null, code, user);
     } else if ("r".equals(language)) {
-      return appExecutor.executeR(null, code, user.getUsername());
+      return appExecutor.executeR(null, code, user);
     } else {
       return new ExecutionResult("Not support", null, null, -1, "Not support"); 
     }

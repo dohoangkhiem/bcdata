@@ -19,10 +19,12 @@
   <mvc:view-controller path="/" view-name="main" />
 
   <mvc:resources mapping="/resources/**" location="/resources/" />
+  <mvc:resources mapping="/cdn/**" location="/cdn/" />
   
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
     <property name="logDir" value="/tmp/bouncingdata"></property>
     <property name="storePath" value="/home/khiem/java/temp/apps"></property>
+    <property name="datastoreService" ref="datastoreService" />
   </bean>
  
   <bean id="appStoreService" class="com.bouncingdata.plfdemo.service.ApplicationStoreService">
@@ -42,10 +44,10 @@
     <!-- property name="userDataService" ref="userDataService" /-->
   </bean>
   
-  <!-- bean id="datasetController" class="com.bouncingdata.plfdemo.controller.DatasetController">
+  <bean id="datasetController" class="com.bouncingdata.plfdemo.controller.DatasetController">
     <property name="datastoreService" ref="datastoreService" />
     <property name="userDataService" ref="userDataService" />
-  </bean-->
+  </bean>
   
   <bean id="visualizeController" class="com.bouncingdata.plfdemo.controller.VisualizeController">
     <property name="appStoreService" ref="appStoreService"></property>

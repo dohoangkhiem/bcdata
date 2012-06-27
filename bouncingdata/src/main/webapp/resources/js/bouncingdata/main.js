@@ -13,7 +13,7 @@ Main.prototype.initUI = function() {
       west__size:       240,
       applyDefaultStyles: true,
       resizable: false,
-      //center__onresize: "innerLayout.resizeAll"
+      center__onresize: "com.bouncingdata.Workspace.resizeAll()"
     });
     
     /*innerLayout = $('.workspace-container #workspace-layout').layout({
@@ -28,7 +28,20 @@ Main.prototype.initUI = function() {
     
   });
 }
- 
-plfdemo = {};
-plfdemo.Main = new Main();
-plfdemo.Main.initUI();
+
+function Utils() {
+}
+
+Utils.prototype.getConsoleCaret = function(language) {
+  if (language == "python") return ">>>";
+  else if (language == "r") return ">";
+  else return null;
+}
+
+
+com = {};
+com.bouncingdata = {};
+com.bouncingdata.Main = new Main();
+com.bouncingdata.Utils = new Utils();
+Utils = com.bouncingdata.Utils;
+com.bouncingdata.Main.initUI();

@@ -35,6 +35,8 @@ public interface DatastoreService {
    */
   public Application getApplication(String guid) throws Exception;
   
+  public Dataset getDataset(String guid) throws Exception;
+  
   /**
    * Stores new application
    * @param application the <code>Application</code> to save
@@ -79,4 +81,6 @@ public interface DatastoreService {
   public String readDataset(String dataset) throws Exception;
   
   public Map<String, String> getDataSetMap(int appId) throws Exception;
+  
+  public void createVisualization(Visualization visualization) throws Exception;
 }

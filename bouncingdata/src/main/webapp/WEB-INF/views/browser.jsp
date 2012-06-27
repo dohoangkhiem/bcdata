@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<script type="text/javascript" src="<c:url value="/resources/js/plfdemo/browser.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
 <div class="search-container">
   <div id="search-form" class="search-form">
     <input type="text" class="search-input" id="query" name="query" />

@@ -3,77 +3,145 @@
 
 <script type="text/javascript" src="<c:url value="/resources/js/jqconsole-2.7.min.js" />"></script>
 <script type="text/javascript" src="<c:url value="/resources/js/jquery.bxSlider.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/js/plfdemo/workspace.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/js/plfdemo/ide.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workspace.js" />"></script>
 
-<div class="workspace-container">
-  <div class="workspace-layout" id="workspace-layout">
-    <div class="workspace-layout-center workspace-main-panel">
-      <div class="app-editor-tabs" id="app-editor-tabs">
-        <ul class="editor-tabs-bar">
-          <!-- li class="tab-header editor-tab-header"><a href="#untitled1">Untitled1</a></li-->
-        </ul>     
-        <div class="app-actions">
-          <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
-          <span id="ajax-message" style="color: Green; font-style: italic;"></span>
-          <input type="button" value="Clone" class="app-action" id="copy-app" />
-          <input type="button" value="Save" class="app-action" id="save-app" />
-          <input type="button" value="Run" class="app-action" id="run-app"  />
-        </div>
-        <!-- div class="app-code-editor">
-            <textarea rows="15" id="code-editor" class="code-editor" spellcheck='false'></textarea>
-        </div-->
-        <!-- div id="untitled1" class="app-editor-item">
-          <div class="app-info">
-            <div class="app-title">
-              <span>New application</span>
-            </div>  
-            <div class="language-select">  
-              <span>Language: </span>
-              <select id="app-language">
-                <option value="python">Python</option>
-                <option value="r">R</option>
-              </select>
+<div class="workspace-container">  
+    <!-- Workspace main tabs layout -->
+    <div class="workspace-main-tabs" id="workspace-main-tabs">
+      <ul class="workspace-main-tabs-bar">
+      </ul>
+      
+      <!-- Dataset view template  -->
+      <script id="data-view-template" type="text/x-jquery-tmpl">
+				<div class="dataset-view-container">
+					<div class="dataset-view-layout" id="dataset-view-layout-\${tabId}">
+            <div class="dataset-view-center" id="dataset-view-center-\${tabId}">
+              <div class="dataset-view-main">
+                <div class="dataset-view">
+                  <table class="dataset-table"></table>
+                </div>
+                <div class="dataset-query">
+                  <div class="dataset-query-editor">
+                    <textarea rows="5" class="code-editor query-editor" spellcheck="false"></textarea>
+                  </div>
+									<div class="dataset-query-actions">
+									  <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
+                    <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+                    <input class="dataset-query-execute" type="button" value="Execute" />
+									</div>
+                </div>
+              </div>
+            </div> 
+            <div class="dataset-view-east" id="dataset-view-east-\${tabId}">
+              <div class="dataset-view-side dataset-view-info">
+                <p>
+                  <strong>Dataset: </strong>
+                  <span>\${dsName }</span>
+                </p>
+                <p>
+                  <strong>Author: </strong>
+                  <span>\${dsAuthor }</span>
+                </p>
+                <p>
+                  <strong>Schema: </strong>
+                  <span>\${dsSchema }</span>
+                </p>
+                <p>
+                  <strong>Row count: </strong>
+                  <span>\${dsRowCount }</span>
+                </p>
+                <p>
+                  <strong>Create date: </strong>
+                  <span>\${dsCreateDate }</span>
+                </p>
+                <p>
+                  <strong>Last update: </strong>
+                  <span>\${dsLastUpdate }</span>
+                </p>
+                <p>
+                  <strong>Tags: </strong>
+                  <span>\${dsTags }</span>
+                </p>
+              </div>
             </div>
           </div>
-          <div class="app-code-editor">
-            <textarea rows="15" id="code-editor" class="code-editor" spellcheck='false'></textarea>
-          </div>        
-        </div-->
-      </div>
+          
+        </div>
+      </script>
       
-      <div class="workspace-info-tabs" id="workspace-info-tabs">
-        <ul>
-          <li><a href="#workspace-output">Output</a></li>
-          <li><a href="#workspace-variables">Variables</a></li>
-        </ul>  
-        <div id="workspace-output">
-          <div id="console" class="prompt" style="display: block;"></div>
-          <div class="console-actions">    
-            <input id="clear-console" type="button" value="Clear console" onclick="plfdemo.Workspace.clearConsole();" />
-          </div>
+      <!-- Define the workspace templates -->
+      <script id="workspace-content-template" type="text/x-jquery-tmpl">
+      	<div class="workspace-content-container">
+          <div class="workspace-content-layout" id="workspace-content-layout-\${tabId}">
+  					<div class="workspace-content-center" id="workspace-content-center-\${tabId}">
+  						<div class="workspace-content-main">
+								<div class="app-actions">
+                  <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
+                  <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+                  <input type="button" value="Clone" class="app-action" id="copy-app" />
+                  <input type="button" value="Save" class="app-action" id="save-app" />
+                  <input type="button" value="Run" class="app-action" id="run-app"  />
+          			</div>
+  							<div class="app-info">
+  					      <div class='app-title'><label style='font-weight: bold;'>Application name: </label>\${appName}</div>
+                  <div class='app-language' id='app-language'><label style='font-weight: bold;'>Language: </label>\${appLang}</div>
+                  <div class='app-author'><label style='font-weight: bold;'>Author: </label>\${appAuthor}</div>
+  							</div>
+								<div class="new-app-info">
+									<strong>Language: </strong>
+									<select class="language-select">
+										<option value='python'>Python</option>
+										<option value='r'>R</option>
+									</select>
+								</div>
+          			<div class="clear"></div>
+                <div class="app-code-editor">
+                  <textarea rows='15' id='code-editor-\${tabId}' class='code-editor' spellcheck='false'></textarea>
+                </div>
+  
+   							<div class="app-execution-logs-tabs">
+                  <ul>
+                    <li><a href="#app-execution-logs-\${tabId}">Logs</a></li>
+                    <li><a href="#app-execution-variables-\${tabId}">Variables</a></li>
+                  </ul>  
+                  <div id="app-execution-logs-\${tabId}" class="app-execution-logs">
+                    <div class="console prompt" style="display: block;"></div>
+                    <div class="console-actions">    
+                      <input class="clear-console" type="button" value="Clear console" />
+                    </div>
+                  </div>
+                  <div id="app-execution-variables-\${tabId}" class="app-execution-variables">
+                    Application variables.
+                  </div>
+                  
+          			</div>
+  						</div>
+  					</div>
+  					<div class="workspace-content-east" id="workspace-content-east-\${tabId}">
+  						<div class="workspace-content-side">
+  							<div class="app-output-tabs">
+  			          <ul>
+                    <li><a href="#app-output-visuals-\${tabId}">Visualizations</a></li>
+                    <li><a href="#app-output-datasets-\${tabId}">Datasets</a></li>
+                  </ul> 
+                  <div id="app-output-visuals-\${tabId}" class="app-output-visuals">
+                    <h4>Visualizations</h4>
+                    <div class="visuals-container"></div>
+                  </div>
+                  <div id="app-output-datasets-\${tabId}" class="app-output-datasets">
+                    <h4>Datasets</h4>
+                    <div class="dataset-container"></div>
+                  </div>  
+  							</div>
+  						</div>
+  					</div>
+  				</div>
+          
         </div>
-        <div id="workspace-variables">
-          Workspace variables
-        </div>
-      </div>
-    </div>
-    <div class="workspace-layout-east workspace-side-panel">
-      <div class="app-output-tabs" id="app-output-tabs">
-        <ul>
-          <li><a href="#app-visualizations">Visualizations</a></li>
-          <li><a href="#app-datasets">Datasets</a></li>
-        </ul>
-        <div id="app-visualizations">
-          Visualizations here
-          <div id="visualization-slider"></div>
-        </div>
-        <div id="app-datasets">
-          Datasets here
-        </div>
-      </div>
-    </div>
-
+        
+      </script>
+    </div> 
+    
     <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
       <form>
         <fieldset>
@@ -95,6 +163,5 @@
           <input type="text" id="new-app-tags" title="Separate tags by comma"></input><br>
         </fieldset>
       </form>
-    </div>
-  </div>
+    </div> 
 </div>

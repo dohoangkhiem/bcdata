@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
 import com.bouncingdata.plfdemo.utils.VisualizationSource;
 import com.bouncingdata.plfdemo.utils.VisualizationType;
@@ -34,6 +36,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   
   private String storePath;
   
+  private DatastoreService datastoreService;
+  
   public void setLogDir(String ld) {
     this.logDir = ld;
   }
@@ -42,8 +46,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     this.storePath = sp;
   }
   
+  public void setDatastoreService(DatastoreService ds) {
+    this.datastoreService = ds;
+  }
+  
   @Override
-  public ExecutionResult executePython(Application app, String code, String username) {
+  public ExecutionResult executePython(Application app, String code, User user) {
     // get execution ticket
     final String ticket = Utils.getExecutionId();
     
@@ -51,12 +59,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     if (app == null) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), username, mode);
+    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), String.valueOf(user.getId()), user.getUsername(), mode);
     pb.redirectErrorStream(true);
     
     String output = null;
     try {
-      logger.info("Starting the execution {}, requested user {}, appId: {}", new Object[] { ticket, username, app==null?"-1":app.getId() });
+      logger.info("Starting the execution {}, requested user {}, appId: {}", new Object[] { ticket, user.getUsername(), app==null?"-1":app.getId() });
       final Process p = pb.start();
       Timer t = new Timer();
       t.schedule(new TimerTask() {      
@@ -95,6 +103,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       
     } catch (IOException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     Map<String, String> datasets = getDatasets(ticket);
     Map<String, VisualizationSource> visuals = getVisualizations(ticket);
@@ -102,18 +112,18 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executeR(Application app, String code, String username) {
+  public ExecutionResult executeR(Application app, String code, User user) {
     String ticket = Utils.getExecutionId();
     String tempFile = logDir + Utils.FILE_SEPARATOR + ticket + Utils.FILE_SEPARATOR + ticket + ".R";
     File temp = new File(tempFile);
-    String updatedCode = "options(device=png)\n" + code;
+    //String updatedCode = "options(device=png)\n" + code;
     try {
       if (!temp.getParentFile().isDirectory()) {
         temp.getParentFile().mkdirs();
       }
       
       BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
-      writer.write(updatedCode);
+      writer.write(code);
       writer.close();
     } catch (Exception e) { 
       e.printStackTrace(); 
@@ -123,7 +133,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     if (app == null) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket, app==null?"-1":String.valueOf(app.getId()), username, mode);
+    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket, app==null?"-1":String.valueOf(app.getId()), String.valueOf(user.getId()), user.getUsername(), mode);
     if (!pb.environment().containsKey("R_DEFAULT_DEVICE")) {
       pb.environment().put("R_DEFAULT_DEVICE", "png");
     }
@@ -153,7 +163,11 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     //
     if (mode.equals("persistent")) {
       // copy visuals from log dir to visualizations dir
-      copyVisualizations(ticket, app.getGuid());
+      try {
+        copyVisualizations(ticket, app);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     
     return new ExecutionResult(output, visuals, datasets, 0, "OK");
@@ -197,7 +211,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     return datasets;
   }
   
-  private void copyVisualizations(String executionId, String appGuid) {
+  private void copyVisualizations(String executionId, Application app) throws Exception {
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
     File[] vsFiles = execLogDir.listFiles(new FileFilter() {
@@ -209,17 +223,26 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
         } else return false;
       }
     });
-    File appDir = new File(storePath + Utils.FILE_SEPARATOR + appGuid);
-    if (!appDir.isDirectory()) {
-      appDir.mkdirs(); 
+    File vDir = new File(storePath + Utils.FILE_SEPARATOR + app.getGuid() + Utils.FILE_SEPARATOR + "v");
+    if (!vDir.isDirectory()) {
+      vDir.mkdirs(); 
     }
     
     if (vsFiles != null) {
       for (File f : vsFiles) {
+        String filename = f.getName();
+        Visualization v = new Visualization();
+        v.setAppId(app.getId());
+        v.setAuthor(app.getAuthor());
+        v.setName(filename.substring(0, filename.lastIndexOf(".")));
+        v.setType("png");
+        String guid = Utils.generateGuid();
+        v.setGuid(guid);
+        datastoreService.createVisualization(v);
         try {
-          FileUtils.copyFileToDirectory(f, appDir);
+          FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + ".png"));
         } catch (IOException e) {
-          logger.debug("Failed to copy visual file " + f.getAbsolutePath() + " to " + appDir.getAbsolutePath());
+          logger.debug("Failed to copy visual file " + f.getAbsolutePath() + " to " + vDir.getAbsolutePath());
         }
       }
     }
@@ -252,7 +275,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
         int length = (int) f.length();
         byte[] bytes = new byte[length];
         try {
-          InputStream is = new BufferedInputStream(new FileInputStream(f));
+          /*InputStream is = new BufferedInputStream(new FileInputStream(f));
           int offset = 0;
           int numRead = 0;
           while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
@@ -261,8 +284,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
           
           if (offset < bytes.length) {
             throw new IOException("Could not completely read file " + f.getAbsolutePath());
-          }
-          
+          }*/
+          bytes = FileUtils.readFileToByteArray(f);
           if (type == VisualizationType.PNG) visuals.put(name, new VisualizationSource(new String(Base64.encodeBase64(bytes)), type));
           else if (type == VisualizationType.HTML) visuals.put(name, new VisualizationSource(new String(bytes), type));
           

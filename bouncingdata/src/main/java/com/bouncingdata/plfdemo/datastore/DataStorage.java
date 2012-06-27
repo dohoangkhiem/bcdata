@@ -128,5 +128,9 @@ public interface DataStorage {
    */
   public Collection<String> getUserAuthorities(int userId) throws DataAccessException;
   
-  public List<Object> readDataset(String dataset) throws DataAccessException;
+  /*public List<Object> readDataset(String dataset) throws DataAccessException;*/
+  
+  public void createVisualization(Visualization visualization) throws DataAccessException; 
+  
+  public Dataset getDatasetByGuid(String guid) throws DataAccessException;
 }

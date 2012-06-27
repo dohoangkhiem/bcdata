@@ -10,6 +10,7 @@
     <intercept-url pattern="/auth/*" access="permitAll" />
     <intercept-url pattern="/plfdemo/*" access="permitAll" />
     <intercept-url pattern="/resources/**" access="permitAll" />
+    <intercept-url pattern="/cdn/**" access="permitAll" />
     <intercept-url pattern="/favicon.ico" access="permitAll"/>
     <intercept-url pattern="/**" access="isAuthenticated()" />
     <form-login login-page="/auth/login" default-target-url="/main"

@@ -2,6 +2,9 @@ package com.bouncingdata.plfdemo.controller;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,11 +20,14 @@ import com.bouncingdata.plfdemo.datastore.pojo.ApplicationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.service.UserDataService;
 import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.utils.VisualizationSource;
+import com.bouncingdata.plfdemo.utils.VisualizationType;
 
 @Controller
 @RequestMapping("/app")
@@ -51,11 +57,29 @@ public class AppController {
   @RequestMapping(value="/{guid}", method = RequestMethod.GET)
   public @ResponseBody ApplicationDetail getApplication(@PathVariable String guid) {
     try {
-      //return appStoreService.getApplicationCode(guid, null);
       Application app = datastoreService.getApplication(guid);
       if (app == null) return null;
-      ApplicationDetail detail = appStoreService.getApplicationDetail(guid, null);
-      detail.setDatasets(userDataService.getApplicationDataset(guid));
+      
+      List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
+      
+      String code = appStoreService.getApplicationCode(guid, null);
+      Map<String, String> datasets = userDataService.getApplicationDataset(app.getId());
+      //Map<String, VisualizationSource> visualsMap =  appStoreService.getVisualizationMap(guid, visuals);
+      Map<String, VisualizationSource> visualsMap = null;
+      if (visuals != null) {
+        visualsMap = new HashMap<String, VisualizationSource>();
+        for (Visualization v : visuals) {
+          if ("html".equals(v.getType())) {
+            visualsMap.put(v.getName(), new VisualizationSource(v.getGuid(), VisualizationType.getVisualType(v.getType())));
+          } else {
+            String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
+            visualsMap.put(v.getName(), new VisualizationSource(source, VisualizationType.getVisualType(v.getType())));
+          }
+        }
+      }
+      
+      ApplicationDetail detail = new ApplicationDetail(code, datasets, visualsMap);
+      
       return detail;
     } catch (Exception e) {
       e.printStackTrace();
@@ -114,9 +138,9 @@ public class AppController {
       }
       
       if ("python".equals(app.getLanguage())) {
-        return appExecutor.executePython(app, code, user.getUsername());
+        return appExecutor.executePython(app, code, user);
       } else if ("r".equals(app.getLanguage())) {
-        return appExecutor.executeR(app, code, user.getUsername());
+        return appExecutor.executeR(app, code, user);
       } else {
         return new ExecutionResult(null, null, null, -1, "Not supported language.");
       }

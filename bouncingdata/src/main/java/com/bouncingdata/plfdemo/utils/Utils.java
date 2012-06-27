@@ -5,8 +5,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import net.sf.json.JSONArray;
@@ -18,6 +22,23 @@ public class Utils {
   
   static {
     FILE_SEPARATOR = System.getProperty("file.separator");
+  }
+  
+  public static List<Map> resultSetToList(ResultSet rs) throws SQLException {
+    java.sql.ResultSetMetaData rsmd = rs.getMetaData();
+    List<Map> result = new ArrayList<Map>();
+    while (rs.next()) {
+      Map<String, Object> row = new HashMap<String, Object>();
+      
+      int numColumns = rsmd.getColumnCount();
+      for (int i = 1; i < numColumns + 1; i++) {
+        String column_name = rsmd.getColumnName(i);
+        Object value = rs.getObject(column_name);
+        row.put(column_name, value);
+      }
+      result.add(row);
+    }
+    return result;
   }
   
   public static String resultSetToJson(ResultSet rs) throws SQLException {

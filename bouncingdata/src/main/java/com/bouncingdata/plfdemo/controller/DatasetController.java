@@ -1,27 +1,30 @@
-/*package com.bouncingdata.plfdemo.controller;
+package com.bouncingdata.plfdemo.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.old.Datastore;
-import com.bouncingdata.plfdemo.service.DatastoreService__;
+import com.bouncingdata.plfdemo.datastore.pojo.QueryResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.service.UserDataService;
 
 @Controller
 @RequestMapping("/dataset")
 public class DatasetController {
+  
+  private Logger logger = LoggerFactory.getLogger(DatasetController.class);
+  
   private DatastoreService datastoreService;
-  //private UserDataService userDataService;
+  private UserDataService userDataService;
   
   public void setDatastoreService(DatastoreService datastoreService) {
     this.datastoreService = datastoreService;
@@ -29,50 +32,40 @@ public class DatasetController {
 
   public void setUserDataService(UserDataService userDataService) {
     this.userDataService = userDataService;
-  }
+  }  
   
-  @RequestMapping(method = RequestMethod.GET)
-  public String getDefault() {
-    return "redirect:/dataset/gui";
-  }
-  
-  @RequestMapping(value="/gui", method = RequestMethod.GET)
-  public String getView(ModelMap model) {
-    model.addAttribute("currentDataset", null);
-    List<Datastore> datasets = datastoreService.getDatastoreList();
-    model.addAttribute("datasets", datasets);
-    
-    Map<String, List<Dataset>> datamap = new HashMap<String, List<Dataset>>();
-    for (Datastore ds : datasets) {
-      datamap.put(ds.getName(), datastoreService.getDatasetList(ds.getName()));
-    }
-    model.addAttribute("datamap", datamap);
-    return "dataset";
-  }
-  
-  @RequestMapping(value="/gui/{dataset}", method = RequestMethod.GET)
-  public String getDatasetView(@PathVariable String dataset, ModelMap model) {
-    Datastore ds = datastoreService.getDatastore(dataset);
-    if (ds == null) return "redirect:/dataset/gui";
-    model.addAttribute("currentDataset", ds);
-    List<Dataset> tables = datastoreService.getDatasetList(ds.getName());
-    model.addAttribute("tables", tables);
-    return "dataset";
-  }
-
-  @RequestMapping(value="/rest/{dataset}/{tablename}", method = RequestMethod.GET)
-  public @ResponseBody String getTableData(@PathVariable String dataset, @PathVariable String tablename) {
+  @RequestMapping(value="/{guid}", method = RequestMethod.GET)
+  public @ResponseBody List<Map> getDataset(@PathVariable String guid) {
     try {
-      return userDataService.getDatasetData(dataset, tablename);
+      Dataset ds = datastoreService.getDataset(guid);
+      if (ds == null) {
+        logger.debug("Can't find the dataset {}", guid);
+        return null;
+      }
+      
+      return userDataService.getDatasetToList(ds.getName());
     } catch (Exception e) {
-      return "Not found!";
+      logger.debug("Exception occurs when retrieving dataset " + guid, e);
+    }   
+    return null;
+  }
+  
+  @RequestMapping(value="/query", method = RequestMethod.POST)
+  public @ResponseBody QueryResult queryDataset(@RequestParam(value="guid", required=true) String guid, 
+      @RequestParam(value="query", required=true) String query) {
+    try {
+      Dataset ds = datastoreService.getDataset(guid);
+      if (ds == null) {
+        logger.debug("Can't find the dataset {}", guid);
+        return null;
+      }
+      
+      return new QueryResult(userDataService.query(query), 1, "OK");
+    } catch (Exception e) {
+      logger.debug("Exception occurs when querying dataset " + guid, e);
+      return new QueryResult(null, -1, e.getMessage());
     }
   }
   
-  @RequestMapping(value="/query", method = RequestMethod.GET)
-  public @ResponseBody String query(String query) {   
-    return userDataService.executeQueryWithResult(query);
-  }
   
 }
-*/

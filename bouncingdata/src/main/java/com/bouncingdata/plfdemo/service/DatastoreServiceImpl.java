@@ -106,8 +106,8 @@ public class DatastoreServiceImpl implements DatastoreService {
 
   @Override
   public String readDataset(String dataset) throws Exception {
-    List<Object> objects = dataStorage.readDataset(dataset);
-    System.out.println (objects);
+    /*List<Object> objects = dataStorage.readDataset(dataset);
+    System.out.println (objects);*/
     return "";
   }
 
@@ -123,6 +123,16 @@ public class DatastoreServiceImpl implements DatastoreService {
       return result;
     }
     return null;
+  }
+
+  @Override
+  public void createVisualization(Visualization visualization) throws Exception {
+    dataStorage.createVisualization(visualization);
+  }
+
+  @Override
+  public Dataset getDataset(String guid) throws Exception {
+    return dataStorage.getDatasetByGuid(guid);
   }
 
 }

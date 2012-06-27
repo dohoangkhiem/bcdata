@@ -2,16 +2,17 @@
 .browser-container {
   margin: 10px 0 0 0;
   width: auto;
-  height: auto;
+  height: 790px;
   display: block;
 }
 
 .browser-container #browser-tabs {
-  overflow: auto;
 }
 
 .browser-container #browser-tabs #browser-mystuff {
-  padding: 0.6em;
+  padding: 7px 5px 8px 5px;
+  height: 740px;
+  overflow: auto;
 }
 
 .browser-container #browser-tabs #browser-mystuff .show-all {

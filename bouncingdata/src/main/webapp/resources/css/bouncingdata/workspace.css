@@ -1,0 +1,197 @@
+.workspace-container {
+  height: 820px;  
+}
+
+.workspace-container .workspace-main-tabs {
+  height: 100%;
+  padding: 2px;
+}
+
+.workspace-content-main .app-actions {
+  margin: 10px 0;
+  float: right;
+}
+
+.workspace-content-main .app-editor {
+  padding: 1em;
+}
+
+.workspace-main-tabs .workspace-main-tabs-bar li .ui-icon-close { 
+  float: left; 
+  margin: 0.2em 0.2em 0 0; 
+  cursor: pointer; 
+  border: 1px solid transparent;
+}
+
+.workspace-main-tabs .workspace-main-tabs-bar li .ui-icon-close:hover {
+  border-radius: 3px;
+  border: 1px solid #BEBEBE;
+}
+
+.workspace-main-tabs .workspace-main-tabs-bar {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.workspace-main-tabs .workspace-main-tabs-bar li a {
+  outline: none;
+}
+
+.workspace-main-tabs > div.ui-tabs-panel {
+  height: 770px;
+  padding: 1em;
+}
+
+.workspace-main-tabs .workspace-content-container, .workspace-main-tabs .workspace-content-container .workspace-content-layout {
+  height: 100%;
+}
+
+.workspace-container .workspace-content-main .app-code-editor {
+  border: 1px solid #D3D3D3;
+  margin: 1em 0 0 0;
+}
+
+.workspace-container .code-editor {
+  font-family: monospace;
+  width: 100%;
+  font-size: 13px;
+  resize: none;
+  color: #000000;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.workspace-container .app-execution-logs-tabs {
+  margin-top: 10px;
+  padding: 1em .5em;
+}
+
+.workspace-container .app-execution-logs-tabs .console-actions {
+  margin-top: 5px;
+}
+
+/** Visualization styles **/
+
+.visualization-item-frame {
+  border: 1px solid #CCCCCC;
+  width: 100%;
+  height: 400px;
+}
+
+/** Dataset view styles **/
+
+.dataset-view-container .dataset-view-info p {
+  margin: 10px 0;
+}
+
+.dataset-view-container .dataset-view-main .dataset-query-editor {
+  border: 1px solid #D3D3D3;
+  margin: 1em 0 0 0;
+}
+
+.workspace-main-tabs .dataset-view-container, .workspace-main-tabs .dataset-view-container .dataset-view-layout {
+  height: 100%;
+}
+
+.dataset-view-main .dataset-query {
+  margin: 30px 0 10px;
+}
+
+.dataset-view-main .dataset-query .dataset-query-actions {
+  margin-top: 5px;
+  float: right;
+}
+
+/** Console styles **/
+
+/* The console container element */
+.app-execution-logs .console {
+  position: relative;
+  height: 300px;
+  background-color: #FFFFFF;
+  font-size: .9em;
+  border: 1px solid #D3D3D3;
+}
+
+/* The inner console element. */
+.jqconsole {
+  padding: 10px;
+}
+
+/* The cursor. */
+.jqconsole-cursor {
+  background-color: gray;
+}
+
+/* The cursor color when the console looses focus. */
+.jqconsole-blurred .jqconsole-cursor {
+  background-color: #666;
+}
+
+/* The current prompt text color */
+.jqconsole-prompt {
+  color: #0d0;
+}
+
+/* The command history */
+.jqconsole-old-prompt {
+  color: #0b0;
+  font-weight: normal;
+}
+
+/* The text color when in input mode. */
+.jqconsole-input {
+  color: #dd0;
+}
+
+/* Previously entered input. */
+.jqconsole-old-input {
+  color: #bb0;
+  font-weight: normal;
+}
+
+/* The text color of the output. */
+.jqconsole-header, .jqconsole-output {
+  color: #000000;
+}
+
+/* New application dialog styles */
+#new-app-dialog {
+  padding: 10px 10px 0 10px;
+}
+
+#new-app-dialog form {
+}
+
+#new-app-dialog form input, #new-app-dialog form textarea, #new-app-dialog form label, #new-app-dialog form select {
+  display: block;
+  float: left;
+  margin-bottom: 8px;
+}
+
+#new-app-dialog form label {
+  text-align: right;
+  padding-right: 10px;  
+  width: 120px;
+}
+
+#new-app-dialog fieldset {
+  padding: 12px;
+  border: 1px solid #DDDDDD;
+  border-radius: 1px;
+}
+
+#new-app-dialog br {
+  clear: left;
+}
+
+#new-app-dialog fieldset input, #new-app-dialog fieldset textarea {
+  width: 250px;
+  border: 1px solid #BBBBBB;
+  padding: .2em;
+}
