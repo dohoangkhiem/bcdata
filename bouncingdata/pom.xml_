@@ -83,6 +83,19 @@
       <scope>provided</scope>
     </dependency>
     
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>spring-js</artifactId>
+      <version>2.3.1.RELEASE</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>spring-js-resources</artifactId>
+      <version>2.3.1.RELEASE</version>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- Spring Security -->
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -228,7 +241,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>bouncingdata</finalName>
+    <finalName>ROOT</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/java</directory>

@@ -28,6 +28,16 @@ public class LoginController {
     return "main";
   }
   
+  @RequestMapping(value="/test", method = RequestMethod.GET)
+  public String test() {
+    return "test";
+  }
+  
+  @RequestMapping(value="/new", method = RequestMethod.GET)
+  public String newF() {
+    return "new";
+  }
+  
   @RequestMapping(value="/auth", method=RequestMethod.GET)
   public String gologin(ModelMap model) {
     model.addAttribute("mode", "login");

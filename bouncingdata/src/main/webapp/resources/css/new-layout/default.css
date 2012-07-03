@@ -1,0 +1,98 @@
+body, html>body {
+  margin: 0 auto;
+  font-size: 12px;
+  background-color: #FFFFFF; /*#EBEBEB;*/
+  font-family: "Helvetica Neue", Arial, sans-serif; 
+}
+
+/** Global styles **/
+body .ui-widget {
+  font-size: 1em;
+  font-family: Helvetica,Arial,sans-serif;
+}
+
+#page input.ui-button, #page button.ui-button .ui-button-text {
+  padding: 0.3em 1.5em;
+}
+
+#page .ui-tabs .ui-tabs-nav li a {
+  padding: 0.3em 1em;
+}
+
+#page .ui-widget input, #page .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-size: 0.9em;
+}
+
+div.clear {
+  clear: both;
+}
+
+.ui-tab-nav li a {
+  outline: none;
+}
+
+/** Layout **/
+#page {
+  width: 100%;
+  margin: 0 auto;
+  height: 100%;
+  background: none repeat top left #F1F1F1;
+}
+
+#page .header-container {
+  background: none repeat top left #F1F1F1;
+  clear: both;  
+  height: 60px;
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
+#page .header-container .header-content {
+  padding: 5px 0 5px 5px;
+  font-family: Verdana, Arial, sans-serif;
+}
+
+.header-container .header-content a, .header-container .header-content a:active, .header-container .header-content a:visited {
+  text-decoration: none;
+  color: #000000;
+}
+
+#page .main-content-container {
+  height: 850px;
+  margin-left: 125px;
+  z-index: 1;
+}
+
+#page .main-navigation {
+  position: fixed;
+  width: 120px;
+}
+
+.footer-container {
+  width: 100%;
+  background-color: #EBEBEB;
+}
+
+.footer-container .footer {
+  margin: 0 auto;
+  padding: 3em 0 7em 0;
+  color: #333333;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 11px;
+}
+
+.footer-container .footer .footer-content {
+  text-align: center;
+  padding-top: 3em;
+  font-size: 0.9em;
+}
+
+.footer-container .footer .footer-horizontal-rule {
+  border-bottom: 1px solid #FFFFFF;
+  border-top: 1px solid #DDDDDD;
+  height: 0;
+  margin: 0;
+  z-index: -99;
+}
+
+/** End Layout **/

@@ -18,7 +18,7 @@
  <!-- Forwards requests to the "/" resource to the "welcome" view -->
   <mvc:view-controller path="/" view-name="main" />
 
-  <mvc:resources mapping="/resources/**" location="/resources/" />
+  <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
   
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
@@ -66,11 +66,14 @@
     </property>
   </bean>
 
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+  <!-- bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
     <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
     <property name="order" value="0"></property>
-  </bean> 
- 
+  </bean--> 
+ <bean id="viewResolver" class="org.springframework.js.ajax.AjaxUrlBasedViewResolver">
+    <property name="viewClass" value="org.springframework.js.ajax.tiles2.AjaxTilesView" />
+    <property name="order" value="0"></property>
+  </bean>
  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="prefix">
       <value>/WEB-INF/views/</value>

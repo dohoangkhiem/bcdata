@@ -1,4 +1,28 @@
 function Workspace() {
+  /*the tabs counter, always increase, = the number of tabs which was created
+  this.tabsCounter = 0;
+  
+  // current opening applications (only saved apps), key: app guid, value: tab info { tabId, app info, type }
+  this.tabsInfo = {};
+  
+  // key: index (0, 1, 2, ...), value: app guid, jqconsole, if the tab belongs to new app., value = null 
+  this.tabsIndex = [];
+  
+  // current working app 
+  this.currentApp = {};
+  
+  this.$tabs = {};
+  this.$tabTemplate = {};
+  this.$dsTemplate = {};
+  
+  // use to name untitled tabs
+  this.untitledCounter = 0;*/
+}
+
+Workspace.prototype.init = function() {
+  console.info('Initializing Workspace..');
+  var me = this;
+  
   //the tabs counter, always increase, = the number of tabs which was created
   this.tabsCounter = 0;
   
@@ -17,10 +41,7 @@ function Workspace() {
   
   // use to name untitled tabs
   this.untitledCounter = 0;
-}
-
-Workspace.prototype.init = function() {
-  var me = this;
+  
   $(function() {
     
     //Init popup dialog
@@ -208,7 +229,7 @@ Workspace.prototype.resizeAll = function() {
   // do resize the current layout  
   var $tab = this.getSelectedTabContainer();
   var index = this.getSelectedIndex();
-  var type = this.tabsIndex[ui.index].type;
+  var type = this.tabsIndex[index].type;
   if (type == 'app') {
     var $layout = $('.workspace-content-layout', $tab).layout();
     if ($layout) $layout.resizeAll();
@@ -838,4 +859,4 @@ Workspace.prototype.getTabIndex = function(tabId) {
 }
 
 com.bouncingdata.Workspace = new Workspace();
-com.bouncingdata.Workspace.init();
+//com.bouncingdata.Workspace.init();

@@ -13,19 +13,27 @@
   <definition name="main" extends="resizable">
     <put-attribute name="main-content" value="/WEB-INF/views/workspace.jsp" />
   </definition>
-    
-  <definition name="fullWidth" template="/WEB-INF/views/layout/full-width.jsp">
-    <put-attribute name="title" value="Data Project Demo"></put-attribute>
-    <put-attribute name="header-content" value="/WEB-INF/views/layout/header.jsp" />
-    <put-attribute name="left-content" value="/WEB-INF/views/browser.jsp" />
-    <put-attribute name="footer-content" value="/WEB-INF/views/layout/footer.jsp" />
+  
+  <definition name="test" extends="resizable">
+    <put-attribute name="main-content" value="/WEB-INF/views/test.jsp" />
   </definition>
   
-  <definition name="resizable" template="/WEB-INF/views/layout/resizable-layout.jsp">
+  <definition name="new" extends="new-layout">
+    <put-attribute name="navigation" value="/WEB-INF/views/layout/bouncingdata/nav.jsp"></put-attribute>
+    <put-attribute name="main-content" value="/WEB-INF/views/workspace.jsp"></put-attribute>
+  </definition>
+      
+  <definition name="resizable" template="/WEB-INF/views/layout/resizable/resizable-layout.jsp">
     <put-attribute name="title" value="Bouncing Data"></put-attribute>
-    <put-attribute name="header-content" value="/WEB-INF/views/layout/header.jsp" />
+    <put-attribute name="header-content" value="/WEB-INF/views/layout/resizable/header.jsp" />
     <put-attribute name="left-content" value="/WEB-INF/views/browser.jsp" />
-    <put-attribute name="footer-content" value="/WEB-INF/views/layout/footer.jsp" />
+    <put-attribute name="footer-content" value="/WEB-INF/views/layout/resizable/footer.jsp" />
+  </definition>
+  
+  <definition name="new-layout" template="/WEB-INF/views/layout/bouncingdata/layout.jsp">
+    <put-attribute name="title" value="Bouncing Data"></put-attribute>
+    <put-attribute name="header-content" value="/WEB-INF/views/layout/bouncingdata/header.jsp" />
+    <put-attribute name="footer-content" value="/WEB-INF/views/layout/bouncingdata/footer.jsp" />
   </definition>
   
 </tiles-definitions>
