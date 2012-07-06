@@ -208,7 +208,7 @@ Workspace.prototype.resizeAll = function() {
   // do resize the current layout  
   var $tab = this.getSelectedTabContainer();
   var index = this.getSelectedIndex();
-  var type = this.tabsIndex[ui.index].type;
+  var type = this.tabsIndex[index].type;
   if (type == 'app') {
     var $layout = $('.workspace-content-layout', $tab).layout();
     if ($layout) $layout.resizeAll();

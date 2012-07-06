@@ -232,15 +232,21 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       for (File f : vsFiles) {
         String filename = f.getName();
         Visualization v = new Visualization();
+        
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        VisualizationType type = null;
+        if ("png".equals(extension)) type = VisualizationType.PNG;
+        else if ("html".equals(extension)) type = VisualizationType.HTML;
+        
         v.setAppId(app.getId());
         v.setAuthor(app.getAuthor());
         v.setName(filename.substring(0, filename.lastIndexOf(".")));
-        v.setType("png");
+        v.setType(type.getType());
         String guid = Utils.generateGuid();
         v.setGuid(guid);
         datastoreService.createVisualization(v);
         try {
-          FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + ".png"));
+          FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + "." + type.getType()));
         } catch (IOException e) {
           logger.debug("Failed to copy visual file " + f.getAbsolutePath() + " to " + vDir.getAbsolutePath());
         }

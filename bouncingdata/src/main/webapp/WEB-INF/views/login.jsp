@@ -80,7 +80,6 @@
                 Your login attempt was not successful, try again.
               </div>
             </c:if>
-            Demo account: demo/demo
           </div>
           <div class="login-form">
             <form name='f' action="<c:url value='/auth/j_spring_security_check' />" method='post'> 
