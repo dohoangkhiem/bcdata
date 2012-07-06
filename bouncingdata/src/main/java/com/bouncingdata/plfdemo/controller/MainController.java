@@ -50,7 +50,7 @@ public class MainController {
   public String main(ModelMap model, Principal principal) {
     String username = principal.getName();
     model.addAttribute("username", username);
-    return "main";
+    return "create";
   }
   
   @RequestMapping(value = "/dataset", method = RequestMethod.GET)

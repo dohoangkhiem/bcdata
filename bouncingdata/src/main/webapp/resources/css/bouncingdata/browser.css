@@ -1,18 +1,32 @@
 /** Browser CSS */
 .browser-container {
-  margin: 10px 0 0 0;
-  width: auto;
-  height: 790px;
+  margin: 0;
+  width: 100%;
+  position: absolute;
+  top: 40px;
+  bottom: 0;
   display: block;
 }
 
 .browser-container #browser-tabs {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 214px;
+  padding: 2px;
 }
 
-.browser-container #browser-tabs #browser-mystuff {
+.browser-container #browser-tabs .ui-tabs-panel {
+  position: absolute;
+  top: 32px;
+  bottom: 2px;  
+  width: 204px;
   padding: 7px 5px 8px 5px;
-  height: 740px;
-  overflow: auto;
+  overflow-y: hidden;
+}
+
+.browser-container #browser-tabs .ui-tabs-panel:hover {
+  overflow-y: auto; 
 }
 
 .browser-container #browser-tabs #browser-mystuff .show-all {
@@ -101,4 +115,12 @@
 .browser-item .datastore-item-dataset .datastore-item-dataset-info {
   padding-left: 4px;
   word-wrap: break-word;
+}
+
+#workspace-browser .search-container #search-form input.search-input {
+  border: 1px solid #D3D3D3;
+  height: 1.5em;
+  padding-left: 5px;
+  width: 200px;
+  margin: 10px 0 0 5px;
 }

@@ -7,6 +7,7 @@ Main.prototype.setContext = function(ctx) {
 
 Main.prototype.initUI = function() {
   $(function() {
+    /*
     outerLayout = $('.content-container #main-layout').layout({
       center__paneSelector: ".main-layout-center",
       west__paneSelector:   ".main-layout-west",
@@ -15,7 +16,7 @@ Main.prototype.initUI = function() {
       resizable: false,
       center__onresize: "com.bouncingdata.Workspace.resizeAll()"
     });
-    
+    */
     /*innerLayout = $('.workspace-container #workspace-layout').layout({
       center__paneSelector: ".workspace-layout-center",
       east__paneSelector:   ".workspace-layout-east",

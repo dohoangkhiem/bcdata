@@ -1,16 +1,68 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workspace.js" />"></script>
 <script type="text/javascript">
-	com.bouncingdata.Workspace.init();
+  if (!com.bouncingdata.Workspace) {
+    $.getScript(ctx + "/resources/js/bouncingdata/workspace.js", function() {
+    	console.debug("workspace.js async. loaded!");
+    	com.bouncingdata.Workspace.init();
+    });  
+  } else {
+    com.bouncingdata.Workspace.init();
+  }
+  
+  if (!com.bouncingdata.Browser) {
+    $.getScript(ctx + "/resources/js/bouncingdata/browser.js", function() {
+    	console.debug("browser.js async. loaded!");
+    	com.bouncingdata.Browser.init();
+    });  
+  } else {
+    com.bouncingdata.Browser.init();
+  }
+  
 </script>
 <div id="main-content">
-<div class="workspace-container">  
+  <div class="workspace-browser" id="workspace-browser">
+    <div class="search-container">
+      <div id="search-form" class="search-form">
+        <input type="text" class="search-input" id="query" name="query" />
+        <!-- input type="submit" value="Search" id="search-submit" /-->
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="browser-container">
+      <div class="browser-tabs" id="browser-tabs">
+        <ul>
+          <li><a href="#browser-mystuff">My Stuff</a></li>
+        </ul>
+        <div id="browser-mystuff">
+          <div class="dataset-list-panel">
+            <h4 style="cursor: pointer;">Datasets</h4>
+            <div id="dataset-list">
+            </div>
+          </div>
+          <div class="browser-separator"></div>
+          <div class="application-list-panel">
+            <h4 style="cursor: pointer;">Applications</h4>
+            <div id="application-list"></div>
+          </div>
+          <div class="show-all"><a id="show-all-button" href="javascript:void(0)">Back</a></div>
+          <div class="clear"></div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <div class="workspace-ide workspace-container">  
     <!-- Workspace main tabs layout -->
     <div class="workspace-main-tabs" id="workspace-main-tabs">
       <ul class="workspace-main-tabs-bar">
       </ul>
+      <div class="app-actions">
+            <input type="button" value="Clone" class="app-action" id="copy-app" />
+            <input type="button" value="Save" class="app-action" id="save-app" />
+            <input type="button" value="Run" class="app-action" id="run-app"  />
+      </div>
     </div> 
     
     <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
@@ -35,5 +87,5 @@
         </fieldset>
       </form>
     </div> 
-</div>
+  </div>
 </div>

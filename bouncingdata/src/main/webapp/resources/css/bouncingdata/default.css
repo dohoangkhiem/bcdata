@@ -1,14 +1,13 @@
 body, html>body {
   margin: 0 auto;
   font-size: 12px;
-  background-color: #FFFFFF; /*#EBEBEB;*/
   font-family: "Helvetica Neue", Arial, sans-serif; 
 }
 
 /** Global styles **/
 body .ui-widget {
   font-size: 1em;
-  font-family: Helvetica,Arial,sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 #page input.ui-button, #page button.ui-button .ui-button-text {
@@ -48,7 +47,7 @@ div.clear {
   z-index: 10;
 }
 #page .header-container .header-content {
-  padding: 5px 0 5px 5px;
+  padding: 15px 0 5px 5px;
   font-family: Verdana, Arial, sans-serif;
 }
 
@@ -57,25 +56,45 @@ div.clear {
   color: #000000;
 }
 
+#page .header-container .search-container {
+  float: left;  
+  margin-left: 30px;
+}
+
+#page .header-container .search-container .search-input {
+  width: 400px;
+  border: 1px solid #CCCCCC;
+  height: 22px;
+}
+
+#page .header-container .search-container #search-submit {
+  height: 26px;
+  margin: 0 10px;
+  padding: 3px 18px;
+}
+
 #page .main-content-container {
-  height: 850px;
-  margin-left: 125px;
+  margin-left: 105px;
+  margin-right: 5px;
   z-index: 1;
+  background-color: transparent;
+  min-height: 600px;
 }
 
 #page .main-navigation {
   position: fixed;
-  width: 120px;
+  width: 100px;
+  height: 100%;
 }
 
 .footer-container {
   width: 100%;
-  background-color: #EBEBEB;
+  background-color: transparent;
 }
 
 .footer-container .footer {
   margin: 0 auto;
-  padding: 3em 0 7em 0;
+  padding: 0 0 20px 0;
   color: #333333;
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
@@ -83,7 +102,7 @@ div.clear {
 
 .footer-container .footer .footer-content {
   text-align: center;
-  padding-top: 3em;
+  padding-top: 15px;
   font-size: 0.9em;
 }
 
@@ -96,3 +115,33 @@ div.clear {
 }
 
 /** End Layout **/
+
+/** Navigation */
+#page .main-navigation .nav-item {
+  height: 60px;
+  padding: 0 10px;
+}
+
+#page .main-navigation .nav-item a {
+  color: #000000; /*#A7A7A7;*/
+  text-decoration: none;
+  outline: none;
+}
+
+#page .main-navigation .nav-item a:hover, #page .main-navigation .nav-item-selected a {
+  color: #000000;
+}
+
+#page .main-navigation .nav-item .nav-item-icon {
+  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+#page .main-navigation .nav-item .nav-item-text {
+  text-align: center;
+}
+
+
+

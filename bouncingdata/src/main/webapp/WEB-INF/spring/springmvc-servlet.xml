@@ -16,19 +16,19 @@
   <mvc:annotation-driven />
  
  <!-- Forwards requests to the "/" resource to the "welcome" view -->
-  <mvc:view-controller path="/" view-name="main" />
+  <mvc:view-controller path="/" view-name="create" />
 
   <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
   
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
     <property name="logDir" value="/tmp/bouncingdata"></property>
-    <property name="storePath" value="/home/khiem/java/temp/apps"></property>
+    <property name="storePath" value="/home/ec2-user/temp/apps"></property>
     <property name="datastoreService" ref="datastoreService" />
   </bean>
  
   <bean id="appStoreService" class="com.bouncingdata.plfdemo.service.ApplicationStoreService">
-    <constructor-arg value="/home/khiem/java/temp/apps"></constructor-arg>
+    <constructor-arg value="/home/ec2-user/temp/apps"></constructor-arg>
   </bean>
   
   <bean id="mainController" class="com.bouncingdata.plfdemo.controller.MainController">

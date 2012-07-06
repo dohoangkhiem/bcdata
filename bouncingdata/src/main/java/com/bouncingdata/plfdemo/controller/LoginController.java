@@ -25,7 +25,7 @@ public class LoginController {
   public String main(ModelMap model, Principal principal) {
     String username = principal.getName();
     model.addAttribute("username", username);
-    return "main";
+    return "create";
   }
   
   @RequestMapping(value="/test", method = RequestMethod.GET)
@@ -33,9 +33,16 @@ public class LoginController {
     return "test";
   }
   
-  @RequestMapping(value="/new", method = RequestMethod.GET)
-  public String newF() {
-    return "new";
+  @RequestMapping(value={"/new", "/home", "/profile"}, method = RequestMethod.GET)
+  public String newVersion(ModelMap model, Principal principal) {
+    String username = principal.getName();
+    model.addAttribute("username", username);
+    return "home";
+  }
+  
+  @RequestMapping(value="/create", method = RequestMethod.GET)
+  public String openCreate() {
+    return "create";
   }
   
   @RequestMapping(value="/auth", method=RequestMethod.GET)

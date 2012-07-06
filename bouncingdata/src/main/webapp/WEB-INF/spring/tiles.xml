@@ -18,8 +18,11 @@
     <put-attribute name="main-content" value="/WEB-INF/views/test.jsp" />
   </definition>
   
-  <definition name="new" extends="new-layout">
-    <put-attribute name="navigation" value="/WEB-INF/views/layout/bouncingdata/nav.jsp"></put-attribute>
+  <definition name="home" extends="new-layout">  
+    <put-attribute name="main-content" value="/WEB-INF/views/test.jsp"></put-attribute>
+  </definition>
+  
+  <definition name="create" extends="new-layout">  
     <put-attribute name="main-content" value="/WEB-INF/views/workspace.jsp"></put-attribute>
   </definition>
       
@@ -33,6 +36,7 @@
   <definition name="new-layout" template="/WEB-INF/views/layout/bouncingdata/layout.jsp">
     <put-attribute name="title" value="Bouncing Data"></put-attribute>
     <put-attribute name="header-content" value="/WEB-INF/views/layout/bouncingdata/header.jsp" />
+    <put-attribute name="navigation" value="/WEB-INF/views/layout/bouncingdata/nav.jsp"></put-attribute>
     <put-attribute name="footer-content" value="/WEB-INF/views/layout/bouncingdata/footer.jsp" />
   </definition>
   

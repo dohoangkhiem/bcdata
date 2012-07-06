@@ -6,7 +6,7 @@
     </div>
   </div>
   
-  <h2 style="margin: 0;">
+  <h2 style="margin: 0 0 0 10px; float: left; display: inline;">
     <a href="#">Bouncing Data</a>
   </h2>
   <div class="search-container">

@@ -43,6 +43,8 @@ Workspace.prototype.init = function() {
   this.untitledCounter = 0;
   
   $(function() {
+    $('#main-content input:button').button();
+    $('#main-content input:submit').button();
     
     //Init popup dialog
     $('.workspace-container #new-app-dialog').dialog({
@@ -100,18 +102,10 @@ Workspace.prototype.init = function() {
         
       }, 
       
-      show: function(event, ui) {
-        // need this check as we have a trick in add() function above
-        if (me.tabsIndex[ui.index].loaded) {
-          var type = me.tabsIndex[ui.index].type;
-          if (type == 'app') {
-            var $layout = $('.workspace-content-layout', $(ui.panel)).layout();
-            if ($layout) $layout.resizeAll();
-          } else if (type == 'dataset') {
-            var $layout = $('.dataset-view-layout', $(ui.panel)).layout();
-            if ($layout) $layout.resizeAll();
-          }
-        }  
+      // each time show the tab
+      show: function(event, ui) {       
+        var guid = me.tabsIndex[ui.index].guid;
+        me.updateActionStatus(guid, !guid?null:(me.tabsInfo[guid].app.authorName == com.bouncingdata.Main.username));
       }
 
     });
@@ -137,19 +131,23 @@ Workspace.prototype.init = function() {
     // create empty tab
     me.createTab(null);
     
-    // test
-    $('.workspace-container').click(function(e) {     
+    // 
+    $('.workspace-ide .app-actions').click(function(e) {     
       var $target = $(e.target);
       if (($target[0].nodeName == "input" || $target[0].nodeName == "INPUT") && $target.hasClass("app-action")) {       
         // determine tab
-        var $tab = $target.parents('.workspace-tab-panel');
+        //var $tab = me.getSelectedTabId(); 
+          //$target.parents('.workspace-tab-panel');
         // execute
-        var tabId = $tab[0].id;
+        var tabId = me.getSelectedTabId();
         var index = me.getTabIndex(tabId);
-        if ($target[0].id == "run-app") {
+        var actionId = $target.attr('id');
+        if (actionId == "run-app") {
           me.execute(index);
-        } else if ($target[0].id == "save-app") {
+        } else if (actionId == "save-app") {
           me.saveCode(index);
+        } else if (actionId = 'copy-app') {
+          me.cloneApp(index);
         }
       }
     });
@@ -172,15 +170,17 @@ Workspace.prototype.openApp = function(app, tabName) {
     this.tabsCounter++;
     this.untitledCounter++;
     this.currentApp = null;
-    this.tabsIndex[index].guid = null;
     if (!tabName) tabName = 'Untitled' + this.untitledCounter;
+    this.tabsIndex[index].guid = null;
+    //this.tabsIndex[index].name = tabName;
     this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, tabName);
   } else {
     this.currentApp = app;
     this.tabsCounter++;
-    this.tabsIndex[index].guid = app.guid;
-    this.tabsInfo[app.guid] = { tabId: 'tabs-' + this.tabsCounter, app: app};
     if (!tabName) tabName = app.name;
+    this.tabsIndex[index].guid = app.guid;
+    //this.tabsIndex[index].name = tabName;
+    this.tabsInfo[app.guid] = { tabId: 'tabs-' + this.tabsCounter, app: app};
     this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, tabName);
   }
   
@@ -212,6 +212,8 @@ Workspace.prototype.removeTab = function(index) {
   if (this.getNumberOfTabs() == 1) {
     return;
   }
+  if (!this.tabsIndex[index]) return;
+  
   var guid = this.tabsIndex[index].guid;
   this.tabsIndex.splice(index, 1);
   //delete this.sessions_[this.getTabId(index)];
@@ -295,6 +297,11 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
       applyDefaultStyles: true
     });
     
+    if (!guid) {
+      this.tabsIndex[tabIndex].loaded = true;
+      return;
+    }
+    
     var dataset = this.tabsInfo[guid].dataset;
     var $table = $('table.dataset-table', $tabContent)
     
@@ -371,28 +378,24 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
   if (guid) {
     $('.app-info', $tabContent).show();
     $('.new-app-info', $tabContent).hide();
-    app = this.tabsInfo[guid].app;
-    
-    if (app && (app.authorName != com.bouncingdata.Main.username)) {
-      $('.app-actions #save-app', $tabContent).hide();
-      $('.app-actions #run-app', $tabContent).hide();
-      $('.app-actions #copy-app', $tabContent).show();
-    }
+    app = this.tabsInfo[guid].app;    
   } else {
     $('.app-info', $tabContent).hide();
     $('.new-app-info', $tabContent).show();
-    $('.app-actions #copy-app', $tabContent).hide();
   }
-  
-  // initializes resizable layout
-  var $layoutContainer = $('#workspace-content-layout-' + tabId, $tabContent);
-  var $layout = $layoutContainer.layout({
-    center__paneSelector: '#workspace-content-center-' + tabId,
-    east__paneSelector: '#workspace-content-east-' + tabId,
-    east__size: 480,
+    
+  var $appCodeLayoutContainer = $('.app-code-layout', $tabContent);
+  $appCodeLayoutContainer.layout({
+    center__paneSelector: '#app-code-layout-center-' + tabId,
+    east__paneSelector: '#app-code-layout-east-' + tabId,
+    east__size: 400,
     applyDefaultStyles: true
   });
   
+  // initialize ace editor
+  var editorDom = $('.app-code-editor .code-editor', $tabContent)[0];
+  var editor = ace.edit(editorDom);
+  editor.getSession().setMode('ace/mode/python');
   
   // Retrieve app. details
   if (app) {
@@ -415,30 +418,15 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
     });
   }
   
-  /*// Action handlers
-  $('.app-actions #run-app', $tabContent).click(function() {
-    var index = me.getSelectedIndex();
-    me.execute(index);
-  }); 
-  
-  $('.app-actions #save-app', $tabContent).click(function() {
-    var index = me.getSelectedIndex();
-    me.saveCode(index);
-  });*/
-  
-  $('.app-actions #copy-app', $tabContent).click(function() {
-    var code = me.getCode($tabContent);
-    var lang;
-    var tabName;
-    if (app) {
-      tabName = app.name + "-clone";
-      lang = app.language;
-    } 
-    var $newTab = me.getTabContainer(me.createTab(null, tabName));
-    me.setCode(code, $newTab);
-    $('.new-app-info .language-select', $newTab).val(lang?lang:'python');
-    return false;
+  $(function() {
+    // just for demo
+    var $iframe = $('<iframe style="position: absolute; width: 100%; height: 100%; border: 0 none;"></iframe>');
+    var $dashboard = $('#viz-dashboard-' + tabId, $tabContent);
+    $iframe.load().appendTo($dashboard);
+    $dashboard.append('<script type="text/javascript"> $("#viz-dashboard-' + tabId + ' iframe").attr("src", "http://bouncingdata.com/cdn/dashboard.html") </script>');
+    //$iframe.attr('src', "http://bouncingdata.com/cdn/dashboard.html");
   });
+  
   
   $('.console-actions .clear-console', $tabContent).click(function() {
     var index = me.getSelectedIndex();
@@ -453,14 +441,14 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
 
 
 /**
- * 
+ * Executes code from the tab with given index
  */
 Workspace.prototype.execute = function(tabIndex) {
   var me = this;
-  var guid = me.tabsIndex[tabIndex].guid;
-  var tabId = me.getTabId(tabIndex);
-  var $tab = me.getTabContainer(tabIndex);
-  var code = $('#code-editor-' + tabId, $tab).val();
+  var guid = this.tabsIndex[tabIndex].guid;
+  var tabId = this.getTabId(tabIndex);
+  var $tab = this.getTabContainer(tabIndex);
+  var code = this.getCode($tab);
   
   if (!code || $.trim(code).length == 0) return;
   
@@ -468,7 +456,7 @@ Workspace.prototype.execute = function(tabIndex) {
   var language;
   if (guid) {
     url = ctx + "/app/" + guid + "/execute";
-    language = me.tabsInfo[guid].app.language;
+    language = this.tabsInfo[guid].app.language;
   } else {
     url = ctx + "/main/execute"; 
     language = $('.new-app-info select.language-select', $tab).val();
@@ -488,7 +476,6 @@ Workspace.prototype.execute = function(tabIndex) {
         if (result['statusCode'] >= 0) {
           me.setStatus($tab, "finished-running");
           var jqConsole = me.tabsIndex[tabIndex].jqConsole;
-          //var jqConsole = me.getJqConsole($tab);
           jqConsole.Write(result['output'], 'jqconsole-output');
           //jqConsole.Write('Run finished.', 'jqconsole-output');
           me.startPrompt(jqConsole, 'python');
@@ -518,7 +505,6 @@ Workspace.prototype.execute = function(tabIndex) {
 Workspace.prototype.saveCode = function(tabIndex) {
   var me = this;
   var $tab = this.getTabContainer(tabIndex);
-  
   var code = this.getCode($tab);
   
   if (!code || $.trim(code).length == 0) {
@@ -535,8 +521,7 @@ Workspace.prototype.saveCode = function(tabIndex) {
       console.debug('No permission to save this application.');
       return false;
     } else {
-      // save app. code
-      
+      // save app. code     
       this.setStatus($tab, "updating");
       
       $.ajax({
@@ -569,9 +554,23 @@ Workspace.prototype.saveCode = function(tabIndex) {
     $('#new-app-name', $dialog).focus();
     return;
   }
-  
 }
 
+/**
+ * Clone content from given tab to new tab
+ */
+Workspace.prototype.cloneApp = function(tabIndex) {
+  var $tab = this.getTabContainer(tabIndex);
+  var guid = this.tabsIndex[tabIndex].guid; 
+  if (guid) {
+    var app = this.tabsInfo[guid].app;
+    var lang = app.language;
+    var code = this.getCode($tab);
+    var $newTab = this.getTabContainer(this.createTab(null, app.name + "-clone"));
+    this.setCode(code, $newTab);
+    $('.new-app-info .language-select', $newTab).val(lang?lang:'python');
+  }
+}
 
 /**
  * Creates new application
@@ -625,15 +624,19 @@ Workspace.prototype.bindAppToTab = function(index, app) {
   $('div.app-title', $appInfo).append(app.name);
   $('div.app-language', $appInfo).append(app.language);
   $('div.app-author', $appInfo).append(app.authorName);
-  
+  this.updateActionStatus(true, true);
 }
 
 Workspace.prototype.setCode = function(code, $tab) {
-  $('.app-code-editor .code-editor', $tab).val(code);
+  var editorDom = $('.app-code-editor .code-editor', $tab)[0];
+  var editor = ace.edit(editorDom);
+  editor.getSession().getDocument().setValue(code);
 }
 
 Workspace.prototype.getCode = function($tab) {
-  return $('.app-code-editor .code-editor', $tab).val();
+  var editorDom = $('.app-code-editor .code-editor', $tab)[0];
+  var editor = ace.edit(editorDom);
+  return editor.getSession().getDocument().getValue();
 }
 
 Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
@@ -730,38 +733,50 @@ Workspace.prototype.setStatus = function($tab, status) {
   if (status) {
     switch(status) {
     case "running":
-      $("#ajax-message", $tab).text("Running...");
+      $("#ajax-message", $tab).text("Running...").css("color", "green");
       $("#ajax-loading", $tab).css("display", "inline");
-      $("#ajax-message", $tab).css("color", "green");
       break;
     case "loading":
-      $("#ajax-message", $tab).text("Loading...");
+      $("#ajax-message", $tab).text("Loading...").css("color", "green");
       $("#ajax-loading", $tab).css("display", "inline");
-      $("#ajax-message", $tab).css("color", "green");
       break;
     case "finished-running":
-      $("#ajax-message", $tab).text("Finished running.");
+      $("#ajax-message", $tab).text("Finished running.").css("color", "green");;
       $("#ajax-loading", $tab).css("display", "none");
-      $("#ajax-message", $tab).css("color", "green");
       break;
     case "updating":
-      $("#ajax-message", $tab).text("Updating...");
+      $("#ajax-message", $tab).text("Updating...").css("color", "green");
       $("#ajax-loading", $tab).css("display", "inline");
-      $("#ajax-message", $tab).css("color", "green");
       break;
     case "updated":
-      $("#ajax-loading", $tab).css("display", "none");
-      $("#ajax-message", $tab).text("Updated.");
-      $("#ajax-message", $tab).css("color", "green");
+      $("#ajax-loading", $tab).css("display", "none")
+      $("#ajax-message", $tab).text("Updated.").css("color", "green");;
       break;
     case "error":
-      $("#ajax-loading", $tab).css("display", "none");
-      $("#ajax-message", $tab).text("Error");
-      $("#ajax-message", $tab).css("color", "red");
+      $("#ajax-loading", $tab).css("display", "none")
+      $("#ajax-message", $tab).text("Error").css("color", "red");;
     }
   } else {
     $("#ajax-message", $tab).text("");
     $("#ajax-loading", $tab).css("display", "none");
+  }
+}
+
+Workspace.prototype.updateActionStatus = function(isSaved, isOwner) {
+  if (isSaved) {
+    if (isOwner) {
+      $('.app-actions #save-app').show();
+      $('.app-actions #run-app').show();
+      $('.app-actions #copy-app').show();
+    } else {
+      $('.app-actions #save-app').hide();
+      $('.app-actions #run-app').hide();
+      $('.app-actions #copy-app').show();
+    }
+  } else {
+    $('.app-actions #save-app').show();
+    $('.app-actions #run-app').show();
+    $('.app-actions #copy-app').hide();
   }
 }
 

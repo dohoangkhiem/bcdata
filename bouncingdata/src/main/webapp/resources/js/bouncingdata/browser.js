@@ -31,19 +31,19 @@ Browser.prototype.init = function() {
     
     // initializes search
     var searchFunc = function() {
-      var query = $.trim($('#search-form #query').val()); 
+      var query = $.trim($('#workspace-browser #search-form #query').val()); 
       if (query.length > 0) {
         me.search(query); 
       }
     }
-    $('#search-form #query').keypress(function(e) {
+    $('#workspace-browser #search-form #query').keypress(function(e) {
       var code = (e.keyCode ? e.keyCode : e.which);
       if(code == 13) {
         searchFunc();
         return false;
       } else return true;
     });
-    $('#search-form #search-submit').click(function() {
+    $('#workspace-browser #search-form #search-submit').click(function() {
       searchFunc();
       return false;
     });
@@ -54,10 +54,10 @@ Browser.prototype.setMode = function(mode) {
   var me = this;
   this.mode = mode;
   if (mode == "all") {
-    $(".browser-tabs #browser-mystuff .show-all").hide();
+    $("#browser-tabs #browser-mystuff .show-all").hide();
   } else if (mode == "search") {
-    $(".browser-tabs #browser-mystuff .show-all").show();
-    $(".browser-tabs #browser-mystuff .show-all #show-all-button").click(function() {
+    $("#browser-tabs #browser-mystuff .show-all").show();
+    $("#browser-tabs #browser-mystuff .show-all #show-all-button").click(function() {
       me.showAll();
       return false;
     });
@@ -117,8 +117,8 @@ Browser.prototype.getApplicationList = function() {
 
 Browser.prototype.loadItems = function(itemMap, type) {
   var $container;
-  if (type == "application") $container = $('#application-list');
-  else if (type == 'dataset') $container = $('#dataset-list');
+  if (type == "application") $container = $('#browser-tabs #application-list');
+  else if (type == 'dataset') $container = $('#browser-tabs #dataset-list');
   else return;
   
   $container.empty();
@@ -235,4 +235,4 @@ Browser.prototype.search = function(query) {
 }
 
 com.bouncingdata.Browser = new Browser();
-com.bouncingdata.Browser.init();
+//com.bouncingdata.Browser.init();

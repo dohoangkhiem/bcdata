@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<div class="footer-horizontal-rule"></div>
+<!-- div class="footer-horizontal-rule"></div-->
 <div class="footer-content">
   <span style="font-weight: bold; text-align: center;">Copyright &copy;2012 bouncingdata.com. All rights reserved.</span>
 </div>
@@ -63,7 +63,66 @@
       
       <!-- Define the workspace templates -->
       <script id="workspace-content-template" type="text/x-jquery-tmpl">
-        <div class="workspace-content-container">
+        <div class="workspace-ide-content">
+          <div class="app-status">
+            <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loading.gif" />" style="display:none;"  />
+            <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+          </div>
+          <div class="app-info">
+            <div class='app-title'><label style='font-weight: bold;'>Application name: </label>\${appName}</div>
+            <div class='app-language' id='app-language'><label style='font-weight: bold;'>Language: </label>\${appLang}</div>
+            <div class='app-author'><label style='font-weight: bold;'>Author: </label>\${appAuthor}</div>
+          </div>
+          <div class="new-app-info">
+            <strong>Language: </strong>
+            <select class="language-select">
+              <option value='python'>Python</option>
+              <option value='r'>R</option>
+            </select>
+          </div>
+          <div class="clear"></div>
+          <div class="app-code-container">
+						<div class="app-code-layout">
+              <div class="app-code-layout-center app-code-editor" id="app-code-layout-center-\${tabId }">
+                <!-- textarea rows='15' id='code-editor-\${tabId}' class='code-editor' spellcheck='false'></textarea-->
+                <div>
+								  <div id="code-editor-\${tabId}" class="code-editor"></div>
+								</div>    
+              </div>
+              <div class="app-code-layout-east app-execution-logs" id="app-code-layout-east-\${tabId }">
+                <div id="app-execution-logs-\${tabId}">
+                  <div class="console prompt" style="display: block;"></div>
+                  <div class="console-actions">
+                    <input class="clear-console" type="button"
+                      value="Clear console" />
+                  </div>
+                </div>
+              </div>
+            </div>						
+          </div>
+          
+          <div class="app-output-tabs">
+            <ul>
+              <li><a href="#app-output-viz-\${tabId}">Visualization</a></li>
+              <li><a href="#app-output-code-\${tabId}">Code</a></li>
+              <li><a href="#app-output-data-\${tabId}">Data</a></li>
+            </ul>
+            <div id="app-output-viz-\${tabId}" class="app-output-viz">
+              <div class="app-output-viz-dashboard">
+                <div><strong>Visualization Dashboard.</strong></div><br />
+								<div class="viz-dashboard" id="viz-dashboard-\${tabId}"></div>
+              </div>
+            </div>
+            <div id="app-output-code-\${tabId}" class="app-output-code">
+              <div>App. Code</div>
+            </div>
+            <div id="app-output-data-\${tabId}" class="app-output-data">
+              <div>App. Data</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- div class="workspace-content-container">
           <div class="workspace-content-layout" id="workspace-content-layout-\${tabId}">
             <div class="workspace-content-center" id="workspace-content-center-\${tabId}">
               <div class="workspace-content-main">
@@ -129,6 +188,6 @@
             </div>
           </div>
           
-        </div>
+        </div-->
         
       </script>

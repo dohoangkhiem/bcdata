@@ -1,5 +1,22 @@
 .workspace-container {
-  height: 820px;  
+}
+
+#main-content {
+  position: relative;
+}
+
+#main-content .workspace-browser {
+  position: fixed;
+  top: 60px;
+  bottom: 20px;
+  right: 6px;
+  width: 220px;
+  background-color: #FFFFFF;
+}
+
+#main-content .workspace-ide {
+  margin-right: 230px;
+  background-color: #FFFFFF;
 }
 
 .workspace-container .workspace-main-tabs {
@@ -7,13 +24,13 @@
   padding: 2px;
 }
 
-.workspace-content-main .app-actions {
-  margin: 10px 0;
+.workspace-ide .app-actions {
+  margin: 10px 10px 0 0;
   float: right;
 }
 
-.workspace-content-main .app-editor {
-  padding: 1em;
+.workspace-ide-content .app-status {
+  float: right;
 }
 
 .workspace-main-tabs .workspace-main-tabs-bar li .ui-icon-close { 
@@ -42,28 +59,42 @@
 }
 
 .workspace-main-tabs > div.ui-tabs-panel {
-  height: 770px;
-  padding: 1em;
+  padding: 10px;
 }
 
 .workspace-main-tabs .workspace-content-container, .workspace-main-tabs .workspace-content-container .workspace-content-layout {
   height: 100%;
 }
 
-.workspace-container .workspace-content-main .app-code-editor {
+.workspace-ide-content .app-code-container {
+  margin-top: 15px;  
+}
+
+.workspace-ide-content .app-code-container, .workspace-ide-content .app-code-container .app-code-layout {
+  height: 400px;
+}
+
+.workspace-ide-content .app-code-container .app-code-layout-center>div {
+  height: 378px;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  border: 0 none;
+}
+
+.workspace-container .workspace-ide-content .app-code-editor {
   border: 1px solid #D3D3D3;
   margin: 1em 0 0 0;
 }
 
-.workspace-container .code-editor {
-  font-family: monospace;
+.workspace-ide-content .code-editor {
   width: 100%;
   font-size: 13px;
   resize: none;
-  color: #000000;
   border: 0;
   padding: 0;
   margin: 0;
+  height: 378px;
 }
 
 .workspace-container .app-execution-logs-tabs {
@@ -71,11 +102,25 @@
   padding: 1em .5em;
 }
 
-.workspace-container .app-execution-logs-tabs .console-actions {
+.workspace-ide-content .app-execution-logs .console-actions {
   margin-top: 5px;
 }
 
+.app-execution-logs .console-actions input.ui-button {
+  float: right;
+}
+
+.workspace-ide-content .app-output-tabs {
+  margin-top: 10px;
+}
+
 /** Visualization styles **/
+
+.workspace-ide-content .app-output-viz .viz-dashboard {
+  min-height: 450px;
+  border: 1px solid #CCCCCC;
+  position: relative;
+}
 
 .visualization-item-frame {
   border: 1px solid #CCCCCC;
@@ -112,7 +157,7 @@
 /* The console container element */
 .app-execution-logs .console {
   position: relative;
-  height: 300px;
+  height: 350px;
   background-color: #FFFFFF;
   font-size: .9em;
   border: 1px solid #D3D3D3;

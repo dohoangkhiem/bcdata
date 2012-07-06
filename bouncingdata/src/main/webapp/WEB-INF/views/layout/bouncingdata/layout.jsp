@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title><tiles:insertAttribute name="title" ignore="true" /></title>
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/new-layout/default.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/default.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/browser.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/workspace.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/jquery-ui/smoothness/jquery-ui-1.8.20.custom.css" />" rel="stylesheet" />
@@ -19,7 +19,11 @@
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.layout-1.3.0.rc30.4.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.dataTables.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.tmpl.min.js" />"></script>
+  
+  <!-- Loads at start page for dev. mode -->
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/main.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workspace.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
   
   <script type="text/javascript" src="<c:url value="/resources/dojo/dojo.js" />"> </script>
   <script type="text/javascript" src="<c:url value="/resources/spring/Spring.js" />"> </script>
@@ -27,6 +31,9 @@
   
   <script type="text/javascript" src="<c:url value="/resources/js/jqconsole-2.7.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.bxSlider.min.js" />"></script>
+  
+  <!-- Some external scripts like this need to be loaded in defer way -->
+  <script type="text/javascript" src="<c:url value="/resources/js/ace-min/ace.js" />" charset="utf-8"></script>
   
   <script>
     var ctx = '${pageContext.request.contextPath}';
@@ -41,7 +48,7 @@
         <tiles:insertAttribute name="header-content" />
       </div>
     </div>
-    <div style="clear: both; height: 80px;"></div>
+    <div style="clear: both; height: 60px;"></div>
     <div class="main-container">
       <div class="main-navigation">
         <tiles:insertAttribute name="navigation" />
