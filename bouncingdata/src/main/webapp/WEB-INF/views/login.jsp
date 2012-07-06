@@ -62,7 +62,8 @@
       
       </div>
       <div class="title">
-        <h1>Bouncing Data</h1>
+        <h1>Bouncing Data</h1><br />
+        <h4>Browse the <a href="http://www.bouncingdata.com/snapshot" style="color: blue; text-decoration: none;">snapshot version</a></h4>
       </div>
       <div class="top-horizontal-rule"></div>
     </div>

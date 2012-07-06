@@ -228,7 +228,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>old</finalName>
+    <finalName>ROOT</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/java</directory>
