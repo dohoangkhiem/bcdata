@@ -23,12 +23,12 @@
   
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
     <property name="logDir" value="/tmp/bouncingdata"></property>
-    <property name="storePath" value="/home/ec2-user/temp/apps"></property>
+    <property name="storePath" value="/home/khiem/java/temp/apps"></property>
     <property name="datastoreService" ref="datastoreService" />
   </bean>
  
   <bean id="appStoreService" class="com.bouncingdata.plfdemo.service.ApplicationStoreService">
-    <constructor-arg value="/home/ec2-user/temp/apps"></constructor-arg>
+    <constructor-arg value="/home/khiem/java/temp/apps"></constructor-arg>
   </bean>
   
   <bean id="mainController" class="com.bouncingdata.plfdemo.controller.MainController">
