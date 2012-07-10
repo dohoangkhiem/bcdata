@@ -122,6 +122,28 @@
   position: relative;
 }
 
+
+
+.workspace-ide-content .app-output-viz .viz-dashboard iframe {
+  border: 0 none;  
+  overflow: hidden;
+}
+
+.app-output-viz .viz-dashboard .viz-handle {
+  height: 20px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0 none;
+}
+
+.app-output-viz .viz-dashboard .viz-handle-hover {
+  border-style: dotted;
+  background: #EEEEEE no-repeat scroll left top;
+  cursor: pointer;
+}
+
 .visualization-item-frame {
   border: 1px solid #CCCCCC;
   width: 100%;

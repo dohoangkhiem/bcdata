@@ -16,6 +16,7 @@ import org.springframework.orm.jdo.support.JdoDaoSupport;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.DashboardItem;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
@@ -233,5 +234,21 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     List<Dataset> ds = (List<Dataset>) q.execute();
     return (ds!= null && ds.size() > 0)?ds.get(0):null;
 
+  }
+
+  @Override
+  public List<DashboardItem> getDashboard(int appId) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(DashboardItem.class);
+    q.setFilter("appId == " + appId);
+    List<DashboardItem> di = (List<DashboardItem>) q.execute();
+    return di;
+  }
+
+  @Override
+  public void updateDashboard(int appId, int vizId, int x, int y, int w, int h)
+      throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(DashboardItem.class);
+    q.setFilter("appId == " + appId + " AND vizId == " + vizId);
+    
   }
 }

@@ -278,7 +278,8 @@ Workspace.prototype.makeTabContent = function(tabId, obj, type) {
 Workspace.prototype.processTab = function(tabIndex, $tabContent) {
   
   var type = this.tabsIndex[tabIndex].type;
-  var tabId = $tabContent.parent()[0].id;
+  var $tab = $tabContent.parent();
+  var tabId = $tab.attr('id');
   var guid = this.tabsIndex[tabIndex].guid;
   var me = this;
   
@@ -289,7 +290,7 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
   if (type == 'dataset') {
     
     // initializes jQuery Layout
-    var $layoutContainer = $('#dataset-view-layout-' + tabId, $tabContent);
+    var $layoutContainer = $('#dataset-view-layout-' + tabId, $tab);
     var $layout = $layoutContainer.layout({
       center__paneSelector: '#dataset-view-center-' + tabId,
       east__paneSelector: '#dataset-view-east-' + tabId,
@@ -303,23 +304,23 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
     }
     
     var dataset = this.tabsInfo[guid].dataset;
-    var $table = $('table.dataset-table', $tabContent)
+    var $table = $('table.dataset-table', $tab)
     
     // retrieve dataset content
     me.setStatus($tabContent, "running");
     console.debug("Retrieving dataset content...");
-    var $queryEditor = $('.query-editor', $tabContent);
+    var $queryEditor = $('.query-editor', $tab);
     $queryEditor.val('SELECT * FROM `' + dataset.name + '`');
     $.ajax({
       url: ctx + '/dataset/' + guid,
       dataType: 'json',
       success: function(result) {
         me.renderDatatable(result, $table);
-        me.setStatus($tabContent, "");
+        me.setStatus($tab, "");
       }, 
       error: function(result) {
         console.debug(result);
-        me.setStatus($tabContent, "error");
+        me.setStatus($tab, "error");
       }
     });
     
@@ -327,7 +328,7 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
     var queryFunction = function() {
       var sql = $queryEditor.val();
       if (!sql) return;
-      me.setStatus($tabContent, "running");
+      me.setStatus($tab, "running");
       $.ajax({
         url: ctx + '/dataset/query',
         dataType: 'json',
@@ -339,23 +340,23 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
         success: function(result) {
           if (result['statusCode'] >= 0) {
             // show datatable
-            me.setStatus($tabContent, "finished-running");
+            me.setStatus($tab, "finished-running");
             var data = result['data'];
             me.renderDatatable(data, $table);
           } else {
             // print error message
-            me.setStatus($tabContent, "error");
+            me.setStatus($tab, "error");
             console.debug(result);
           }
         },
         error: function(result) {
-          me.setStatus($tabContent, "error");
+          me.setStatus($tab, "error");
           console.debug(result);
         }
       });
     }
     
-    $('input.dataset-query-execute', $tabContent).click(function() {
+    $('input.dataset-query-execute', $tab).click(function() {
       queryFunction();
       return false;
     });
@@ -365,26 +366,26 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
   }
   
   // init. tabs
-  $('.app-execution-logs-tabs', $tabContent).tabs();
-  $('.app-output-tabs', $tabContent).tabs();
+  $('.app-execution-logs-tabs', $tab).tabs();
+  $('.app-output-tabs', $tab).tabs();
 
   // init console
-  var jqConsole = $('#app-execution-logs-' + tabId + ' .console', $tabContent).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
+  var jqConsole = $('#app-execution-logs-' + tabId + ' .console', $tab).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
   this.tabsIndex[tabIndex].jqConsole = jqConsole;
   this.startPrompt(jqConsole, 'python');
   
   // init app. actions
   var app;
   if (guid) {
-    $('.app-info', $tabContent).show();
-    $('.new-app-info', $tabContent).hide();
+    $('.app-info', $tab).show();
+    $('.new-app-info', $tab).hide();
     app = this.tabsInfo[guid].app;    
   } else {
-    $('.app-info', $tabContent).hide();
-    $('.new-app-info', $tabContent).show();
+    $('.app-info', $tab).hide();
+    $('.new-app-info', $tab).show();
   }
     
-  var $appCodeLayoutContainer = $('.app-code-layout', $tabContent);
+  var $appCodeLayoutContainer = $('.app-code-layout', $tab);
   $appCodeLayoutContainer.layout({
     center__paneSelector: '#app-code-layout-center-' + tabId,
     east__paneSelector: '#app-code-layout-east-' + tabId,
@@ -393,42 +394,42 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
   });
   
   // initialize ace editor
-  var editorDom = $('.app-code-editor .code-editor', $tabContent)[0];
+  var editorDom = $('.app-code-editor .code-editor', $tab)[0];
   var editor = ace.edit(editorDom);
   editor.getSession().setMode('ace/mode/python');
   
   // Retrieve app. details
   if (app) {
     $(function() {
-      me.setStatus($tabContent.parent(), "loading");
+      me.setStatus($tab.parent(), "loading");
       console.info('Retrieving application details...');
       $.ajax({
         url: ctx + "/app/" + app['guid'],
         success: function(result) {
           console.debug(result);
-          me.setCode(result.code, $tabContent)
-          me.renderOutput(result['datasets'], result['visualizations'], $tabContent, app);        
-          me.setStatus($tabContent.parent(), "");
+          me.setCode(result.code, $tab)
+          me.renderOutput(result['datasets'], result['visualizations'], $tab, app);        
+          me.setStatus($tab.parent(), "");
         },
         error: function(msg) {
           console.debug(msg);
-          me.setStatus($tabContent.parent(), "error");
+          me.setStatus($tab.parent(), "error");
         }
       });
     });
   }
-  
+  /*
   $(function() {
     // just for demo
     var $iframe = $('<iframe style="position: absolute; width: 100%; height: 100%; border: 0 none;"></iframe>');
-    var $dashboard = $('#viz-dashboard-' + tabId, $tabContent);
+    var $dashboard = $('#viz-dashboard-' + tabId, $tab);
     $iframe.load().appendTo($dashboard);
     $dashboard.append('<script type="text/javascript"> $("#viz-dashboard-' + tabId + ' iframe").attr("src", "http://bouncingdata.com/cdn/dashboard.html") </script>');
     //$iframe.attr('src', "http://bouncingdata.com/cdn/dashboard.html");
   });
+  */
   
-  
-  $('.console-actions .clear-console', $tabContent).click(function() {
+  $('.console-actions .clear-console', $tab).click(function() {
     var index = me.getSelectedIndex();
     var jqconsole = me.tabsIndex[index].jqConsole;
     jqconsole.Reset();
@@ -640,26 +641,27 @@ Workspace.prototype.getCode = function($tab) {
 }
 
 Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
-  var $dsContainer = $(".app-output-datasets .dataset-container", $tab);
+  /*var $dsContainer = $(".app-output-datasets .dataset-container", $tab);
   $dsContainer.empty();
   // render datasets
   // IMPORTANT: this loop may decrease performance, need to be improved.
   for (d in datasets) {
     this.renderDataset(d, JSON.parse(datasets[d]), $dsContainer);
-  }
+  }*/
   
-  var $vsSlider = $(".app-output-visuals .visuals-container", $tab);
-  $vsSlider.empty();
-  for (v in visuals) {
-    var type = visuals[v].type;
+  var $vsContainer = $("#viz-dashboard-" + $tab.attr('id'), $tab);
+  $vsContainer.empty();
+  //for (v in visuals) {
+    /*var type = visuals[v].type;
     if (type == "png" || type == "PNG") {
       this.renderBase64PNG(v, visuals[v].source, $vsSlider);
     } else if (type == "html" || type == "HTML") {
       //
       this.renderVisualization(v, visuals[v].source, $vsSlider, app);
       console.info("Render HTML visualization:" + v);
-    }
-  }
+    }*/
+  com.bouncingdata.Dashboard.addAllViz(visuals, app['guid'], $vsContainer);
+  //}
 }
 
 Workspace.prototype.renderVisualization = function(name, source, $visualsContainer, app) {

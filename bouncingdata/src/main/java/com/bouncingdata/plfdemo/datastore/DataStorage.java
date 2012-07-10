@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.DashboardItem;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
@@ -133,4 +134,8 @@ public interface DataStorage {
   public void createVisualization(Visualization visualization) throws DataAccessException; 
   
   public Dataset getDatasetByGuid(String guid) throws DataAccessException;
+  
+  public List<DashboardItem> getDashboard(int appId) throws DataAccessException;
+  
+  public void updateDashboard(int appId, int vizId, int x, int y, int w, int h) throws DataAccessException;
 }
