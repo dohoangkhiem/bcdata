@@ -141,4 +141,9 @@ public class DatastoreServiceImpl implements DatastoreService {
     return dataStorage.getDashboard(appId);
   }
 
+  @Override
+  public void invalidateViz(Application application) throws Exception {
+    dataStorage.invalidateViz(application);    
+  }
+
 }

@@ -139,6 +139,9 @@
       <field name="author">
         <column name="author" jdbc-type="INTEGER" />
       </field>
+      <field name="isActive">
+        <column name="is_active" jdbc-type="BIT" />
+      </field>
     </class>
     
     <class name="ExecutionLog" identity-type="datastore" table="execution_logs">

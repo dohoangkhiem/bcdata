@@ -17,6 +17,7 @@ public class Visualization {
   private int appId;
   private int author;
   private String type;
+  private boolean isActive;
   
   public int getId() {
     return id;
@@ -59,6 +60,12 @@ public class Visualization {
   }
   public void setType(String type) {
     this.type = type;
+  }
+  public boolean isActive() {
+    return isActive;
+  }
+  public void setActive(boolean isActive) {
+    this.isActive = isActive;
   }
   
 }

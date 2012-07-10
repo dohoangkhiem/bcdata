@@ -453,14 +453,15 @@ Workspace.prototype.execute = function(tabIndex) {
   
   if (!code || $.trim(code).length == 0) return;
   
-  var url;
-  var language;
+  var url, language, app;
   if (guid) {
     url = ctx + "/app/" + guid + "/execute";
     language = this.tabsInfo[guid].app.language;
+    app = this.tabsInfo[guid].app;
   } else {
     url = ctx + "/main/execute"; 
     language = $('.new-app-info select.language-select', $tab).val();
+    app = null;
   }
   
   this.setStatus($tab, "running");
@@ -484,7 +485,7 @@ Workspace.prototype.execute = function(tabIndex) {
           // render datasets & visualizations
           var datasets = result['datasets'];
           var visuals = result['visualizations'];
-          me.renderOutput(datasets, visuals, $tab, null);
+          me.renderOutput(datasets, visuals, $tab, app);
           
         } else {
           console.debug(result);

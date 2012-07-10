@@ -138,4 +138,6 @@ public interface DataStorage {
   public List<DashboardItem> getDashboard(int appId) throws DataAccessException;
   
   public void updateDashboard(int appId, int vizId, int x, int y, int w, int h) throws DataAccessException;
+  
+  public void invalidateViz(Application app) throws DataAccessException;
 }

@@ -27,7 +27,7 @@ public class VisualizeController {
     this.datastoreService = dsService;
   }
   
-  @RequestMapping(value="/{guid}/{vGuid}/{type}", method = RequestMethod.GET)
+  @RequestMapping(value="/app/{guid}/{vGuid}/{type}", method = RequestMethod.GET)
   public String get(@PathVariable String guid, @PathVariable String vGuid, @PathVariable String type, ModelMap model) {
     try { 
       String content = appStoreService.getVisualization(guid, vGuid, type);
@@ -35,6 +35,16 @@ public class VisualizeController {
     } catch (IOException e) {
       // log: file not found
       e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return "visualize";
+  }
+  
+  @RequestMapping(value="/temp/{executionId}/{name}/{type}", method = RequestMethod.GET)
+  public String temp(@PathVariable String executionId, @PathVariable String name, @PathVariable String type, ModelMap model) {
+    try {
+      
     } catch (Exception e) {
       e.printStackTrace();
     }

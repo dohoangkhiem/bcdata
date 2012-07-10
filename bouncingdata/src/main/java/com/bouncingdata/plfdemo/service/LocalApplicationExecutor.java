@@ -164,7 +164,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     if (mode.equals("persistent")) {
       // copy visuals from log dir to visualizations dir
       try {
-        copyVisualizations(ticket, app);
+        processVisualizations(ticket, app);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -211,7 +211,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     return datasets;
   }
   
-  private void copyVisualizations(String executionId, Application app) throws Exception {
+  private void processVisualizations(String executionId, Application app) throws Exception {
+    try {
+      datastoreService.invalidateViz(app);
+    } catch (Exception e) {
+      logger.error("", e);
+    }
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
     File[] vsFiles = execLogDir.listFiles(new FileFilter() {
@@ -232,22 +237,29 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       for (File f : vsFiles) {
         String filename = f.getName();
         Visualization v = new Visualization();
+        
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        VisualizationType type = null;
+        if ("png".equals(extension)) type = VisualizationType.PNG;
+        else if ("html".equals(extension)) type = VisualizationType.HTML;
+        
         v.setAppId(app.getId());
         v.setAuthor(app.getAuthor());
         v.setName(filename.substring(0, filename.lastIndexOf(".")));
-        v.setType("png");
+        v.setType(type.getType());
         String guid = Utils.generateGuid();
         v.setGuid(guid);
+        v.setActive(true);
         datastoreService.createVisualization(v);
         try {
-          FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + ".png"));
+          FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + "." + type.getType()));
         } catch (IOException e) {
           logger.debug("Failed to copy visual file " + f.getAbsolutePath() + " to " + vDir.getAbsolutePath());
         }
       }
     }
   }
-  
+    
   private Map<String, VisualizationSource> getVisualizations(String executionId) {
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);

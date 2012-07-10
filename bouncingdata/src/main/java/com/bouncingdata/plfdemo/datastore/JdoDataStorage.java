@@ -84,7 +84,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   @Override
   public List<Visualization> getApplicationVisualization(int appId) throws DataAccessException {
     Query q = getPersistenceManager().newQuery(Visualization.class);
-    q.setFilter("appId==" + appId);
+    q.setFilter("appId==" + appId + " && isActive==true");
     return (List<Visualization>) q.execute();
   }
 
@@ -248,7 +248,27 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public void updateDashboard(int appId, int vizId, int x, int y, int w, int h)
       throws DataAccessException {
     Query q = getPersistenceManager().newQuery(DashboardItem.class);
-    q.setFilter("appId == " + appId + " AND vizId == " + vizId);
+    q.setFilter("appId == " + appId + " && vizId == " + vizId);
     
+  }
+
+  @Override
+  public void invalidateViz(Application app) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Visualization.class);
+    q.setFilter("appId == " + app.getId() + " && isActive == true");
+    List<Visualization> vis = (List<Visualization>) q.execute();
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      for (Visualization v : vis) {
+        v.setActive(false);
+      }
+      tx.commit();
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+    }
   }
 }

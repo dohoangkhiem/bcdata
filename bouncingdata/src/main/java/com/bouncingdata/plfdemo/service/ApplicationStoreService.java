@@ -29,6 +29,7 @@ public class ApplicationStoreService implements ServletContextAware {
   private Logger logger = LoggerFactory.getLogger(ApplicationStoreService.class);
   
   private String storePath;
+  private String logDir;
   private ServletContext servletContext;
   
   public ApplicationStoreService(String storePath) {
@@ -68,6 +69,24 @@ public class ApplicationStoreService implements ServletContextAware {
   }
   
   public String getVisualization(String guid, String vGuid, String type) throws IOException {
+    File f = new File(storePath + Utils.FILE_SEPARATOR + guid + Utils.FILE_SEPARATOR + "/v/" + vGuid + "." + type.toLowerCase());
+    if (!f.isFile()) {
+      // 
+      if (logger.isDebugEnabled()) {
+        logger.debug("Visualization file {} does not existed.", f.getAbsolutePath());
+      }
+      return null;
+    }
+    if ("png".equals(type)) {
+      byte[] bytes = FileUtils.readFileToByteArray(f);
+      return new String(Base64.encodeBase64(bytes));
+    } else {
+      String content = FileUtils.readFileToString(f);
+      return content;
+    }
+  }
+  
+  public String getTemporaryVisualization(String executionId, String name, String type) throws IOException {
     File f = new File(storePath + Utils.FILE_SEPARATOR + guid + Utils.FILE_SEPARATOR + "/v/" + vGuid + "." + type.toLowerCase());
     if (!f.isFile()) {
       // 

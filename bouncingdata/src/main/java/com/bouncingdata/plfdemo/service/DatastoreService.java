@@ -86,4 +86,6 @@ public interface DatastoreService {
   public void createVisualization(Visualization visualization) throws Exception;
   
   public List<DashboardItem> getDashboard(int appId)  throws Exception;
+  
+  public void invalidateViz(Application application) throws Exception;
 }
