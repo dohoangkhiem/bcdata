@@ -2,16 +2,15 @@ package com.bouncingdata.plfdemo.datastore.pojo;
 
 import java.util.Map;
 
-import com.bouncingdata.plfdemo.utils.VisualizationSource;
 
 public class ExecutionResult {
   private String output;
-  private Map<String, VisualizationSource> visualizations;
+  private Map<String, VisualizationDetail> visualizations;
   private Map<String, String> datasets;
   private int statusCode;
   private String message;
   
-  public ExecutionResult(String output, Map<String, VisualizationSource> visualizations, Map<String, String> datasets, int statusCode, String msg) {
+  public ExecutionResult(String output, Map<String, VisualizationDetail> visualizations, Map<String, String> datasets, int statusCode, String msg) {
     this.output = output;
     this.visualizations = visualizations;
     this.statusCode = statusCode;
@@ -35,11 +34,11 @@ public class ExecutionResult {
     this.message = message;
   }
 
-  public Map<String, VisualizationSource> getVisualizations() {
+  public Map<String, VisualizationDetail> getVisualizations() {
     return visualizations;
   }
 
-  public void setVisualizations(Map<String, VisualizationSource> visualizations) {
+  public void setVisualizations(Map<String, VisualizationDetail> visualizations) {
     this.visualizations = visualizations;
   }
 

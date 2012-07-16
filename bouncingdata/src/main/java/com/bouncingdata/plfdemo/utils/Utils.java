@@ -11,10 +11,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
 
 public class Utils {
   
@@ -117,6 +121,29 @@ public class Utils {
     if (str == null || str.isEmpty()) return 0;
     String[] lines = str.split("\n");
     return lines.length;
+  }
+  
+  public static Map<String, DashboardDetail> parseDashboard(Dashboard db) {
+    if (db == null || db.getStatus() == null || db.getStatus().isEmpty()) return null;
+    String status = db.getStatus();
+    String[] list = status.split(",");
+    int i = 0;
+    Map<String, DashboardDetail> dashboard = new HashMap<String, DashboardDetail>();
+    try {
+      while (i < list.length) {
+        String guid = list[i];
+        int x = Integer.parseInt(list[i+1]);
+        int y = Integer.parseInt(list[i+2]);
+        int w = Integer.parseInt(list[i+3]);
+        int h = Integer.parseInt(list[i+4]);
+        dashboard.put(guid, new DashboardDetail(guid, x, y, w, h));
+        i+=5;
+      }
+      return dashboard;
+    } catch(Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
   
   public static void main(String args[]) {

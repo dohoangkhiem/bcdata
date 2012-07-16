@@ -1,8 +1,9 @@
-package com.bouncingdata.plfdemo.utils;
+package com.bouncingdata.plfdemo.datastore.pojo;
 
 import java.io.Serializable;
 
-public class VisualizationSource implements Serializable {
+
+public class VisualizationDetail implements Serializable {
   
   /**
    * 
@@ -11,11 +12,25 @@ public class VisualizationSource implements Serializable {
   
   private String source;
   private VisualizationType type;
+  private String guid;
   
-  public VisualizationSource(String source, VisualizationType type) {
+  public VisualizationDetail(String guid, String source, VisualizationType type) {
     super();
     this.source = source;
     this.type = type;
+    this.guid = guid;
+  }
+
+  public String getGuid() {
+    return guid;
+  }
+
+  public void setGuid(String guid) {
+    this.guid = guid;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
   }
 
   public String getSource() {

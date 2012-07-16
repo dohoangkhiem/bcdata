@@ -93,8 +93,7 @@
                 <div id="app-execution-logs-\${tabId}">
                   <div class="console prompt" style="display: block;"></div>
                   <div class="console-actions">
-                    <input class="clear-console" type="button"
-                      value="Clear console" />
+                    <input class="clear-console" type="button" value="Clear console" />
                   </div>
                 </div>
               </div>

@@ -1,21 +1,23 @@
 package com.bouncingdata.plfdemo.datastore.pojo;
 
 import java.util.Map;
+import java.util.Properties;
 
-import com.bouncingdata.plfdemo.utils.VisualizationSource;
 
 public class ApplicationDetail {
   
   String code;
   Map<String, String> datasets;
-  Map<String, VisualizationSource> visualizations;
+  Map<String, VisualizationDetail> visualizations;
+  Map<String, DashboardDetail> dashboard;
   
   public ApplicationDetail(String code, Map<String, String> datasets,
-      Map<String, VisualizationSource> visualizations) {
+      Map<String, VisualizationDetail> visualizations, Map<String, DashboardDetail> dashboard) {
     super();
     this.code = code;
     this.datasets = datasets;
     this.visualizations = visualizations;
+    this.dashboard = dashboard;
   }
 
   public String getCode() {
@@ -34,12 +36,20 @@ public class ApplicationDetail {
     this.datasets = datasets;
   }
 
-  public Map<String, VisualizationSource> getVisualizations() {
+  public Map<String, VisualizationDetail> getVisualizations() {
     return visualizations;
   }
 
-  public void setVisualizations(Map<String, VisualizationSource> visualizations) {
+  public void setVisualizations(Map<String, VisualizationDetail> visualizations) {
     this.visualizations = visualizations;
+  }
+
+  public Map<String, DashboardDetail> getDashboard() {
+    return dashboard;
+  }
+
+  public void setDashboard(Map<String, DashboardDetail> dashboard) {
+    this.dashboard = dashboard;
   }
   
   

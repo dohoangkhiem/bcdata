@@ -24,15 +24,19 @@
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
   
   <util:properties id="appStoreConfiguration" location="classpath:appstore.properties"/>
+  
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="properties"><ref bean="appStoreConfiguration"></ref></property>        
+  </bean>
    
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
-    <property name="logDir" value="/tmp/bouncingdata"></property>
-    <property name="storePath" value="/home/khiem/java/temp/apps"></property>
-    <property name="datastoreService" ref="datastoreService" />
+    <property name="storePath" value="${com.bouncingdata.appstore.storePath}"></property>
+    <property name="logDir" value="${com.bouncingdata.appstore.logDir}"></property>
   </bean>
  
   <bean id="appStoreService" class="com.bouncingdata.plfdemo.service.ApplicationStoreService">
-    <constructor-arg value="/home/khiem/java/temp/apps"></constructor-arg>
+    <property name="storePath" value="${com.bouncingdata.appstore.storePath}"></property>
+    <property name="logDir" value="${com.bouncingdata.appstore.logDir}"></property>
   </bean>
   
   <bean id="mainController" class="com.bouncingdata.plfdemo.controller.MainController">

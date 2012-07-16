@@ -213,5 +213,18 @@
         <column name="user_id" jdbc-type="INTEGER" />
       </field>
     </class>
+    
+    <class name="Dashboard" identity-type="datastore" table="dashboards">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="guid">
+        <column name="guid" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="status">
+        <column name="status" jdbc-type="LONGVARCHAR" />
+      </field>
+    </class>
   </package>
 </orm>

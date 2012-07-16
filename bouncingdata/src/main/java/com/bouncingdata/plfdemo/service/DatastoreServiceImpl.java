@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bouncingdata.plfdemo.datastore.DataStorage;
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.DashboardItem;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
@@ -137,13 +137,23 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public List<DashboardItem> getDashboard(int appId) throws Exception {
-    return dataStorage.getDashboard(appId);
+  public Dashboard getDashboard(String guid) throws Exception {
+    return dataStorage.getDashboard(guid);
   }
 
   @Override
   public void invalidateViz(Application application) throws Exception {
     dataStorage.invalidateViz(application);    
+  }
+  
+  @Override
+  public void updateDashboard(String guid, String status) throws Exception {
+    dataStorage.saveDashboard(guid, status, false);
+  }
+
+  @Override
+  public void createDashboard(String guid, String status) throws Exception {
+    dataStorage.saveDashboard(guid, status, true);
   }
 
 }

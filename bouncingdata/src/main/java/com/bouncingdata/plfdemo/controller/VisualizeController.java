@@ -44,10 +44,12 @@ public class VisualizeController {
   @RequestMapping(value="/temp/{executionId}/{name}/{type}", method = RequestMethod.GET)
   public String temp(@PathVariable String executionId, @PathVariable String name, @PathVariable String type, ModelMap model) {
     try {
-      
+      String content = appStoreService.getTemporaryVisualization(executionId, name, type);
+      model.addAttribute("content", content);
     } catch (Exception e) {
       e.printStackTrace();
     }
     return "visualize";
   }
+
 }

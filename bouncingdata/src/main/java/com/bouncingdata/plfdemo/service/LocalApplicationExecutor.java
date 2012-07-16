@@ -19,24 +19,28 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
-import com.bouncingdata.plfdemo.utils.VisualizationSource;
-import com.bouncingdata.plfdemo.utils.VisualizationType;
 
 public class LocalApplicationExecutor implements ApplicationExecutor {
   
   private Logger logger = LoggerFactory.getLogger(LocalApplicationExecutor.class);
   
   private String logDir;
-  
   private String storePath;
   
+  @Autowired
   private DatastoreService datastoreService;
+  
+  @Autowired
+  private ApplicationStoreService appStoreService;
   
   public void setLogDir(String ld) {
     this.logDir = ld;
@@ -45,11 +49,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   public void setStorePath(String sp) {
     this.storePath = sp;
   }
-  
-  public void setDatastoreService(DatastoreService ds) {
-    this.datastoreService = ds;
-  }
-  
+    
   @Override
   public ExecutionResult executePython(Application app, String code, User user) {
     // get execution ticket
@@ -107,8 +107,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       e.printStackTrace();
     }
     Map<String, String> datasets = getDatasets(ticket);
-    Map<String, VisualizationSource> visuals = getVisualizations(ticket);
-    return new ExecutionResult(output, visuals, datasets, 0, "OK");
+    if (app == null) {
+      Map<String, VisualizationDetail> visuals = getVisualizations(ticket);
+      return new ExecutionResult(output, visuals, datasets, 0, "OK");
+    } else {
+      return new ExecutionResult(output, null, datasets, 0, "OK");
+    }
   }
     
   @Override
@@ -158,7 +162,6 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     }
     
     Map<String, String> datasets = getDatasets(ticket);
-    Map<String, VisualizationSource> visuals = getVisualizations(ticket);
     
     //
     if (mode.equals("persistent")) {
@@ -170,7 +173,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       }
     }
     
-    return new ExecutionResult(output, visuals, datasets, 0, "OK");
+    if (app == null) {
+      Map<String, VisualizationDetail> visuals = getVisualizations(ticket);
+      return new ExecutionResult(output, visuals, datasets, 0, "OK");
+    } else {
+      return new ExecutionResult(output, null, datasets, 0, "OK");
+    }
   }
   
   private Map<String, String> getDatasets(String executionId) {
@@ -260,7 +268,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     }
   }
     
-  private Map<String, VisualizationSource> getVisualizations(String executionId) {
+  private Map<String, VisualizationDetail> getVisualizations(String executionId) {
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
     File[] vsFiles = execLogDir.listFiles(new FileFilter() {
@@ -273,34 +281,26 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       }
     });
     
-    Map<String, VisualizationSource> visuals = null;
+    Map<String, VisualizationDetail> visuals = null;
     if (vsFiles != null) {
-      visuals = new HashMap<String, VisualizationSource>();
+      visuals = new HashMap<String, VisualizationDetail>();
       for (File f : vsFiles) {
         String filename = f.getName();
         String name = filename.substring(0, filename.lastIndexOf("."));
         String extension = filename.substring(filename.lastIndexOf(".") + 1);
         VisualizationType type = null;
         if ("png".equals(extension)) type = VisualizationType.PNG;
-        else if ("html".equals(extension)) type = VisualizationType.HTML;
+        else if ("html".equals(extension)) {
+          type = VisualizationType.HTML;
+          visuals.put(name, new VisualizationDetail(null, "temp/" + executionId + "/" + name + "/html", type));
+          continue;
+        }
         
         int length = (int) f.length();
         byte[] bytes = new byte[length];
         try {
-          /*InputStream is = new BufferedInputStream(new FileInputStream(f));
-          int offset = 0;
-          int numRead = 0;
-          while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-          }
-          
-          if (offset < bytes.length) {
-            throw new IOException("Could not completely read file " + f.getAbsolutePath());
-          }*/
           bytes = FileUtils.readFileToByteArray(f);
-          if (type == VisualizationType.PNG) visuals.put(name, new VisualizationSource(new String(Base64.encodeBase64(bytes)), type));
-          else if (type == VisualizationType.HTML) visuals.put(name, new VisualizationSource(new String(bytes), type));
-          
+          visuals.put(name, new VisualizationDetail(null, new String(Base64.encodeBase64(bytes)), type));        
         } catch (IOException e) {
           logger.debug("Failed to read visualization at {}", f.getAbsoluteFile());
         }

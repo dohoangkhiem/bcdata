@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ApplicationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
@@ -26,8 +30,6 @@ import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.service.UserDataService;
 import com.bouncingdata.plfdemo.utils.Utils;
-import com.bouncingdata.plfdemo.utils.VisualizationSource;
-import com.bouncingdata.plfdemo.utils.VisualizationType;
 
 @Controller
 @RequestMapping("/app")
@@ -54,32 +56,37 @@ public class AppController {
     this.userDataService = userDataService;
   }
   
-  @RequestMapping(value="/{guid}", method = RequestMethod.GET)
+  @RequestMapping(value="/a/{guid}", method = RequestMethod.GET)
   public @ResponseBody ApplicationDetail getApplication(@PathVariable String guid) {
     try {
       Application app = datastoreService.getApplication(guid);
       if (app == null) return null;
       
       List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
-      
-      String code = appStoreService.getApplicationCode(guid, null);
-      Map<String, String> datasets = userDataService.getApplicationDataset(app.getId());
-      //Map<String, VisualizationSource> visualsMap =  appStoreService.getVisualizationMap(guid, visuals);
-      Map<String, VisualizationSource> visualsMap = null;
+      Map<String, VisualizationDetail> visualsMap = null;
       if (visuals != null) {
-        visualsMap = new HashMap<String, VisualizationSource>();
+        visualsMap = new HashMap<String, VisualizationDetail>();
         for (Visualization v : visuals) {
           if ("html".equals(v.getType())) {
-            visualsMap.put(v.getName(), new VisualizationSource(v.getGuid(), VisualizationType.getVisualType(v.getType())));
-          } else {
-            String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
-            visualsMap.put(v.getName(), new VisualizationSource(source, VisualizationType.getVisualType(v.getType())));
+            visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), "visualize/app/" + guid + "/" + v.getGuid() + "/html", VisualizationType.getVisualType(v.getType())));
+          } else if ("png".equals(v.getType())) {
+            try {
+              String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
+              visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), source, VisualizationType.getVisualType(v.getType())));
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
           }
         }
       }
       
-      ApplicationDetail detail = new ApplicationDetail(code, datasets, visualsMap);
+      String code = appStoreService.getApplicationCode(guid, null);
+      Map<String, String> datasets = userDataService.getApplicationDataset(app.getId());
       
+      Dashboard d = datastoreService.getDashboard(guid);
+      Map<String, DashboardDetail> dashboard = Utils.parseDashboard(d);
+      
+      ApplicationDetail detail = new ApplicationDetail(code, datasets, visualsMap, dashboard);
       return detail;
     } catch (Exception e) {
       e.printStackTrace();
@@ -87,39 +94,37 @@ public class AppController {
     }
   }
   
-  /*@RequestMapping(value="/{appname}", method = RequestMethod.GET)
-  public String getApp(@PathVariable String appname, ModelMap model) {    
-    // get application name, code
-    Application application = datastoreService.getApplication(appname);
-    if (application == null) {
-      return "main";
-    }
-    
-    model.addAttribute("app", application);
-    
-    // get application dataset, visualization
-    Datastore dataset = datastoreService.getDatastore(appname);
-    model.addAttribute("dataset", dataset);
-    
-    // get list of tables inside dataset
-    List<Dataset> tables = datastoreService.getDatasetList(appname);
-    // get data from (at least) the first table
-    model.addAttribute("tables", tables);
-    
-    // list of visualizations
-    List<Visualization> visualizations = datastoreService.getVisualizationList(appname);
-    model.addAttribute("visualizations", visualizations);
-    
+  @RequestMapping(value="/v/{guid}", method = RequestMethod.GET)
+  public @ResponseBody Map<String, VisualizationDetail> getVisualizationMap(@PathVariable String guid) {
     try {
-      String code = appStoreService.getApplicationCode(application.getId(), application.getLanguage());
-      model.addAttribute("appcode", code);
-    } catch (IOException e) {
+      Application app = datastoreService.getApplication(guid);
+      if (app == null) return null;
+    
+      List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
+      Map<String, VisualizationDetail> visualsMap = null;
+      if (visuals != null) {
+        visualsMap = new HashMap<String, VisualizationDetail>();
+        for (Visualization v : visuals) {
+          if ("html".equals(v.getType())) {
+            visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), "visualize/app/" + guid + "/" + v.getGuid() + "/html", VisualizationType.getVisualType(v.getType())));
+          } else if ("png".equals(v.getType())) {
+            try {
+              String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
+              visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), source, VisualizationType.getVisualType(v.getType())) );
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+      return visualsMap;
+    } catch (Exception e) {
       e.printStackTrace();
+      return null;
     }
-    return "main";
-  }*/
-  
-  @RequestMapping(value="/{appGuid}/execute", method = RequestMethod.POST)
+  }
+    
+  @RequestMapping(value="/e/{appGuid}", method = RequestMethod.POST)
   public @ResponseBody ExecutionResult executeApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, ModelMap model, Principal principal) {
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
@@ -150,16 +155,9 @@ public class AppController {
       return new ExecutionResult(null, null, null, -3, "Unknown error");
     }
     
-    /*if ("python".equals(language)) {
-      return appExecutor.executePython(appname, code);
-    } else if ("r".equals(language)) {
-      return appExecutor.executeR(appname, code);
-    } else {
-      return new ExecutionResult("Not support!", null);
-    }*/
   }
   
-  @RequestMapping(value="/{appGuid}/save", method = RequestMethod.POST)
+  @RequestMapping(value="/s/{appGuid}", method = RequestMethod.POST)
   public @ResponseBody String saveApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, 
       @RequestParam(value="language", required=false) String language, ModelMap model, Principal principal) {
     
@@ -191,107 +189,38 @@ public class AppController {
       e.printStackTrace();
     }
     
-    
     return null;
   }
   
-  /*@RequestMapping(value="/{appname}/data/{tablename}", method = RequestMethod.GET)
-  public @ResponseBody String getData(@PathVariable String appname, @PathVariable String tablename, ModelMap model) {
-    return userDataService.getDatasetData(appname, tablename);
-  }*/
-  
-  /*@RequestMapping(value="/{appname}/data/{tablename}/delete", method = RequestMethod.POST)
-  public @ResponseBody String deleteTable(@PathVariable String appname, @PathVariable String tablename) {
+  @RequestMapping(value="/v/d/update/{guid}", method = RequestMethod.POST)
+  public @ResponseBody String updateDashboard(@PathVariable String guid, @RequestParam(value="status", required = true) String status, Principal principal) {
+    System.out.format("Receive update dashboard request %s, %s%n", guid, status);
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) return "KO";
     try {
-      datastoreService.deleteDataset(appname, tablename);
-      userDataService.deleteDataset(appname, tablename);
-      return "OK";
+      Application app = datastoreService.getApplication(guid);
+      if (app == null) return "KO";
+      
+      if (app.getAuthor() != user.getId()) {
+        return "KO";
+      }
+      
+      datastoreService.updateDashboard(guid, status);
     } catch (Exception e) {
       e.printStackTrace();
-      return "Failed";
-    }  
-  }*/
-  
-  /*@RequestMapping(value="/{appname}/visualize", method = RequestMethod.GET) 
-  public @ResponseBody List<String> getVisualization(@PathVariable String appname) {
-    List<Visualization> visuals = datastoreService.getVisualizationList(appname);
-    List<String> results = new ArrayList<String>();
-    if (visuals != null) {
-      for (Visualization v : visuals) {
-        results.add(v.getName());
-      }
+      return "KO";
     }
-    return results;
+    return "OK";
   }
   
-  @RequestMapping(value="/{appname}/visualize/{visualizationName}", method = RequestMethod.GET)
-  public @ResponseBody String getVisualizationContent(@PathVariable String appname, @PathVariable String visualizationName, ModelMap model) {
+  @RequestMapping(value="/v/d/create/{guid}/{status}", method = RequestMethod.GET)
+  public void createDashboard(@PathVariable String guid, @PathVariable String status) {
+    System.out.format("Receive create dashboard request %s, %s%n", guid, status);
     try {
-      Application app = datastoreService.getApplication(appname);
-      if (app == null) {
-        return "Not found";
-      }
-      return appStoreService.getVisualizationContent(app.getId(), visualizationName);
-    } catch(IOException e) {
-      return "Failed to load this visualization";
-    }
-  }*/
-  
-  /*@RequestMapping(value="/{appname}/visualize/{visualName}/delete", method = RequestMethod.POST)
-  public @ResponseBody String deleteVisualization(@PathVariable String appname, @PathVariable String visualName) {
-    try {
-      Application app = datastoreService.getApplication(appname);
-      if (app == null) {
-        return "Not found";
-      }
-      datastoreService.deleteVisualization(appname, visualName);
-      return "OK";
+      datastoreService.createDashboard(guid, status);
     } catch (Exception e) {
       e.printStackTrace();
-      return "Error";
     }
   }
-  
-  @RequestMapping(value="/{appname}/visualize/{visualName}/save", method = RequestMethod.POST)
-  public @ResponseBody String saveVisualizationCode(@PathVariable String appname, @PathVariable String visualName, @RequestParam(value="code", required=true) String code) {
-    try {
-      Application app = datastoreService.getApplication(appname);
-      if (app == null) {
-        return "Not found";
-      }
-      appStoreService.saveVisualizationCode(app.getId(), visualName, code);
-      return "OK";
-    } catch (IOException e) {
-      e.printStackTrace();
-      return "Error";
-    }
-  }*/
-  
-  /*@RequestMapping(value="/{appname}/data")
-  public @ResponseBody String getApplicationData(@PathVariable String appname) {
-    List<Dataset> tableList = datastoreService.getDatasetList(appname);
-    JSONArray tableListJson = new JSONArray();
-    if (tableList != null) {
-      for (Dataset t : tableList) {
-        String tdata = userDataService.getDatasetData(appname, t.getName());
-        JSONObject js = new JSONObject();
-        js.element("name", t.getName());
-        js.element("data", tdata);
-        tableListJson.add(js);
-      }
-    }
-    
-    JSONArray visualizationListJson = new JSONArray();
-    List<Visualization> visualizations = datastoreService.getVisualizationList(appname);
-    if (visualizations != null) {
-      for (Visualization v : visualizations) {
-        visualizationListJson.add(v.getName());      
-      }
-    }
-    JSONObject result = new JSONObject();
-    result.element("tables", tableListJson.toString());
-    result.element("visualizations", visualizationListJson.toString());
-    return result.toString();
-  }*/
   
 }

@@ -116,20 +116,41 @@
 
 /** Visualization styles **/
 
+.workspace-ide-content .app-output-viz {
+  overflow-y: auto;  
+}
+
 .workspace-ide-content .app-output-viz .viz-dashboard {
   min-height: 450px;
   border: 1px solid #CCCCCC;
   position: relative;
+  width: 900px;
+  margin: 5px auto;
 }
 
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container {
+  border: 1px none;
+}
 
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container-hover {
+  border: 1px solid #DDDDDD;
+  border-style: dotted;
+}
+
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .ui-resizable-handle {
+  opacity: 0;
+}
+
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container-hover .ui-resizable-handle {
+  opacity: 1;
+}
 
 .workspace-ide-content .app-output-viz .viz-dashboard iframe {
   border: 0 none;  
   overflow: hidden;
 }
 
-.app-output-viz .viz-dashboard .viz-handle {
+.app-output-viz .viz-dashboard .viz-container .viz-handle {
   height: 20px;
   display: block;
   margin: 0;
@@ -138,10 +159,19 @@
   border: 0 none;
 }
 
-.app-output-viz .viz-dashboard .viz-handle-hover {
-  border-style: dotted;
+.app-output-viz .viz-dashboard .viz-container .viz-handle-hover {
   background: #EEEEEE no-repeat scroll left top;
   cursor: pointer;
+}
+
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle .perm-link {
+  opacity: 0;
+  float: right;
+  color: #CCCCCC;
+}
+
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle-hover .perm-link {
+  opacity: 0.9;
 }
 
 .visualization-item-frame {
@@ -179,7 +209,7 @@
 /* The console container element */
 .app-execution-logs .console {
   position: relative;
-  height: 350px;
+  height: 348px;
   background-color: #FFFFFF;
   font-size: .9em;
   border: 1px solid #D3D3D3;

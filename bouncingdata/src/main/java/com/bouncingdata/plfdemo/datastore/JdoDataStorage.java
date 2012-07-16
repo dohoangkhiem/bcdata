@@ -16,7 +16,7 @@ import org.springframework.orm.jdo.support.JdoDaoSupport;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.DashboardItem;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
@@ -237,19 +237,47 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<DashboardItem> getDashboard(int appId) throws DataAccessException {
-    Query q = getPersistenceManager().newQuery(DashboardItem.class);
-    q.setFilter("appId == " + appId);
-    List<DashboardItem> di = (List<DashboardItem>) q.execute();
-    return di;
+  public Dashboard getDashboard(String guid) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Dashboard.class);
+    q.setFilter("guid == '" + guid + "'");
+    List<Dashboard> db = (List<Dashboard>) q.execute();
+    return (db!=null && db.size() > 0)?db.get(0):null;
   }
 
   @Override
-  public void updateDashboard(int appId, int vizId, int x, int y, int w, int h)
-      throws DataAccessException {
-    Query q = getPersistenceManager().newQuery(DashboardItem.class);
-    q.setFilter("appId == " + appId + " && vizId == " + vizId);
-    
+  public void saveDashboard(String guid, String status, boolean isNew) throws DataAccessException {
+    /*if (isNew) {
+      Dashboard db = new Dashboard(guid, status);
+      List<Dashboard> ldb = new ArrayList<Dashboard>();
+      persistData(ldb);
+      return;
+    }*/
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      Query q = pm.newQuery(Dashboard.class);
+      q.setFilter("guid == '" + guid + "'");
+      List<Dashboard> db = (List<Dashboard>) q.execute();
+      if (db != null && db.size() > 0) {
+        Dashboard dashboard = db.get(0);
+        dashboard.setStatus(status);
+        tx.commit();
+      } else {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Dashboard {} not found.", guid);
+        }
+        Dashboard d = new Dashboard(guid, status);
+        List<Dashboard> ld = new ArrayList<Dashboard>();
+        ld.add(d);
+        persistData(ld);
+      } 
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) logger.debug("", e);
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+    }      
   }
 
   @Override
