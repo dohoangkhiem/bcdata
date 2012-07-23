@@ -107,8 +107,14 @@
               <li><a href="#app-output-data-\${tabId}">Data</a></li>
             </ul>
             <div id="app-output-viz-\${tabId}" class="app-output-viz">
+							<div><strong>Visualization Dashboard.</strong></div><br />
               <div class="app-output-viz-dashboard">
-                <div><strong>Visualization Dashboard.</strong></div><br />
+								<div class="dashboard-ruler">
+									<div class="dashboard-ruler-left"></div>
+									<div class="dashboard-ruler-top"></div>
+									<div class="dashboard-ruler-right"></div>
+									<div class="dashboard-ruler-bottom"></div>
+								</div>
 								<div class="viz-dashboard" id="viz-dashboard-\${tabId}"></div>
               </div>
             </div>

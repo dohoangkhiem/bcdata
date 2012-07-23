@@ -2,23 +2,47 @@ function Dashboard() {
   
 }
 
+Dashboard.prototype.Layout = {
+    ONE_COLUMN: 1,
+    TWO_COLUMN: 2,
+    THREE_COLUMN: 3
+}
+
 Dashboard.prototype.init = function() {
+  
+}
+
+Dashboard.prototype.prepareLayout = function($container, layout) {
+  
+}
+
+Dashboard.prototype.loadAll = function(vizList, dashboardPos, $container) {
   
 }
 
 Dashboard.prototype.load = function(vizList, dashboardPos, $container, editMode) {
   $container.empty();
-  var count = 0;
-  for (v in vizList) {
-    var viz = vizList[v];
-    var pos = dashboardPos?dashboardPos[viz.guid]:null;
-    if (pos) {
-      this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
-    } else {
-      this.addViz((count%2) * 365, Math.floor(count/2) * 280, 0, 0, viz, $container, editMode)
+  
+  if (!dashboardPos) {
+    // the vizList will be positioned automatically
+    var count = 0;
+    var defaultSize = Math.floor($container.width()/2);
+    for (v in vizList) {
+      var viz = vizList[v];
+      this.addViz((count%2) * defaultSize, Math.floor(count/2) * defaultSize, defaultSize - 2, defaultSize - 2, viz, $container, editMode);
+      count++;
     }
-    count++;
+  } else {
+    var count = 0;
+    for (v in vizList) {
+      var viz = vizList[v];
+      var pos = dashboardPos[viz.guid];
+      if (pos) this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
+      else this.addViz((count%2) * defaultSize, Math.floor(count/2) * defaultSize, defaultSize - 2, defaultSize - 2, viz, $container, editMode);
+      count++;
+    }
   }
+  
 }
 
 Dashboard.prototype.viewDashboard = function() {
@@ -78,6 +102,8 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   
   $container.append($vizContainer);
   
+  this.updateRuler($container);
+  
   if (editMode) {
     var _x = $container.offset().left;
     var _y = $container.offset().top;
@@ -99,16 +125,19 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $vizContainer.bind('drag', function(event, ui) {
       if (ui.position.top + $(this).height() + 25 >= $container.height()) {
         $container.css('height', ($container.height() + 25) + "px");
+        com.bouncingdata.Dashboard.updateRuler(this);
       }
     }).bind('dragstop', function(event, ui) {
       if (ui.position.top + $(this).height() >= $container.height()) {
         $container.css('heigth', (ui.position.top + $(this).height() + 10) + "px");
+        com.bouncingdata.Dashboard.updateRuler(this);
       }
       // post back
       com.bouncingdata.Dashboard.postback($container);
     }).bind('resize', function(event, ui) {
       if (ui.position.top + $(this).height() + 25 >= $container.height()) {
         $container.css('height', ($container.height() + 25) + "px");
+        com.bouncingdata.Dashboard.updateRuler(this);
       }
       var cw = $(this).width(); 
       $inner.css('height', ($(this).height() - 10) + "px").css('width', (cw - 10) + "px");
@@ -117,6 +146,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     }).bind('resizestop', function(event, ui) {
       if (ui.position.top + $(this).height() >= $container.height()) {
         $container.css('heigth', (ui.position.top + $(this).height() + 10) + "px");
+        com.bouncingdata.Dashboard.updateRuler(this);
       }
       // post back
       com.bouncingdata.Dashboard.postback($container);
@@ -131,6 +161,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
       $(this).removeClass('viz-container-hover');
     });
   }
+
 }
 
 Dashboard.prototype.refresh = function() {
@@ -194,6 +225,16 @@ Dashboard.prototype.lock = function($container, lock) {
       });
     });
   }
+}
+
+Dashboard.prototype.updateRuler = function($container) {
+  var $ruler = $container.prev();
+  if (!$ruler.hasClass("dashboard-ruler")) {
+    console.debug("Can't find ruler for the dashboard " + $container);
+    return; 
+  }
+  
+  $ruler.height($container.height());
 }
 
 com.bouncingdata.Dashboard = new Dashboard();

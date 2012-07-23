@@ -665,7 +665,9 @@ Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
   }*/
   
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
-  $dashboard.attr('guid', app['guid']);
+  if (app) {
+    $dashboard.attr('guid', app['guid']);
+  }
   com.bouncingdata.Dashboard.load(visuals, null, $dashboard, true);
 }
 
