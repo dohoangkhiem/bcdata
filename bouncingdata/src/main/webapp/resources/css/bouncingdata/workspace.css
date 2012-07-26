@@ -136,6 +136,7 @@
 .app-output-viz .dashboard-ruler .snap-line {
   position: absolute;
   opacity: 0;  
+  z-index: 9999;
 }
 
 .app-output-viz .dashboard-ruler .snap-line-left, .app-output-viz .dashboard-ruler .snap-line-right {
