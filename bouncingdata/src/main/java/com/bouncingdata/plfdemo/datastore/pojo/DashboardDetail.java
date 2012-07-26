@@ -1,64 +1,30 @@
 package com.bouncingdata.plfdemo.datastore.pojo;
 
-import java.io.Serializable;
+import java.util.Map;
 
-public class DashboardDetail implements Serializable {
-  /**
-   * 
-   */
-  private static final long serialVersionUID = -6893319914166424373L;
+public class DashboardDetail {
+  Map<String, VisualizationDetail> visualizations;
+  Map<String, DashboardPosition> dashboard;
   
-  String guid;
-  int x;
-  int y;
-  int w;
-  int h;
+  public DashboardDetail(Map<String, VisualizationDetail> visualizations,
+      Map<String, DashboardPosition> dashboard) {
+    super();
+    this.visualizations = visualizations;
+    this.dashboard = dashboard;
+  }
   
-  public DashboardDetail(String guid, int x, int y, int w, int h) {
-    this.guid = guid;
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
+  public Map<String, VisualizationDetail> getVisualizations() {
+    return visualizations;
   }
-
-  public String getGuid() {
-    return guid;
+  public void setVisualizations(Map<String, VisualizationDetail> visualizations) {
+    this.visualizations = visualizations;
   }
-
-  public void setGuid(String guid) {
-    this.guid = guid;
+  public Map<String, DashboardPosition> getDashboard() {
+    return dashboard;
   }
-
-  public int getX() {
-    return x;
+  public void setDashboard(Map<String, DashboardPosition> dashboard) {
+    this.dashboard = dashboard;
   }
-
-  public void setX(int x) {
-    this.x = x;
-  }
-
-  public int getY() {
-    return y;
-  }
-
-  public void setY(int y) {
-    this.y = y;
-  }
-
-  public int getW() {
-    return w;
-  }
-
-  public void setW(int w) {
-    this.w = w;
-  }
-
-  public int getH() {
-    return h;
-  }
-
-  public void setH(int h) {
-    this.h = h;
-  }
+  
+  
 }

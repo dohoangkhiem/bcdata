@@ -9,9 +9,9 @@ import javax.jdo.annotations.PrimaryKey;
 public class Dashboard {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
-  int id;
-  String guid;
-  String status;
+  private int id;
+  private String guid;
+  private String status;
   
   public Dashboard(String guid, String status) {
     this.guid = guid;
@@ -35,6 +35,5 @@ public class Dashboard {
   public void setStatus(String status) {
     this.status = status;
   }
-  
   
 }

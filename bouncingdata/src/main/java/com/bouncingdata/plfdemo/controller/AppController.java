@@ -3,6 +3,7 @@ package com.bouncingdata.plfdemo.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.ApplicationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
@@ -84,7 +86,7 @@ public class AppController {
       Map<String, String> datasets = userDataService.getApplicationDataset(app.getId());
       
       Dashboard d = datastoreService.getDashboard(guid);
-      Map<String, DashboardDetail> dashboard = Utils.parseDashboard(d);
+      Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
       
       ApplicationDetail detail = new ApplicationDetail(code, datasets, visualsMap, dashboard);
       return detail;
@@ -95,7 +97,7 @@ public class AppController {
   }
   
   @RequestMapping(value="/v/{guid}", method = RequestMethod.GET)
-  public @ResponseBody Map<String, VisualizationDetail> getVisualizationMap(@PathVariable String guid) {
+  public @ResponseBody DashboardDetail getVisualizationMap(@PathVariable String guid) {
     try {
       Application app = datastoreService.getApplication(guid);
       if (app == null) return null;
@@ -117,7 +119,53 @@ public class AppController {
           }
         }
       }
-      return visualsMap;
+      
+      Dashboard d = datastoreService.getDashboard(guid);
+      Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
+      
+      return new DashboardDetail(visualsMap, dashboard);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  @RequestMapping(value="/v/e/{guid}", method = RequestMethod.GET)
+  public @ResponseBody DashboardDetail updateDashboardForExecution(@PathVariable String guid) {
+    try {
+      Application app = datastoreService.getApplication(guid);
+      if (app == null) return null;
+    
+      List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
+      Map<String, VisualizationDetail> visualsMap = null;
+      Map<String, String> visualNames = null;
+      if (visuals != null) {
+        visualsMap = new HashMap<String, VisualizationDetail>();
+        visualNames = new HashMap<String, String>();
+        for (Visualization v : visuals) {
+          visualNames.put(v.getGuid(), v.getName());
+          if ("html".equals(v.getType())) {
+            visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), "visualize/app/" + guid + "/" + v.getGuid() + "/html", VisualizationType.getVisualType(v.getType())));
+          } else if ("png".equals(v.getType())) {
+            try {
+              String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
+              visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), source, VisualizationType.getVisualType(v.getType())) );
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+      
+      Dashboard d = datastoreService.getDashboard(guid);
+      Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
+      Map<String, DashboardPosition> dashboardPos = new HashMap<String, DashboardPosition>();
+      
+      for (DashboardPosition dp : dashboard.values()) {
+        dashboardPos.put(visualNames.get(dp.getGuid()), dp);
+      }
+      
+      return new DashboardDetail(visualsMap, dashboardPos);
     } catch (Exception e) {
       e.printStackTrace();
       return null;

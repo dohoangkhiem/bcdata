@@ -9,7 +9,8 @@ Dashboard.prototype.Layout = {
 }
 
 Dashboard.prototype.init = function() {
-  
+  this.zCounter = {};
+  this.dashboardCache = {};
 }
 
 Dashboard.prototype.prepareLayout = function($container, layout) {
@@ -21,29 +22,44 @@ Dashboard.prototype.loadAll = function(vizList, dashboardPos, $container) {
 }
 
 Dashboard.prototype.load = function(vizList, dashboardPos, $container, editMode) {
+  this.zCounter[$container.attr('tabid')] = 50;
+  var dbCache = this.dashboardCache[$container.attr('guid')];
   $container.empty();
+  var count = 0, defaultSize = 380; //Math.floor($container.width()/2);
   
   if (!dashboardPos) {
     // the vizList will be positioned automatically
-    var count = 0;
-    var defaultSize = Math.floor($container.width()/2);
     for (v in vizList) {
       var viz = vizList[v];
-      this.addViz((count%2) * defaultSize, Math.floor(count/2) * defaultSize, defaultSize - 2, defaultSize - 2, viz, $container, editMode);
+      viz.name = v;
+      var pos = dbCache?dbCache[v]:null;
+      if (pos) {
+        this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
+      } else {
+        this.addViz((count%2 + 1)*10 + ((count%2) * defaultSize), (Math.floor(count/2)+1)*10 + (Math.floor(count/2) * defaultSize), defaultSize, defaultSize, viz, $container, editMode);
+      }
       count++;
     }
   } else {
-    var count = 0;
     for (v in vizList) {
       var viz = vizList[v];
-      var pos = dashboardPos[viz.guid];
-      if (pos) this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
-      else this.addViz((count%2) * defaultSize, Math.floor(count/2) * defaultSize, defaultSize - 2, defaultSize - 2, viz, $container, editMode);
+      viz.name = v;
+      var pos = dashboardPos[viz.guid] || (dbCache?dbCache[v]:null);
+      if (pos) {
+        this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
+        if (!dbCache) {
+          this.dashboardCache[$container.attr('guid')] = {};
+          dbCache = this.dashboardCache[$container.attr('guid')];
+        }
+        dbCache[v] = {x: pos.x, y: pos.y, w: pos.w, h: pos.h}
+      }
+      else this.addViz((count%2 + 1)*10 + ((count%2) * defaultSize), (Math.floor(count/2)+1)*10 + (Math.floor(count/2) * defaultSize), defaultSize, defaultSize, viz, $container, editMode);
       count++;
     }
   }
   
 }
+
 
 Dashboard.prototype.viewDashboard = function() {
   
@@ -54,13 +70,14 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   x = x || 0;
   y = y || 0;
   
+  var me = this;
   var type = viz.type.toLowerCase();
   var src = viz.source;
   
   var $vizContainer = $('<div class="viz-container"></div>');
-  $vizContainer.attr('guid', viz.guid);
+  $vizContainer.attr('guid', viz.guid).attr('n', viz.name);
     
-  var $vizHandle = $('<div class="viz-handle"><span class="perm-link viz-permalink"><a href="" target="_blank">permalink</a></span></div>');
+  var $vizHandle = $('<div class="viz-handle"><span class="permalink viz-permalink"><a href="" target="_blank">permalink</a></span></div>');
   $vizContainer.append($vizHandle);
   
   var $inner;
@@ -72,11 +89,12 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $('a', $vizHandle).attr('href', src);
     $inner.load().appendTo($vizContainer);
     $inner.attr('src', ctx + '/' + src)
-      .css('height', (h - 10) + "px")
+      .css('height', (h - 25) + "px")
       .css('width', (w - 10) + "px");
     $vizContainer.css('width', w + 'px').css('height', h + 'px');
     if ($container.height() < (y + h)) {
       $container.css('height', (y + h + 10) + "px");
+      me.updateRuler($container);
     }
     break;
   case "png":
@@ -84,12 +102,13 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $('a', $vizHandle).attr('href', 'data:image/png;base64,' + src);
     $inner.bind('load', function() {
       w = w || ($(this).width() + 10);
-      h = h || ($(this).height() + 30);
+      h = h || ($(this).height() + 25);
       // adjust viz. container size
-      $(this).css('width', (w - 10) + 'px').css('height', (h - 30) + 'px');
+      $(this).css('width', (w - 10) + 'px').css('height', (h - 25) + 'px');
       $vizContainer.css('width', w + 'px').css('height', h + 'px');
       if ($container.height() < (y + h)) {
         $container.css('height', (y + h + 10) + "px");
+        me.updateRuler($container);
       }
     }).appendTo($vizContainer);
     break;
@@ -98,17 +117,19 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     return;
   }
   
-  $vizContainer.css('position', 'absolute').css('top', y + 'px').css('left', x + 'px');
+  $vizContainer.css('position', 'absolute')
+    .css('top', y + 'px')
+    .css('left', x + 'px')
+    .css('z-index', this.zCounter[$container.attr('tabid')]++);
   
   $container.append($vizContainer);
-  
-  this.updateRuler($container);
   
   if (editMode) {
     var _x = $container.offset().left;
     var _y = $container.offset().top;
     var _w = $container.width(); // should be fixed
     var _h = $container.height();
+    
     $vizContainer.draggable({ 
       containment: [_x, _y, _x + _w - w, 140000], 
       handle: '.viz-handle', 
@@ -121,35 +142,90 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
       grid: 10,
       aspectRatio: type=="png"
     });
+      
+    $vizContainer.bind('click', function(event, ui) {
+      $(this).css('z-index', me.zCounter[$container.attr('tabid')]++);
+    })
+    .bind('dragstart', function(event, ui) {
+      $(this).css('z-index', me.zCounter[$container.attr('tabid')]++);
+    })
+    .bind('resizestart', function(event, ui) {
+      $(this).css('z-index', me.zCounter[$container.attr('tabid')]++);
+      var $currentViz = this;
+      
+      // iframe fix for resizing
+      $("iframe", $container).each(function() {
+        var $frame = $(this);
+        var $resizeIframeFix = $('<div class="resizable-iframe-fix" style="position: absolute; opacity: 0.001; z-index: 9999;"></div>');
+        if ($frame.is($currentViz.children)) {
+          $resizeIframeFix.addClass("resizable-iframe-fix-inner");
+        }
+        $resizeIframeFix.css('background', 'none repeat scroll left top #FFFFFF')
+          .css('top', $frame.offset().top)
+          .css('left', $frame.offset().left)
+          .css('width', $frame.width())
+          .css('height', $frame.height());
+        $("body").append($resizeIframeFix);
+      });
+      
+    });
     
     $vizContainer.bind('drag', function(event, ui) {
-      if (ui.position.top + $(this).height() + 25 >= $container.height()) {
-        $container.css('height', ($container.height() + 25) + "px");
-        com.bouncingdata.Dashboard.updateRuler(this);
+      me.showSnapLines($(this), $container, false);
+      
+      if (ui.position.top + $(this).height() + 15 >= $container.height()) {
+        $container.css('height', ($container.height() + 15) + "px");
+        me.updateRuler($container);
       }
-    }).bind('dragstop', function(event, ui) {
+    })
+    
+    .bind('dragstop', function(event, ui) {  
+      me.hideSnapLines($container);
+      
       if (ui.position.top + $(this).height() >= $container.height()) {
         $container.css('heigth', (ui.position.top + $(this).height() + 10) + "px");
-        com.bouncingdata.Dashboard.updateRuler(this);
+        me.updateRuler($container);
       }
       // post back
-      com.bouncingdata.Dashboard.postback($container);
-    }).bind('resize', function(event, ui) {
-      if (ui.position.top + $(this).height() + 25 >= $container.height()) {
-        $container.css('height', ($container.height() + 25) + "px");
-        com.bouncingdata.Dashboard.updateRuler(this);
+      me.postback($container);
+    })
+    
+    .bind('resize', function(event, ui) {
+      me.showSnapLines($(this), $container, true);
+      
+      if (ui.position.top + $(this).height() + 15 >= $container.height()) {
+        $container.css('height', ($container.height() + 15) + "px");
+        me.updateRuler($container);
       }
-      var cw = $(this).width(); 
-      $inner.css('height', ($(this).height() - 10) + "px").css('width', (cw - 10) + "px");
+      
+      var cw = $(this).width(), ch = $(this).height(); 
+      $inner.css('height', (ch - 25) + "px").css('width', (cw - 10) + "px");
       $vizContainer.draggable("option", "containment", [_x, _y, _x + _w - cw, 140000]);
       
-    }).bind('resizestop', function(event, ui) {
+      // update inner iframe-fix position
+      if ($inner[0].tagName.toLowerCase() == "iframe") {
+        var $innerIframeFix = $(".resizable-iframe-fix.resizable-iframe-fix-inner");
+        $innerIframeFix.css('top', $inner.offset().top)
+          .css('left', $inner.offset().left)
+          .css('width', $inner.width())
+          .css('height', $inner.height());
+      }
+      
+    })
+    
+    .bind('resizestop', function(event, ui) {
+      me.hideSnapLines($container);
+      
       if (ui.position.top + $(this).height() >= $container.height()) {
         $container.css('heigth', (ui.position.top + $(this).height() + 10) + "px");
-        com.bouncingdata.Dashboard.updateRuler(this);
+        me.updateRuler($container);
       }
+      
+      //remove resizable-iframe-fix
+      $('.resizable-iframe-fix').remove();
+      
       // post back
-      com.bouncingdata.Dashboard.postback($container);
+      me.postback($container);
     });
     
     $vizContainer.hover(function() {
@@ -172,6 +248,7 @@ Dashboard.prototype.postback = function($container) {
   //need: app guid, guid and position of all viz. in dashboard
   var status = ""; 
   var guid = $container.attr('guid');
+  var me = this;
   if (!guid) return;
   $('div.viz-container', $container).each(function() {
     var vGuid = $(this).attr('guid');
@@ -180,6 +257,9 @@ Dashboard.prototype.postback = function($container) {
     var w = Math.round($(this).width());
     var h = Math.round($(this).height());
     status = status + vGuid + "," + x + "," + y + "," + w + "," + h + ",";
+    
+    if (!me.dashboardCache[guid]) me.dashboardCache[guid] = {};
+    me.dashboardCache[guid][$(this).attr('n')] = {x: x, y: y, w: w, h: h};
   });
   status = status.substring(0, status.length - 1);
   
@@ -210,6 +290,14 @@ Dashboard.prototype.lock = function($container, lock) {
       $(this).draggable("option", "disabled", true);
       $(this).resizable("option", "disabled", true);
       $(this).hover(null, null);
+      $('viz-handle', this).hide();
+      $(this).css('border-style', 'none');
+      var $ruler = $container.prev();
+      if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
+        console.debug("Can't find ruler for the dashboard " + $container);
+        return; 
+      }
+      $ruler.hide();
     });
   } else {
     $('div.viz-container', $container).each(function() {
@@ -223,13 +311,20 @@ Dashboard.prototype.lock = function($container, lock) {
         $('viz-handle', $(this)).removeClass('viz-handle-hover');
         $(this).removeClass('viz-container-hover');
       });
+      $(this).css('border-style', 'solid');
+      var $ruler = $container.prev();
+      if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
+        console.debug("Can't find ruler for the dashboard " + $container);
+        return; 
+      }
+      $ruler.show();
     });
   }
 }
 
 Dashboard.prototype.updateRuler = function($container) {
   var $ruler = $container.prev();
-  if (!$ruler.hasClass("dashboard-ruler")) {
+  if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
     console.debug("Can't find ruler for the dashboard " + $container);
     return; 
   }
@@ -237,4 +332,24 @@ Dashboard.prototype.updateRuler = function($container) {
   $ruler.height($container.height());
 }
 
+Dashboard.prototype.showSnapLines = function($viz, $container, isResized) {
+  var $ruler = $container.prev();
+  var $topLine = $('.snap-line-top', $ruler), $leftLine = $('.snap-line-left', $ruler),
+    $rightLine = $('.snap-line-right', $ruler), $bottomLine = $('.snap-line-bottom', $ruler);
+  
+  var pos = $viz.position();
+  if (!isResized) {
+    $topLine.css('top', pos.top).css('left', 0).css('opacity', 1).width($container.width());
+    $leftLine.css('top', 0).css('left', pos.left).css('opacity', 1).height($container.height());
+  }
+  $bottomLine.css('top', pos.top + $viz.height() + 1).css('left', 0).css('opacity', 1).width($container.width());
+  $rightLine.css('top', 0).css('left', pos.left + $viz.width() + 1).css('opacity', 1).height($container.height());
+}
+
+Dashboard.prototype.hideSnapLines = function($container) {
+  var $ruler = $container.prev();
+  $('.snap-line', $ruler).css('opacity', 0);
+}
+
 com.bouncingdata.Dashboard = new Dashboard();
+com.bouncingdata.Dashboard.init();

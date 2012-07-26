@@ -9,15 +9,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.UUID;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
 
 public class Utils {
@@ -123,12 +125,12 @@ public class Utils {
     return lines.length;
   }
   
-  public static Map<String, DashboardDetail> parseDashboard(Dashboard db) {
+  public static Map<String, DashboardPosition> parseDashboard(Dashboard db) {
     if (db == null || db.getStatus() == null || db.getStatus().isEmpty()) return null;
     String status = db.getStatus();
     String[] list = status.split(",");
     int i = 0;
-    Map<String, DashboardDetail> dashboard = new HashMap<String, DashboardDetail>();
+    Map<String, DashboardPosition> dashboard = new HashMap<String, DashboardPosition>();
     try {
       while (i < list.length) {
         String guid = list[i];
@@ -136,7 +138,7 @@ public class Utils {
         int y = Integer.parseInt(list[i+2]);
         int w = Integer.parseInt(list[i+3]);
         int h = Integer.parseInt(list[i+4]);
-        dashboard.put(guid, new DashboardDetail(guid, x, y, w, h));
+        dashboard.put(guid, new DashboardPosition(guid, x, y, w, h));
         i+=5;
       }
       return dashboard;
@@ -144,6 +146,19 @@ public class Utils {
       e.printStackTrace();
       return null;
     }
+  }
+  
+  public static String buildDashboardStatus(Map<String, DashboardPosition> dpMap) {
+    Iterator<Entry<String,DashboardPosition>> iter = dpMap.entrySet().iterator();
+    StringBuilder status = new StringBuilder();
+    while (iter.hasNext()) {
+      Entry<String, DashboardPosition> entry = iter.next();
+      DashboardPosition dp = entry.getValue();
+      status.append(entry.getKey() + "," + dp.getX() + "," + dp.getY() + "," + dp.getW() + "," + dp.getH() + ",");
+    }
+    
+    String st = status.substring(0, status.length() - 1);
+    return st;
   }
   
   public static void main(String args[]) {

@@ -9,10 +9,10 @@ public class ApplicationDetail {
   String code;
   Map<String, String> datasets;
   Map<String, VisualizationDetail> visualizations;
-  Map<String, DashboardDetail> dashboard;
+  Map<String, DashboardPosition> dashboard;
   
   public ApplicationDetail(String code, Map<String, String> datasets,
-      Map<String, VisualizationDetail> visualizations, Map<String, DashboardDetail> dashboard) {
+      Map<String, VisualizationDetail> visualizations, Map<String, DashboardPosition> dashboard) {
     super();
     this.code = code;
     this.datasets = datasets;
@@ -44,11 +44,11 @@ public class ApplicationDetail {
     this.visualizations = visualizations;
   }
 
-  public Map<String, DashboardDetail> getDashboard() {
+  public Map<String, DashboardPosition> getDashboard() {
     return dashboard;
   }
 
-  public void setDashboard(Map<String, DashboardDetail> dashboard) {
+  public void setDashboard(Map<String, DashboardPosition> dashboard) {
     this.dashboard = dashboard;
   }
   

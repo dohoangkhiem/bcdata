@@ -133,8 +133,29 @@
   border: 0 none;
 }
 
-.dashboard-ruler .dashboard-ruler-top {
+.app-output-viz .dashboard-ruler .snap-line {
   position: absolute;
+  opacity: 0;  
+}
+
+.app-output-viz .dashboard-ruler .snap-line-left, .app-output-viz .dashboard-ruler .snap-line-right {
+  border: 0 none;
+  width: 1px;
+  background-color: #00FF00;
+}
+
+.app-output-viz .dashboard-ruler .snap-line-top, .app-output-viz .dashboard-ruler .snap-line-bottom {
+  border: 0 none;
+  height: 1px;
+  background-color: #00FF00;
+}
+
+.app-output-viz .dashboard-ruler .ruler {
+  position: absolute;
+  z-index: 9999;
+}
+
+.app-output-viz .dashboard-ruler .dashboard-ruler-top {
   top: 0;
   left: 0;
   height: 10px;
@@ -142,8 +163,7 @@
   background: url('../../images/ruler-top.gif') repeat-x scroll left top transparent;
 }
 
-.dashboard-ruler .dashboard-ruler-left {
-  position: absolute;
+.app-output-viz .dashboard-ruler .dashboard-ruler-left {
   top: 0;
   left: 0;
   width: 10px;
@@ -151,8 +171,7 @@
   background: url('../../images/ruler-left.gif') repeat-y scroll left top transparent;
 }
 
-.dashboard-ruler .dashboard-ruler-right {
-  position: absolute;
+.app-output-viz .dashboard-ruler .dashboard-ruler-right {
   right: 0;
   top: 0; 
   height: 100%;
@@ -160,8 +179,7 @@
   background: url('../../images/ruler-left.gif') repeat-y scroll right top transparent;
 }
 
-.dashboard-ruler .dashboard-ruler-bottom {
-  position: absolute;
+.app-output-viz .dashboard-ruler .dashboard-ruler-bottom {
   bottom: 0;
   left: 0;
   height: 10px;
@@ -177,12 +195,16 @@
 }
 
 .workspace-ide-content .app-output-viz .viz-dashboard .viz-container {
-  border: 1px none;
+  border: 1px solid #999999;
+  background: none repeat left top #FFFFFF;
+}
+
+.workspace-ide-content .app-output-viz .app-output-actions {
+  margin: 10px 0;
 }
 
 .workspace-ide-content .app-output-viz .viz-dashboard .viz-container-hover {
-  border: 1px solid #DDDDDD;
-  border-style: dotted;
+  border: 1px dotted #888888;
 }
 
 .workspace-ide-content .app-output-viz .viz-dashboard .viz-container .ui-resizable-handle {
@@ -208,17 +230,18 @@
 }
 
 .app-output-viz .viz-dashboard .viz-container .viz-handle-hover {
-  background: #EEEEEE no-repeat scroll left top;
+  background: #BBBBBB no-repeat scroll left top;
   cursor: pointer;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle .perm-link {
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle .permalink {
   opacity: 0;
   float: right;
-  color: #CCCCCC;
+  color: #333333;
+  margin-right: 5px;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle-hover .perm-link {
+.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle-hover .permalink {
   opacity: 0.9;
 }
 

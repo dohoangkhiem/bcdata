@@ -44,7 +44,7 @@ div.clear {
   height: 60px;
   position: fixed;
   width: 100%;
-  z-index: 10;
+  z-index: 10000;
 }
 #page .header-container .header-content {
   padding: 15px 0 5px 5px;

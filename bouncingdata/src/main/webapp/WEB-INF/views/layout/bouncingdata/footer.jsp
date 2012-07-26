@@ -108,12 +108,20 @@
             </ul>
             <div id="app-output-viz-\${tabId}" class="app-output-viz">
 							<div><strong>Visualization Dashboard.</strong></div><br />
+							<div class="app-output-actions">
+							  <input class="dashboard-preview" type="button" value="Preview" />
+                <input class="dashboard-publish" type="button" value="Publish" />
+							</div>
               <div class="app-output-viz-dashboard">
 								<div class="dashboard-ruler">
-									<div class="dashboard-ruler-left"></div>
-									<div class="dashboard-ruler-top"></div>
-									<div class="dashboard-ruler-right"></div>
-									<div class="dashboard-ruler-bottom"></div>
+									<div class="dashboard-ruler-left ruler"></div>
+									<div class="dashboard-ruler-top ruler"></div>
+									<div class="dashboard-ruler-right ruler"></div>
+									<div class="dashboard-ruler-bottom ruler"></div>
+									<div class="snap-line-left snap-line"></div>
+									<div class="snap-line-top snap-line"></div>
+									<div class="snap-line-right snap-line"></div>
+									<div class="snap-line-bottom snap-line"></div>
 								</div>
 								<div class="viz-dashboard" id="viz-dashboard-\${tabId}"></div>
               </div>

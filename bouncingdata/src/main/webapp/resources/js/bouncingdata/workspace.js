@@ -665,6 +665,7 @@ Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
   }*/
   
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
+  $dashboard.attr('tabid', $tab.attr('id'));
   if (app) {
     $dashboard.attr('guid', app['guid']);
   }
@@ -673,7 +674,7 @@ Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
 
 Workspace.prototype.loadDashboard = function(visuals, dashboard, $tab, app) {
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
-  $dashboard.attr('guid', app['guid']); 
+  $dashboard.attr('guid', app['guid']).attr('tabid', $tab.attr('id')); 
   com.bouncingdata.Dashboard.load(visuals, dashboard, $dashboard, true);
 }
 
@@ -685,7 +686,9 @@ Workspace.prototype.reloadDashboard = function(app, $tab) {
     dataType: 'json',
     type: 'get',
     success: function(result) {
-      com.bouncingdata.Dashboard.load(result, null, $dashboard, true);
+      com.bouncingdata.Dashboard.load(result['visualizations'], null, $dashboard, true);
+      console.debug("Finish reload dashboard after execution, now post it back again...");
+      com.bouncingdata.Dashboard.postback($dashboard);
     },
     error: function(result) {
       console.debug(result);
