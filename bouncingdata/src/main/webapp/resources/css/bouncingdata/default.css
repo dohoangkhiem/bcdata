@@ -143,5 +143,24 @@ div.clear {
   text-align: center;
 }
 
+/** Main content layout **/
+#main-content {
+  position: relative;
+}
+
+#main-content .right-content {
+  position: fixed;
+  top: 60px;
+  bottom: 20px;
+  right: 6px;
+  width: 220px;
+  background-color: #FFFFFF;
+}
+
+#main-content .center-content {
+  margin-right: 230px;
+  background-color: #FFFFFF;
+}
+
 
 

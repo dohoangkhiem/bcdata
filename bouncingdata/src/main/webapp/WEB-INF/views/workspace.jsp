@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script type="text/javascript">
   if (!com.bouncingdata.Workspace) {
@@ -21,8 +20,8 @@
   }
   
 </script>
-<div id="main-content">
-  <div class="workspace-browser" id="workspace-browser">
+<div id="main-content" class="workspace-container">
+  <div class="workspace-browser right-content" id="workspace-browser">
     <div class="search-container">
       <div id="search-form" class="search-form">
         <input type="text" class="search-input" id="query" name="query" />
@@ -53,7 +52,7 @@
       </div>
     </div>
   </div>
-  <div class="workspace-ide workspace-container">  
+  <div class="workspace-ide center-content">  
     <!-- Workspace main tabs layout -->
     <div class="workspace-main-tabs" id="workspace-main-tabs">
       <ul class="workspace-main-tabs-bar">

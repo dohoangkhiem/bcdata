@@ -114,7 +114,7 @@ Workspace.prototype.init = function() {
     $('#workspace-main-tabs .workspace-main-tabs-bar').dblclick(function(e) {
       var $target = $(e.target);
       var $p = $target.parents('li.workspace-tab-header');
-      if ($p) return false;
+      if ($p && $p.length > 0) return false;
       me.createTab(null);
       return false;
     });
@@ -393,7 +393,7 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
   $appCodeLayoutContainer.layout({
     center__paneSelector: '#app-code-layout-center-' + tabId,
     east__paneSelector: '#app-code-layout-east-' + tabId,
-    east__size: 380,
+    east__size: 350,
     east__initClosed: true,
     applyDefaultStyles: true,
     center__onresize: function() {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,22 +31,15 @@ public class MainController {
   
   private Logger logger = LoggerFactory.getLogger(this.getClass());
   
+  @Autowired
   private DatastoreService datastoreService;
+  
+  @Autowired
   private ApplicationStoreService appStoreService;
+  
+  @Autowired
   private ApplicationExecutor appExecutor;
-  
-  public void setDatastoreService(DatastoreService ds) {
-    this.datastoreService = ds;
-  }
-  
-  public void setAppStoreService(ApplicationStoreService appStoreService) {
-    this.appStoreService = appStoreService;
-  }
-  
-  public void setAppExecutor(ApplicationExecutor appExecutor) {
-    this.appExecutor = appExecutor;
-  }
-    
+      
   @RequestMapping(method = RequestMethod.GET)
   public String main(ModelMap model, Principal principal) {
     String username = principal.getName();

@@ -1,0 +1,19 @@
+.analysis-container#main-content {
+  position: relative;
+}
+
+.analysis-container#main-content .analysis-info {
+  position: fixed;
+  top: 60px;
+  bottom: 20px;
+  right: 6px;
+  width: 220px;
+  background-color: #FFFFFF;
+}
+
+.analysis-container#main-content .analysis-main {
+  margin-right: 230px;
+  background-color: #FFFFFF;
+  min-height: 600px;
+}
+

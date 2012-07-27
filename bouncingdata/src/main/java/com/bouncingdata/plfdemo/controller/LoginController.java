@@ -2,6 +2,9 @@ package com.bouncingdata.plfdemo.controller;
 
 import java.security.Principal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +18,11 @@ import com.bouncingdata.plfdemo.service.DatastoreService;
 @Controller
 public class LoginController {
   
+  private Logger logger = LoggerFactory.getLogger(LoginController.class);
+  
+  @Autowired
   private DatastoreService datastoreService;
-  
-  public void setDatastoreService(DatastoreService ds) {
-    this.datastoreService = ds;
-  }
-  
+    
   @RequestMapping(value="/", method = RequestMethod.GET)
   public String main(ModelMap model, Principal principal) {
     String username = principal.getName();
@@ -44,7 +46,7 @@ public class LoginController {
   public String openCreate() {
     return "create";
   }
-  
+    
   @RequestMapping(value="/auth", method=RequestMethod.GET)
   public String gologin(ModelMap model) {
     model.addAttribute("mode", "login");

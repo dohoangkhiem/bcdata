@@ -17,9 +17,10 @@
   <context:annotation-config />
   <mvc:annotation-driven />
  
- <!-- Forwards requests to the "/" resource to the "welcome" view -->
+  <!-- Forwards requests to the "/" resource to the "create" view -->
   <mvc:view-controller path="/" view-name="create" />
-
+  
+  <!-- Resources mapping -->
   <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
   
@@ -40,30 +41,33 @@
   </bean>
   
   <bean id="mainController" class="com.bouncingdata.plfdemo.controller.MainController">
-    <property name="datastoreService" ref="datastoreService" />
+    <!-- property name="datastoreService" ref="datastoreService" />
     <property name="appStoreService" ref="appStoreService" />
-    <property name="appExecutor" ref="localAppExecutor" />
+    <property name="appExecutor" ref="localAppExecutor" /-->
   </bean>
   
   <bean id="appController" class="com.bouncingdata.plfdemo.controller.AppController">
-    <property name="datastoreService" ref="datastoreService" />
+    <!-- property name="datastoreService" ref="datastoreService" />
     <property name="appExecutor" ref="localAppExecutor" />
     <property name="appStoreService" ref="appStoreService" />
-    <!-- property name="userDataService" ref="userDataService" /-->
+    <property name="userDataService" ref="userDataService" /-->
   </bean>
   
   <bean id="datasetController" class="com.bouncingdata.plfdemo.controller.DatasetController">
-    <property name="datastoreService" ref="datastoreService" />
-    <property name="userDataService" ref="userDataService" />
+    <!-- property name="datastoreService" ref="datastoreService" />
+    <property name="userDataService" ref="userDataService" /-->
   </bean>
   
   <bean id="visualizeController" class="com.bouncingdata.plfdemo.controller.VisualizeController">
-    <property name="appStoreService" ref="appStoreService"></property>
-    <property name="datastoreService" ref="datastoreService" />
+    <!-- property name="appStoreService" ref="appStoreService"></property>
+    <property name="datastoreService" ref="datastoreService" /-->
   </bean>
   
   <bean id="loginController" class="com.bouncingdata.plfdemo.controller.LoginController">
-    <property name="datastoreService" ref="datastoreService" />
+    <!-- property name="datastoreService" ref="datastoreService" /-->
+  </bean>
+  
+  <bean id="analysisController" class="com.bouncingdata.plfdemo.controller.AnalysisController">
   </bean>
   
   <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
@@ -74,10 +78,6 @@
     </property>
   </bean>
 
-  <!-- bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-    <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
-    <property name="order" value="0"></property>
-  </bean--> 
  <bean id="viewResolver" class="org.springframework.js.ajax.AjaxUrlBasedViewResolver">
     <property name="viewClass" value="org.springframework.js.ajax.tiles2.AjaxTilesView" />
     <property name="order" value="0"></property>

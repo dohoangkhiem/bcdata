@@ -10,6 +10,10 @@
   <definition name="create" extends="based-layout">  
     <put-attribute name="main-content" value="/WEB-INF/views/workspace.jsp"></put-attribute>
   </definition>
+  
+  <definition name="analysis" extends="based-layout">
+    <put-attribute name="main-content" value="/WEB-INF/views/analysis.jsp"></put-attribute>
+  </definition>
         
   <definition name="based-layout" template="/WEB-INF/views/layout/bouncingdata/layout.jsp">
     <put-attribute name="title" value="Bouncing Data"></put-attribute>

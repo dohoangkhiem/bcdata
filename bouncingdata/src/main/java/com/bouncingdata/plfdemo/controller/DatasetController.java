@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,17 +24,12 @@ public class DatasetController {
   
   private Logger logger = LoggerFactory.getLogger(DatasetController.class);
   
+  @Autowired
   private DatastoreService datastoreService;
+  
+  @Autowired
   private UserDataService userDataService;
-  
-  public void setDatastoreService(DatastoreService datastoreService) {
-    this.datastoreService = datastoreService;
-  }
-
-  public void setUserDataService(UserDataService userDataService) {
-    this.userDataService = userDataService;
-  }  
-  
+    
   @RequestMapping(value="/{guid}", method = RequestMethod.GET)
   public @ResponseBody List<Map> getDataset(@PathVariable String guid) {
     try {

@@ -3,10 +3,11 @@ package com.bouncingdata.plfdemo.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -37,26 +38,12 @@ import com.bouncingdata.plfdemo.utils.Utils;
 @RequestMapping("/app")
 public class AppController {
   
-  private DatastoreService datastoreService;
-  private ApplicationExecutor appExecutor;
-  private ApplicationStoreService appStoreService;
+  private Logger logger = LoggerFactory.getLogger(AppController.class);
+  
+  @Autowired private DatastoreService datastoreService;
+  @Autowired private ApplicationExecutor appExecutor;
+  @Autowired private ApplicationStoreService appStoreService;
   @Autowired private UserDataService userDataService;
-  
-  public void setDatastoreService(DatastoreService dsService) {
-    this.datastoreService = dsService;
-  }
-  
-  public void setAppExecutor(ApplicationExecutor appExecutor) {
-    this.appExecutor = appExecutor;
-  }
-  
-  public void setAppStoreService(ApplicationStoreService appStoreService) {
-    this.appStoreService = appStoreService;
-  }
-  
-  public void setUserDataService(UserDataService userDataService) {
-    this.userDataService = userDataService;
-  }
   
   @RequestMapping(value="/a/{guid}", method = RequestMethod.GET)
   public @ResponseBody ApplicationDetail getApplication(@PathVariable String guid) {
@@ -242,7 +229,7 @@ public class AppController {
   
   @RequestMapping(value="/v/d/update/{guid}", method = RequestMethod.POST)
   public @ResponseBody String updateDashboard(@PathVariable String guid, @RequestParam(value="status", required = true) String status, Principal principal) {
-    System.out.format("Receive update dashboard request %s, %s%n", guid, status);
+    logger.debug("Receive update dashboard request {}, {}", guid, status);
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return "KO";
     try {
@@ -263,7 +250,7 @@ public class AppController {
   
   @RequestMapping(value="/v/d/create/{guid}/{status}", method = RequestMethod.GET)
   public void createDashboard(@PathVariable String guid, @PathVariable String status) {
-    System.out.format("Receive create dashboard request %s, %s%n", guid, status);
+    logger.debug("Receive create dashboard request {}, {}", guid, status);
     try {
       datastoreService.createDashboard(guid, status);
     } catch (Exception e) {

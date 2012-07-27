@@ -22,8 +22,11 @@ Dashboard.prototype.loadAll = function(vizList, dashboardPos, $container) {
 }
 
 Dashboard.prototype.load = function(vizList, dashboardPos, $container, editMode) {
-  this.zCounter[$container.attr('tabid')] = 50;
-  var dbCache = this.dashboardCache[$container.attr('guid')];
+  var dbCache;
+  if (editMode) {
+    this.zCounter[$container.attr('tabid')] = 50;
+    dbCache = this.dashboardCache[$container.attr('guid')];
+  }
   $container.empty();
   var count = 0, defaultSize = 380; //Math.floor($container.width()/2);
   
@@ -47,11 +50,13 @@ Dashboard.prototype.load = function(vizList, dashboardPos, $container, editMode)
       var pos = dashboardPos[viz.guid] || (dbCache?dbCache[v]:null);
       if (pos) {
         this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
-        if (!dbCache) {
-          this.dashboardCache[$container.attr('guid')] = {};
-          dbCache = this.dashboardCache[$container.attr('guid')];
+        if (editMode) {
+          if (!dbCache) {
+            this.dashboardCache[$container.attr('guid')] = {};
+            dbCache = this.dashboardCache[$container.attr('guid')];
+          }
+          dbCache[v] = {x: pos.x, y: pos.y, w: pos.w, h: pos.h}
         }
-        dbCache[v] = {x: pos.x, y: pos.y, w: pos.w, h: pos.h}
       }
       else this.addViz((count%2 + 1)*10 + ((count%2) * defaultSize), (Math.floor(count/2)+1)*10 + (Math.floor(count/2) * defaultSize), defaultSize, defaultSize, viz, $container, editMode);
       count++;
@@ -89,12 +94,12 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $('a', $vizHandle).attr('href', src);
     $inner.load().appendTo($vizContainer);
     $inner.attr('src', ctx + '/' + src)
-      .css('height', (h - 25) + "px")
+      .css('height', (h - 15) + "px")
       .css('width', (w - 10) + "px");
     $vizContainer.css('width', w + 'px').css('height', h + 'px');
     if ($container.height() < (y + h)) {
       $container.css('height', (y + h + 10) + "px");
-      me.updateRuler($container);
+      if (editMode) me.updateRuler($container);
     }
     break;
   case "png":
@@ -102,13 +107,13 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $('a', $vizHandle).attr('href', 'data:image/png;base64,' + src);
     $inner.bind('load', function() {
       w = w || ($(this).width() + 10);
-      h = h || ($(this).height() + 25);
+      h = h || ($(this).height() + 15);
       // adjust viz. container size
-      $(this).css('width', (w - 10) + 'px').css('height', (h - 25) + 'px');
+      $(this).css('width', (w - 10) + 'px').css('height', (h - 15) + 'px');
       $vizContainer.css('width', w + 'px').css('height', h + 'px');
       if ($container.height() < (y + h)) {
         $container.css('height', (y + h + 10) + "px");
-        me.updateRuler($container);
+        if (editMode) me.updateRuler($container);
       }
     }).appendTo($vizContainer);
     break;
@@ -120,7 +125,8 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   $vizContainer.css('position', 'absolute')
     .css('top', y + 'px')
     .css('left', x + 'px')
-    .css('z-index', this.zCounter[$container.attr('tabid')]++);
+   
+  if (editMode) $vizContainer.css('z-index', this.zCounter[$container.attr('tabid')]++);
   
   $container.append($vizContainer);
   
@@ -199,7 +205,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
       }
       
       var cw = $(this).width(), ch = $(this).height(); 
-      $inner.css('height', (ch - 25) + "px").css('width', (cw - 10) + "px");
+      $inner.css('height', (ch - 15) + "px").css('width', (cw - 10) + "px");
       $vizContainer.draggable("option", "containment", [_x, _y, _x + _w - cw, 140000]);
       
       // update inner iframe-fix position

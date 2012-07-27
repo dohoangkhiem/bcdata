@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>dataprj-parent</artifactId>
-    <groupId>khiem.dataprj</groupId>
+    <groupId>dataprj</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>khiem.dataprj.sec</groupId>
