@@ -8,7 +8,7 @@
 	  var dashboardStatus = dbDetail.dashboard;
 	  console.debug("Visualization map: " + vizMap);
 	  console.debug("Dashboard status: " + dashboardStatus);
-	  com.bouncingdata.Dashboard.load(vizMap, dashboardStatus, $('#main-content #anls-dashboard'), false);
+	  com.bouncingdata.Dashboard.view(vizMap, dashboardStatus, $('#main-content #anls-dashboard'));
 	});
 </script>
 
@@ -19,12 +19,27 @@
   </div>
     
   <div class="analysis-main center-content">
+    <div class="anls-header">
+      <div class="anls-title"><h2>${anlsTitle}</h2></div>
+      <div class="anls-vote">
+
+      </div>
+    </div>
+    <div class="anls-header-rule"></div>
     <div class="anls-content">
-      <div class="anls-dashboard" id="anls-dashboard" style="width: 800px; height: 600px; border: 1px solid #999999;"></div>
+      <ul>
+        <li><a href="#anls-dashboard">Dashboard</a></li>
+        <li><a href="#anls-code">Code</a></li>
+        <li><a href="#anls-data">Data</a></li>
+      </ul>
+      <div class="anls-dashboard" id="anls-dashboard"></div>
+      <div class="anls-code" id="anls-code"></div>
+      <div class="anls-data" id="anls-data"></div>
     </div>
       
     <div class="comments-container">
-      All comments here.
+      <h3>Comments</h3>
+      <div>All comments here.</div>
     </div>
   </div>
   

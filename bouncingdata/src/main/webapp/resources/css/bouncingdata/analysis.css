@@ -7,13 +7,69 @@
   top: 60px;
   bottom: 20px;
   right: 6px;
-  width: 220px;
+  width: 300px;
   background-color: #FFFFFF;
 }
 
 .analysis-container#main-content .analysis-main {
-  margin-right: 230px;
+  margin-right: 310px;
   background-color: #FFFFFF;
   min-height: 600px;
+  padding-left: 10px;
 }
 
+.analysis-container#main-content .analysis-main .anls-dashboard {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  border: 1px solid #999999;
+}
+
+.anls-dashboard .viz-container {
+  border: 1px none;
+  background: none repeat scroll left top #FFFFFF;
+  overflow: hidden;
+}
+
+.anls-dashboard .viz-container .viz-handle {
+  height: 12px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  background: none repeat scroll left top #FFFFFF;
+  opacity: 0;
+}
+
+.anls-dashboard .viz-container .viz-handle .permalink {
+  opacity: 0;
+  float: right;
+  color: #333333;
+  margin-right: 5px;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.anls-dashboard .viz-container > iframe {
+  border: 1px none;
+  overflow: hidden;
+}
+
+.analysis-main .anls-header {
+  padding: 20px 0;
+}
+
+.analysis-main .anls-header-rule {
+  height: 0;
+  width: 98%;
+  border-top: 0 none;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.anls-header .anls-title h2 {
+  margin: 0;
+}
+
+.analysis-main .anls-content {
+  margin: 20px 0px;
+}

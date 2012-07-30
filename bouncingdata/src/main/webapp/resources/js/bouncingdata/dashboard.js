@@ -72,9 +72,7 @@ Dashboard.prototype.viewDashboard = function() {
 
 Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   if (!viz || !viz.source) return;
-  x = x || 0;
-  y = y || 0;
-  
+
   var me = this;
   var type = viz.type.toLowerCase();
   var src = viz.source;
@@ -88,8 +86,6 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   var $inner;
   switch(type) {
   case "html":
-    w = w || 360;
-    h = h || 280;
     $inner = $('<iframe></iframe>');
     $('a', $vizHandle).attr('href', src);
     $inner.load().appendTo($vizContainer);
@@ -285,6 +281,21 @@ Dashboard.prototype.postback = function($container) {
       console.debug(result);
     }
   });
+}
+
+Dashboard.prototype.view = function(vizList, dashboardPos, $container) {
+  var count = 0, defaultSize = 380;
+  $container.empty();
+  for (v in vizList) {
+    var viz = vizList[v];
+    viz.name = v;
+    var pos = dashboardPos[viz.guid];
+    if (pos) {
+      this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, false);
+    }
+    else this.addViz((count%2 + 1)*10 + ((count%2) * defaultSize), (Math.floor(count/2)+1)*10 + (Math.floor(count/2) * defaultSize), defaultSize, defaultSize, viz, $container, false);
+    count++;
+  }
 }
 
 /**

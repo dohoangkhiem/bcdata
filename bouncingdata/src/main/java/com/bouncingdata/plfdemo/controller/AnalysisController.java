@@ -29,27 +29,27 @@ import com.bouncingdata.plfdemo.utils.Utils;
 @Controller
 @RequestMapping("/anls")
 public class AnalysisController {
-  
+
   private Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-  
+
   @Autowired
   private DatastoreService datastoreService;
-  
+
   @Autowired
   private ApplicationStoreService appStoreService;
-  
+
   @RequestMapping(method=RequestMethod.GET)
   public String defaultLayout() {
     return "analysis";
   }
-  
+
   @RequestMapping(value="/{guid}", method=RequestMethod.GET)
   public String viewAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
     logger.debug("Received request for analysis {}", guid);
     try {
       Application app = datastoreService.getApplication(guid);
       if (app == null) return null;
-      
+
       List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
       Map<String, VisualizationDetail> visualsMap = null;
       if (visuals != null) {
@@ -62,19 +62,25 @@ public class AnalysisController {
               String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
               visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), source, VisualizationType.getVisualType(v.getType())));
             } catch (Exception e) {
-              e.printStackTrace();
+              if (logger.isDebugEnabled()) {
+                logger.debug("Error occurs when retrieving visualizations {} from analysis {}", v.getGuid(), guid);
+                logger.debug("Exception detail", e);
+              }
+              continue;
             }
           }
         }
       }
-          
+
       Dashboard d = datastoreService.getDashboard(guid);
       Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
-      
+
       DashboardDetail dbDetail = new DashboardDetail(visualsMap, dashboard);
       ObjectMapper mapper = new ObjectMapper();
       model.addAttribute("dashboardDetail", mapper.writeValueAsString(dbDetail));
-      
+
+      model.addAttribute("anlsTitle", app.getName());
+
       return "analysis";
     } catch (Exception e) {
       logger.debug("Failed to load analysis {}", guid);

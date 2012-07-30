@@ -412,7 +412,7 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
       me.setStatus($tab.parent(), "loading");
       console.info('Retrieving application details...');
       $.ajax({
-        url: ctx + "/app/a/" + app['guid'],
+        url: ctx + "/app/a/" + guid,
         success: function(result) {
           console.debug(result);
           me.setCode(result.code, $tab);
@@ -426,6 +426,11 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
       });
     });
   }
+
+  $(".dashboard-preview", $tab).click(function() {
+    window.open(ctx + "/anls/" + guid);
+  });
+
   /*
   $(function() {
     // just for demo
