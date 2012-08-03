@@ -6,8 +6,9 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
@@ -85,11 +86,13 @@ public interface DatastoreService {
   
   public void createVisualization(Visualization visualization) throws Exception;
   
-  public Dashboard getDashboard(String guid)  throws Exception;
+  public Analysis getDashboard(String guid)  throws Exception;
   
   public void updateDashboard(String guid, String status) throws Exception;
   
   public void createDashboard(String guid, String status) throws Exception;
   
   public void invalidateViz(Application application) throws Exception;
+  
+  public List<Comment> getComments(int analysisId) throws Exception;
 }

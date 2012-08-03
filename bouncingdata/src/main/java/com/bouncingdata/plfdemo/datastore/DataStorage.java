@@ -7,7 +7,8 @@ import org.springframework.dao.DataAccessException;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
@@ -135,9 +136,19 @@ public interface DataStorage {
   
   public Dataset getDatasetByGuid(String guid) throws DataAccessException;
   
-  public Dashboard getDashboard(String guid) throws DataAccessException;
+  public Analysis getAnalysis(int analysisId) throws DataAccessException;
+  
+  public Analysis getAnalysisByGuid(String guid) throws DataAccessException;
   
   public void saveDashboard(String guid, String status, boolean isNew) throws DataAccessException;
   
   public void invalidateViz(Application app) throws DataAccessException;
+  
+  public List<Comment> getComments(int analysisId) throws DataAccessException;
+  
+  public void addComment(Comment comment) throws DataAccessException;
+  
+  public void removeComment(Comment comment) throws DataAccessException;
+  
+  public void updateComment(Comment comment) throws DataAccessException;
 }

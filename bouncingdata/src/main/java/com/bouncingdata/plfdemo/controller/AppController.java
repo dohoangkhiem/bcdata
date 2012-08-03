@@ -25,7 +25,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
@@ -72,7 +72,7 @@ public class AppController {
       String code = appStoreService.getApplicationCode(guid, null);
       Map<String, String> datasets = userDataService.getApplicationDataset(app.getId());
       
-      Dashboard d = datastoreService.getDashboard(guid);
+      Analysis d = datastoreService.getDashboard(guid);
       Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
       
       ApplicationDetail detail = new ApplicationDetail(code, datasets, visualsMap, dashboard);
@@ -107,7 +107,7 @@ public class AppController {
         }
       }
       
-      Dashboard d = datastoreService.getDashboard(guid);
+      Analysis d = datastoreService.getDashboard(guid);
       Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
       
       return new DashboardDetail(visualsMap, dashboard);
@@ -144,7 +144,7 @@ public class AppController {
         }
       }
       
-      Dashboard d = datastoreService.getDashboard(guid);
+      Analysis d = datastoreService.getDashboard(guid);
       Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
       Map<String, DashboardPosition> dashboardPos = new HashMap<String, DashboardPosition>();
       

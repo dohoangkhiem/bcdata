@@ -118,6 +118,13 @@
       <scope>provided</scope>
     </dependency>
     
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+      <version>${spring.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- Apache Tiles -->
     <dependency>
       <groupId>org.apache.tiles</groupId>
@@ -256,6 +263,14 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+      </testResource>
+    </testResources>
     <plugins>
       <!-- Datanucleus enhancement -->
       <plugin>

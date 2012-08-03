@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bouncingdata.plfdemo.datastore.DataStorage;
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
@@ -137,8 +138,8 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public Dashboard getDashboard(String guid) throws Exception {
-    return dataStorage.getDashboard(guid);
+  public Analysis getDashboard(String guid) throws Exception {
+    return dataStorage.getAnalysisByGuid(guid);
   }
 
   @Override
@@ -154,6 +155,18 @@ public class DatastoreServiceImpl implements DatastoreService {
   @Override
   public void createDashboard(String guid, String status) throws Exception {
     dataStorage.saveDashboard(guid, status, true);
+  }
+
+  @Override
+  public List<Comment> getComments(int analysisId) throws Exception {
+    Analysis analysis  = dataStorage.getAnalysis(analysisId);
+    if (analysis == null) {
+      // logging
+      return null;
+    }
+    
+    return dataStorage.getComments(analysisId);
+
   }
 
 }

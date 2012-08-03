@@ -20,7 +20,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 
 public class Utils {
   
@@ -125,7 +125,7 @@ public class Utils {
     return lines.length;
   }
   
-  public static Map<String, DashboardPosition> parseDashboard(Dashboard db) {
+  public static Map<String, DashboardPosition> parseDashboard(Analysis db) {
     if (db == null || db.getStatus() == null || db.getStatus().isEmpty()) return null;
     String status = db.getStatus();
     String[] list = status.split(",");

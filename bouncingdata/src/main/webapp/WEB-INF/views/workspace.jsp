@@ -53,38 +53,41 @@
     </div>
   </div>
   <div class="workspace-ide center-content">  
-    <!-- Workspace main tabs layout -->
-    <div class="workspace-main-tabs" id="workspace-main-tabs">
-      <ul class="workspace-main-tabs-bar">
-      </ul>
-      <div class="app-actions">
-            <input type="button" value="Clone" class="app-action" id="copy-app" />
-            <input type="button" value="Save" class="app-action" id="save-app" />
-            <input type="button" value="Run" class="app-action" id="run-app"  />
+    <div class="center-content-wrapper">
+      <div class="top-rule"></div>
+      <!-- Workspace main tabs layout -->
+      <div class="workspace-main-tabs" id="workspace-main-tabs">
+        <ul class="workspace-main-tabs-bar">
+        </ul>
+        <div class="app-actions">
+          <input type="button" value="Clone" class="app-action" id="copy-app" />
+          <input type="button" value="Save" class="app-action" id="save-app" />
+          <input type="button" value="Run" class="app-action" id="run-app"  />
+        </div>
+      </div> 
+      
+      <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
+        <form>
+          <fieldset>
+            <label for="new-app-name">Application name</label>
+            <input type="text" id="new-app-name" maxlength="40"></input><br>
+            <label for="new-app-language">Language</label>
+            <select id="new-app-language">
+              <option value="python">Python</option>
+              <option value="r">R</option>
+            </select> <br>
+            <label for="new-app-description">Description</label>
+            <textarea rows="3" id="new-app-description" style="resize: none;"></textarea><br>
+            <label for="new-app-public">Published this application?</label>
+            <select id="new-app-public">
+              <option value="1">Public</option>
+              <option value="0">Private</option>
+            </select><br>
+            <label for="new-app-tags">Tags</label>
+            <input type="text" id="new-app-tags" title="Separate tags by comma"></input><br>
+          </fieldset>
+        </form>
       </div>
-    </div> 
-    
-    <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
-      <form>
-        <fieldset>
-          <label for="new-app-name">Application name</label>
-          <input type="text" id="new-app-name" maxlength="40"></input><br>
-          <label for="new-app-language">Language</label>
-          <select id="new-app-language">
-            <option value="python">Python</option>
-            <option value="r">R</option>
-          </select> <br>
-          <label for="new-app-description">Description</label>
-          <textarea rows="3" id="new-app-description" style="resize: none;"></textarea><br>
-          <label for="new-app-public">Published this application?</label>
-          <select id="new-app-public">
-            <option value="1">Public</option>
-            <option value="0">Private</option>
-          </select><br>
-          <label for="new-app-tags">Tags</label>
-          <input type="text" id="new-app-tags" title="Separate tags by comma"></input><br>
-        </fieldset>
-      </form>
     </div> 
   </div>
 </div>

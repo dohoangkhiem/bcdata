@@ -12,15 +12,17 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 214px;
+  width: 244px;
   padding: 2px;
+  border: 0 none;
 }
 
 .browser-container #browser-tabs .ui-tabs-panel {
   position: absolute;
   top: 32px;
   bottom: 2px;  
-  width: 204px;
+  left: 5px;
+  right: 5px;
   padding: 7px 5px 8px 5px;
   overflow-y: hidden;
 }
@@ -121,6 +123,6 @@
   border: 1px solid #D3D3D3;
   height: 1.5em;
   padding-left: 5px;
-  width: 200px;
+  width: 231px;
   margin: 10px 0 0 5px;
 }

@@ -62,9 +62,9 @@ div.clear {
 }
 
 #page .header-container .search-container .search-input {
-  width: 400px;
+  width: 430px;
   border: 1px solid #CCCCCC;
-  height: 22px;
+  height: 24px;
 }
 
 #page .header-container .search-container #search-submit {
@@ -75,7 +75,6 @@ div.clear {
 
 #page .main-content-container {
   margin-left: 105px;
-  margin-right: 5px;
   z-index: 1;
   background-color: transparent;
   min-height: 600px;
@@ -153,13 +152,28 @@ div.clear {
   top: 60px;
   bottom: 20px;
   right: 6px;
-  width: 220px;
+  width: 250px;
   background-color: #FFFFFF;
 }
 
 #main-content .center-content {
-  margin-right: 230px;
+  margin-right: 270px;
   background-color: #FFFFFF;
+}
+
+#main-content .center-content .center-content-wrapper {
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+}
+
+#main-content .center-content .center-content-wrapper .top-rule {
+  height: 8px;
+  position: fixed;
+  left: 105px;
+  right: 270px;
+  top: 60px;
+  border-top: 1px solid #CCCCCC;
+  z-index: 9999;
 }
 
 

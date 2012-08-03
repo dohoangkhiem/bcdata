@@ -1,9 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <div class="header-content">
-  <div style="float: right; margin-right: 5px; text-align: right;">
-    <div>Welcome back <span style="font-weight: bold;"> ${username } </span>
-      <a style="color: blue;" href="<c:url value="/auth/j_spring_security_logout" />"> Logout</a>
-    </div>
+  <div style="float: right; margin-right: 10px; text-align: right;">
+    <sec:authorize access="isAuthenticated()">
+      <div>Welcome back <span style="font-weight: bold;"> 
+          <sec:authentication property="principal.username" />
+        </span>
+        <a style="color: blue;" href="<c:url value="/auth/j_spring_security_logout" />"> Logout</a>
+      </div>
+    </sec:authorize>
   </div>
   
   <h2 style="margin: 0 0 0 10px; float: left; display: inline;">

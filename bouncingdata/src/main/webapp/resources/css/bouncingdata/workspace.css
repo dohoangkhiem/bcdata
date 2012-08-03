@@ -6,19 +6,22 @@
   position: fixed;
   top: 60px;
   bottom: 20px;
-  right: 6px;
-  width: 220px;
+  width: 248px;
+  right: 10px;
   background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
 }
 
 .workspace-container#main-content .workspace-ide {
-  margin-right: 230px;
+  margin-right: 270px;
   background-color: #FFFFFF;
 }
 
 .workspace-ide .workspace-main-tabs {
   height: 100%;
   padding: 2px;
+  border: 0 none;
 }
 
 .workspace-ide .app-actions {

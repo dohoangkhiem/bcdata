@@ -80,6 +80,9 @@
       <field name="isPublished">
         <column name="is_published" jdbc-type="BIT" />
       </field>
+      <!--field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field-->
     </class>
     
     <class name="User" identity-type="datastore" table="spring_users">
@@ -214,7 +217,7 @@
       </field>
     </class>
     
-    <class name="Dashboard" identity-type="datastore" table="dashboards">
+    <class name="Analysis" identity-type="datastore" table="analyses">
       <inheritance strategy="new-table" />
       <field name="id" primary-key="true">
         <column name="id" jdbc-type="INTEGER" />
@@ -224,6 +227,49 @@
       </field>
       <field name="status">
         <column name="status" jdbc-type="LONGVARCHAR" />
+      </field>
+    </class>
+    
+    <class name="Comment" identity-type="datastore" table="comments">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field>
+      <field name="order">
+        <column name="order" jdbc-type="INTEGER" />
+      </field>
+      <field name="title">
+        <column name="title" jdbc-type="VARCHAR" length="100" />
+      </field>
+      <field name="content">
+        <column name="content" jdbc-type="LONGVARCHAR" />
+      </field>
+      <field name="createAt">
+        <column name="create_at" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="lastUpdate">
+        <column name="last_update" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="upVote">
+        <column name="up_vote" jdbc-type="INTEGER" />
+      </field>
+      <field name="downVote">
+        <column name="down_vote" jdbc-type="INTEGER" />
+      </field>
+      <field name="parentId">
+        <column name="parent_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="lastUpdateBy">
+        <column name="last_update_by" jdbc-type="INTEGER" />
+      </field>
+      <field name="removeBy">
+        <column name="remove_by" jdbc-type="INTEGER" />
+      </field>
+      <field name="accepted">
+        <column name="accepted" jdbc-type="BIT" />
       </field>
     </class>
   </package>

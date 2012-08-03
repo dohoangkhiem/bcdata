@@ -16,7 +16,8 @@ import org.springframework.orm.jdo.support.JdoDaoSupport;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Dashboard;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
@@ -237,10 +238,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public Dashboard getDashboard(String guid) throws DataAccessException {
-    Query q = getPersistenceManager().newQuery(Dashboard.class);
+  public Analysis getAnalysisByGuid(String guid) throws DataAccessException {
+    Query q = getPersistenceManager().newQuery(Analysis.class);
     q.setFilter("guid == '" + guid + "'");
-    List<Dashboard> db = (List<Dashboard>) q.execute();
+    List<Analysis> db = (List<Analysis>) q.execute();
     return (db!=null && db.size() > 0)?db.get(0):null;
   }
 
@@ -256,19 +257,19 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Transaction tx = pm.currentTransaction();
     try {
       tx.begin();
-      Query q = pm.newQuery(Dashboard.class);
+      Query q = pm.newQuery(Analysis.class);
       q.setFilter("guid == '" + guid + "'");
-      List<Dashboard> db = (List<Dashboard>) q.execute();
+      List<Analysis> db = (List<Analysis>) q.execute();
       if (db != null && db.size() > 0) {
-        Dashboard dashboard = db.get(0);
+        Analysis dashboard = db.get(0);
         dashboard.setStatus(status);
         tx.commit();
       } else {
         if (logger.isDebugEnabled()) {
           logger.debug("Dashboard {} not found.", guid);
         }
-        Dashboard d = new Dashboard(guid, status);
-        List<Dashboard> ld = new ArrayList<Dashboard>();
+        Analysis d = new Analysis(guid, status);
+        List<Analysis> ld = new ArrayList<Analysis>();
         ld.add(d);
         persistData(ld);
       } 
@@ -298,5 +299,42 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         tx.rollback();
       }
     }
+  }
+
+  @Override
+  public List<Comment> getComments(int analysisId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Comment.class);
+    q.setFilter("analysis == " + analysisId);
+    List<Comment> results = (List<Comment>) q.execute();
+    return results;
+  }
+
+  @Override
+  public void addComment(Comment comment) throws DataAccessException {
+    List<Comment> comments = new ArrayList<Comment>();
+    comments.add(comment);
+    persistData(comments);
+  }
+
+  @Override
+  public void removeComment(Comment comment) throws DataAccessException {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void updateComment(Comment comment) throws DataAccessException {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public Analysis getAnalysis(int analysisId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Analysis.class);
+    q.setFilter("id == " + analysisId);
+    List<Analysis> results = (List<Analysis>) q.execute();
+    return results.size()>0?results.get(0):null;
   }
 }

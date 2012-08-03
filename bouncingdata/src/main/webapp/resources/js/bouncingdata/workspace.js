@@ -416,7 +416,9 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
         success: function(result) {
           console.debug(result);
           me.setCode(result.code, $tab);
-          me.loadDashboard(result['visualizations'], result['dashboard'], $tab, app);        
+          me.loadDashboard(result['visualizations'], result['dashboard'], $tab, app);
+          var $codeText = $("<pre></pre>");
+          $codeText.text(result.code).appendTo($('.app-output-code .code-block', $tab));
           me.setStatus($tab, "");
         },
         error: function(msg) {

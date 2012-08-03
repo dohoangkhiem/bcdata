@@ -127,7 +127,7 @@
               </div>
             </div>
             <div id="app-output-code-\${tabId}" class="app-output-code">
-              <div>App. Code</div>
+              <div class="code-block"></div>
             </div>
             <div id="app-output-data-\${tabId}" class="app-output-data">
               <div>App. Data</div>

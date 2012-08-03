@@ -246,6 +246,9 @@ Dashboard.prototype.refresh = function() {
   
 }
 
+/**
+ * Post dashboard status to server
+ */
 Dashboard.prototype.postback = function($container) {
   //need: app guid, guid and position of all viz. in dashboard
   var status = ""; 
@@ -283,6 +286,9 @@ Dashboard.prototype.postback = function($container) {
   });
 }
 
+/**
+ * 
+ */
 Dashboard.prototype.view = function(vizList, dashboardPos, $container) {
   var count = 0, defaultSize = 380;
   $container.empty();
@@ -339,6 +345,9 @@ Dashboard.prototype.lock = function($container, lock) {
   }
 }
 
+/**
+ * Update dashboard ruler to match the height
+ */
 Dashboard.prototype.updateRuler = function($container) {
   var $ruler = $container.prev();
   if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
@@ -349,6 +358,9 @@ Dashboard.prototype.updateRuler = function($container) {
   $ruler.height($container.height());
 }
 
+/**
+ * Display the snap lines for resizing/dragging alignment
+ */
 Dashboard.prototype.showSnapLines = function($viz, $container, isResized) {
   var $ruler = $container.prev();
   var $topLine = $('.snap-line-top', $ruler), $leftLine = $('.snap-line-left', $ruler),
