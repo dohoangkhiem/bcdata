@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,7 @@ public class AnalysisController {
       model.addAttribute("anlsTitle", app.getName());
       
       String code = appStoreService.getApplicationCode(guid, null);
-      model.addAttribute("anlsCode", code);
+      model.addAttribute("anlsCode", StringEscapeUtils.escapeJavaScript(code));
 
       return "analysis";
     } catch (Exception e) {

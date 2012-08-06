@@ -2,10 +2,33 @@ function Analysis() {
   
 }
 
-Analysis.prototype.init = function() {
+Analysis.prototype.init = function(guid) {
+  $('#anls-content').easytabs();
   
+  $('#comment-form #comment-submit').click(function() {
+    // validate
+    if (!$('#comment-title').val() || !!$('#comment-content').val()) return;
+    
+    // post comment
+    $.ajax({
+      url: ctx + '/anls/commentpost/' + guid,
+      type: 'post',
+      data: {
+        title: $('#comment-title').val(),
+        content: $('#comment-content').val(),
+        parentId: -1
+      }, 
+      success: function(result) {
+        
+      }, 
+      error: function(result) {
+        
+      }
+    });
+  });
+  
+  this.loadCommentList(guid);
 }
-
 
 
 /**
@@ -19,7 +42,8 @@ Analysis.prototype.loadCommentList = function(guid) {
     type: 'get',
     dataType: 'json',
     success: function(result) {
-      
+      console.debug("Received comment list:");
+      console.debug(result);
     },
     error: function(result) {
       console.debug(result);

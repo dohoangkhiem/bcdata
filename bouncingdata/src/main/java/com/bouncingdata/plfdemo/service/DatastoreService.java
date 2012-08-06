@@ -95,4 +95,5 @@ public interface DatastoreService {
   public void invalidateViz(Application application) throws Exception;
   
   public List<Comment> getComments(int analysisId) throws Exception;
+  
 }

@@ -123,6 +123,8 @@ public interface DataStorage {
    */
   public Application getApplicationByGuid(String guid) throws DataAccessException;
   
+  public User getUser(String username) throws DataAccessException;
+  
   /**
    * @param userId
    * @return
@@ -148,7 +150,7 @@ public interface DataStorage {
   
   public void addComment(Comment comment) throws DataAccessException;
   
-  public void removeComment(Comment comment) throws DataAccessException;
+  public void removeComment(int commentId) throws DataAccessException;
   
   public void updateComment(Comment comment) throws DataAccessException;
 }

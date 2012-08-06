@@ -1,16 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/analysis.js" />"></script>
 <script>
 	$(function() {
-	  var dbDetail = $.parseJSON('${dashboardDetail}');
-	  var vizMap = dbDetail.visualizations;
-	  var dashboardStatus = dbDetail.dashboard;
-	  console.debug("Visualization map: " + vizMap);
-	  console.debug("Dashboard status: " + dashboardStatus);
-	  com.bouncingdata.Dashboard.view(vizMap, dashboardStatus, $('#main-content #anls-dashboard'));
+	  com.bouncingdata.Analysis.init('${anlsApp.guid}');
 	  
-	  $('#anls-content').easytabs();
+	  var dbDetail = $.parseJSON('${dashboardDetail}');
+	  com.bouncingdata.Dashboard.view(dbDetail.visualizations, dbDetail.dashboard, $('#main-content #anls-dashboard'));
+	 
 	});
 </script>
 
@@ -62,7 +60,7 @@
             <div class="code-block" id="code-block">
               <pre></pre>
               <script>
-                var code = '${anlsCode}';
+                var code = "${anlsCode}";
                 $('#code-block pre').text(code);
               </script>
             </div>
@@ -78,8 +76,31 @@
       </div>
         
       <div class="comments-container">
-        <h3>Comments</h3>
-        <div>All comments here.</div>
+        <a href="javascript:void(0); onclick="$('#comment-form').toggle();"><h3>Comments</h3></a>
+        <div class="comment-form" id="comment-form">
+          <form>
+            <fieldset>
+            <p>
+              <label for="comment-title">Title</label>
+              <input type="text" id="comment-title" />
+            </p>
+            <p>
+              <label for="comment-content">Content</label>
+              <textarea rows="10" id="comment-content"></textarea>
+            </p>  
+            <p>
+              <input type="button" id="comment-submit" value="Submit">
+            </p>              
+            </fieldset>
+          </form>
+        </div>
+        <div class="clear"></div>
+        <div class="comment-list">
+          <h3>All comments here.</h3>
+          <div>
+            
+          </div>
+        </div>
       </div>
     </div>
     

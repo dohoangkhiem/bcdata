@@ -169,3 +169,37 @@
   white-space: pre-wrap;
   word-wrap: break-word; 
 }
+
+#comment-form form input, #comment-form form textarea, #comment-form form label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+#comment-form {
+  width: 700px;
+}
+
+#comment-form form label {
+  padding-right: 10px;  
+  width: 80px;
+  float: left;
+}
+
+#comment-form fieldset input#comment-title, #comment-form fieldset textarea#comment-content {
+  width: 600px;
+  border: 1px solid #BBBBBB;
+  padding: .2em;
+}
+
+#comment-form fieldset {
+  border: 0 none;
+  padding: 0;
+}
+
+#comment-form #comment-submit {
+  margin-left: 90px; 
+}
+
+#comment-list {
+  margin: 20px 0;
+}

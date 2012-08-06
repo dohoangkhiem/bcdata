@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
@@ -128,13 +129,13 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   private <T> void persistData(Collection<T> collection) {
     if (collection != null && collection.size() > 0) {
       PersistenceManager pm = getPersistenceManager();
-      Transaction tx = pm.currentTransaction();
+      //Transaction tx = pm.currentTransaction();
       try {
-        tx.begin();
+        //tx.begin();
         pm.makePersistentAll(collection);
-        tx.commit();
+        //tx.commit();
       } finally {
-        if (tx.isActive()) tx.rollback();
+        //if (tx.isActive()) tx.rollback();
       }      
     }
   }
@@ -179,9 +180,9 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   @Override
   public void updateApplication(Application application) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
-    Transaction tx = pm.currentTransaction();
+    //Transaction tx = pm.currentTransaction();
     try {
-      tx.begin();
+      //tx.begin();
       Application app = getApplicationByGuid(application.getGuid());
       app.setName(application.getName());
       app.setDescription(application.getDescription());
@@ -192,11 +193,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       app.setTags(application.getTags());
       app.setLineCount(app.getLineCount());
       app.setAuthor(application.getAuthor());
-      tx.commit();
+      //tx.commit();
     } catch (Exception e) {
-      if (tx.isActive()) {
-        tx.rollback();
-      }
+      //if (tx.isActive()) {
+      //  tx.rollback();
+      //}
       if (logger.isDebugEnabled()) {
         logger.debug("Exception occurs when update application " + application.getGuid(), e);
       }
@@ -254,16 +255,16 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       return;
     }*/
     PersistenceManager pm = getPersistenceManager();
-    Transaction tx = pm.currentTransaction();
+    //Transaction tx = pm.currentTransaction();
     try {
-      tx.begin();
+      //tx.begin();
       Query q = pm.newQuery(Analysis.class);
       q.setFilter("guid == '" + guid + "'");
       List<Analysis> db = (List<Analysis>) q.execute();
       if (db != null && db.size() > 0) {
         Analysis dashboard = db.get(0);
         dashboard.setStatus(status);
-        tx.commit();
+        //tx.commit();
       } else {
         if (logger.isDebugEnabled()) {
           logger.debug("Dashboard {} not found.", guid);
@@ -275,9 +276,9 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       } 
     } catch (Exception e) {
       if (logger.isDebugEnabled()) logger.debug("", e);
-      if (tx.isActive()) {
-        tx.rollback();
-      }
+      //if (tx.isActive()) {
+      //  tx.rollback();
+      //}
     }      
   }
 
@@ -287,17 +288,17 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Query q = pm.newQuery(Visualization.class);
     q.setFilter("appId == " + app.getId() + " && isActive == true");
     List<Visualization> vis = (List<Visualization>) q.execute();
-    Transaction tx = pm.currentTransaction();
+    //Transaction tx = pm.currentTransaction();
     try {
-      tx.begin();
+      //tx.begin();
       for (Visualization v : vis) {
         v.setActive(false);
       }
-      tx.commit();
+      //tx.commit();
     } catch (Exception e) {
-      if (tx.isActive()) {
-        tx.rollback();
-      }
+      //if (tx.isActive()) {
+      //  tx.rollback();
+      //}
     }
   }
 
@@ -305,7 +306,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public List<Comment> getComments(int analysisId) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Comment.class);
-    q.setFilter("analysis == " + analysisId);
+    q.setFilter("analysis.id == " + analysisId);
     List<Comment> results = (List<Comment>) q.execute();
     return results;
   }
@@ -318,9 +319,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void removeComment(Comment comment) throws DataAccessException {
-    // TODO Auto-generated method stub
-    
+  public void removeComment(int commentId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Comment.class);
+    q.setFilter("id == " + commentId);
+    q.deletePersistentAll();
   }
 
   @Override
@@ -335,6 +338,15 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Query q = pm.newQuery(Analysis.class);
     q.setFilter("id == " + analysisId);
     List<Analysis> results = (List<Analysis>) q.execute();
+    return results.size()>0?results.get(0):null;
+  }
+
+  @Override
+  public User getUser(String username) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(User.class);
+    q.setFilter("username == '" + username + "'");
+    List<User> results = (List<User>) q.execute();
     return results.size()>0?results.get(0):null;
   }
 }
