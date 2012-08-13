@@ -119,10 +119,11 @@
   word-wrap: break-word;
 }
 
-#workspace-browser .search-container #search-form input.search-input {
+#workbench-browser .search-container #search-form input.search-input {
   border: 1px solid #D3D3D3;
-  height: 1.5em;
+  height: 22px;
   padding-left: 5px;
-  width: 231px;
-  margin: 10px 0 0 5px;
+  width: 225px;
+  margin: 8px 0 0 8px;
+  font-size: 12px;
 }

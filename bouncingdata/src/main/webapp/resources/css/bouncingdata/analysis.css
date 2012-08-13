@@ -8,9 +8,9 @@
   bottom: 20px;
   width: 280px;
   right: 10px;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #CCCCCC;
   border-radius: 4px;
-  background-color: transparent;
+  background-color: #FFF;;
 }
 
 .analysis-container#main-content .analysis-main {
@@ -40,7 +40,7 @@
   position: relative;
   width: 800px;
   height: 600px;
-  border: 1px solid #999999;
+  border: 1px solid #CCCCCC;
 }
 
 .anls-dashboard .viz-container {
@@ -74,7 +74,7 @@
 }
 
 .analysis-main .anls-header {
-  padding: 20px 0 20px 10px;
+  padding: 15px;
 }
 
 .analysis-main .anls-header-rule {
@@ -88,7 +88,7 @@
 }
 
 .analysis-main .anls-content, .analysis-main .comments-container {
-  padding: 10px;
+  padding: 15px;
 }
 
 .analysis-info .anls-info-header {
@@ -97,7 +97,7 @@
 }
 
 .anls-info-header .anls-info-title {
-  background-color: #F1F1F1;
+  background-color: #FFF;
   bottom: -5px;
   display: inline-block;
   font-weight: bold;
@@ -176,19 +176,32 @@
 }
 
 #comment-form {
-  width: 700px;
+  width: 600px;
+  margin-top: 10px;
 }
 
 #comment-form form label {
-  padding-right: 10px;  
   width: 80px;
   float: left;
 }
 
-#comment-form fieldset input#comment-title, #comment-form fieldset textarea#comment-content {
+
+#comment-form fieldset p {
+  margin: 0;
+}
+
+#comment-form fieldset input#comment-title, #comment-form fieldset textarea#message {
   width: 600px;
   border: 1px solid #BBBBBB;
   padding: .2em;
+}
+
+#comment-form fieldset textarea#message {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  resize: vertical;
+  min-height: 30px;
+  border-radius: 3px;
 }
 
 #comment-form fieldset {
@@ -196,10 +209,77 @@
   padding: 0;
 }
 
-#comment-form #comment-submit {
-  margin-left: 90px; 
+.comments-container .comments {
+  margin: 20px 0;
+  min-height: 22px;
 }
 
-#comment-list {
-  margin: 20px 0;
+.comments-container h3.comments-title, .comments-container h3.comments-title a {
+  color: #000000;
+  text-decoration: none;
+  margin: 0;
+}
+
+#comment-form .comment-submit {
+  float: right;
+}
+
+.comments-container ul#comment-list {
+  list-style: none;
+  background: #fff url('../../images/loader32.gif') no-repeat scroll left top;
+  min-height: 20px;
+  width: 800px;
+  padding-left: 0;
+}
+
+.comments-container li.comment-item {
+  padding-top: 15px;
+  border-top: 1px dotted #CCCCCC;  
+}
+
+.comment-item .comment-author {
+  font-weight: bold;  
+}
+
+.comment-item .comment-footer .comment-date {
+  color: #666666;
+}
+
+.comment-item ul.children {
+  list-style: none;
+  padding-left: 30px;
+  margin: 15px 0;
+}
+
+.comment-item .inline-editor {
+  width: 600px;
+}
+
+.comment-item .inline-editor textarea.reply-text {
+  width: 598px;
+  border: 1px solid #BBBBBB;
+  display: block;
+  resize: none;
+  max-width: 594px;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  padding: 2px;
+  margin: 5px 0;
+  resize: vertical;
+  min-height: 30px;
+  border-radius: 3px;
+}
+
+.comment-item .comment-editor .reply-button {
+  float: right;
+}
+
+li.comment-item .comment-footer a {
+  color: blue;  
+  text-decoration: none;
+}
+
+li.comment-item .comment-footer a:hover {
+  color: #333;  
+  cursor: pointer;
 }

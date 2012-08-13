@@ -46,3 +46,12 @@ com.bouncingdata.Main = new Main();
 com.bouncingdata.Utils = new Utils();
 Utils = com.bouncingdata.Utils;
 com.bouncingdata.Main.initUI();
+
+/**
+ * Extra function for jQuery, to get html content of an object, including outer tag
+ */
+(function($) {
+  $.fn.outerHtml = function() {
+    return $(this).clone().wrap('<div></div>').parent().html();
+  }
+})(jQuery);

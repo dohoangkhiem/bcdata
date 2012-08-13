@@ -6,11 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Index;
 import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +26,8 @@ public class User implements UserDetails {
   @PrimaryKey
   @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
   private int id;
+  @Index(name="username_idx", unique="true")
+  @Unique
   private String username;
   private String firstName;
   private String lastName;
@@ -34,7 +39,7 @@ public class User implements UserDetails {
   private Date lastLogin;
   
   @NotPersistent private Set<GrantedAuthority> authorities;
-  
+  @JsonIgnore
   public int getId() {
     return id;
   }
@@ -65,6 +70,7 @@ public class User implements UserDetails {
   public void setEmail(String email) {
     this.email = email;
   }
+  @JsonIgnore
   public String getPassword() {
     return password;
   }
@@ -83,6 +89,7 @@ public class User implements UserDetails {
   public void setLastLogin(Date lastLogin) {
     this.lastLogin = lastLogin;
   }
+  @JsonIgnore
   public int getGroupId() {
     return groupId;
   }
@@ -98,22 +105,31 @@ public class User implements UserDetails {
   public boolean isEnabled() {
     return enabled;
   }
+  
+  @JsonIgnore
   @Override
   public Collection<GrantedAuthority> getAuthorities() {
     return authorities;
   }
+  
+  @JsonIgnore
   @Override
   public boolean isAccountNonExpired() {
     return true;
   }
+  
+  @JsonIgnore
   @Override
   public boolean isAccountNonLocked() {
     return true;
   }
+  
+  @JsonIgnore
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
   }
+  
   public void setAuthorities(Collection<String> authorities) {
     this.authorities = new HashSet<GrantedAuthority>();
     for (String s : authorities) {

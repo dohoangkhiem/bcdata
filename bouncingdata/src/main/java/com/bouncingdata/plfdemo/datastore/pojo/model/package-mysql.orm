@@ -238,14 +238,17 @@
       <field name="user">
         <column name="user" jdbc-type="INTEGER" />
       </field>
+      <field name="analysis">
+        <column name="analysis" jdbc-type="INTEGER" />
+      </field>
       <field name="order">
         <column name="order" jdbc-type="INTEGER" />
       </field>
       <field name="title">
         <column name="title" jdbc-type="VARCHAR" length="100" />
       </field>
-      <field name="content">
-        <column name="content" jdbc-type="LONGVARCHAR" />
+      <field name="message">
+        <column name="message" jdbc-type="LONGVARCHAR" />
       </field>
       <field name="createAt">
         <column name="create_at" jdbc-type="TIMESTAMP" />
@@ -270,6 +273,48 @@
       </field>
       <field name="accepted">
         <column name="accepted" jdbc-type="BIT" />
+      </field>
+    </class>
+    <class name="AnalysisVote" identity-type="datastore" table="analysis_votes">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field>
+      <field name="analysis">
+        <column name="analysis" jdbc-type="INTEGER" />
+      </field>
+      <field name="vote">
+        <column name="vote" jdbc-type="INTEGER" />
+      </field>
+      <field name="voteAt">
+        <column name="vote_at" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="isActive">
+        <column name="is_active" jdbc-type="BIT" />
+      </field>
+    </class>
+    <class name="CommentVote" identity-type="datastore" table="comment_votes">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field>
+      <field name="comment">
+        <column name="comment" jdbc-type="INTEGER" />
+      </field>
+      <field name="vote">
+        <column name="vote" jdbc-type="INTEGER" />
+      </field>
+      <field name="voteAt">
+        <column name="vote_at" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="isActive">
+        <column name="is_active" jdbc-type="BIT" />
       </field>
     </class>
   </package>

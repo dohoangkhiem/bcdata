@@ -4,10 +4,12 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  
   <title><tiles:insertAttribute name="title" ignore="true" /></title>
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/default.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/browser.css" />" />
-  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/workspace.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/workbench.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/analysis.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/jquery-ui/smoothness/jquery-ui-1.8.20.custom.css" />" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/css/demo_page.css" />" />
@@ -23,7 +25,7 @@
   
   <!-- Loads at start page for dev. mode -->
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/main.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workspace.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workbench.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/dashboard.js" />"></script>
   

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bouncingdata.plfdemo.datastore.DataStorage;
@@ -14,6 +15,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
+import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
@@ -167,6 +169,59 @@ public class DatastoreServiceImpl implements DatastoreService {
     
     return dataStorage.getComments(analysisId);
 
+  }
+  
+  @Override
+  public void addComment(int userId, int analysisId, Comment comment) throws Exception {
+    dataStorage.addComment(userId, analysisId, comment);
+  }
+
+  @Override
+  public Comment getComment(int commentId) throws Exception {
+    return dataStorage.getComment(commentId);
+  }
+
+  @Override
+  public CommentVote getCommentVote(int userId, int commentId) throws Exception {
+    // check user, comment
+    return dataStorage.getCommentVote(userId, commentId);
+  }
+
+  @Override
+  public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws Exception {
+    // check logic here
+    Comment comment = dataStorage.getComment(commentId);
+    if (comment == null) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Comment id {} does not exist.", commentId);
+        return;
+      }
+    }
+    
+    // check if this user has voted before
+    CommentVote oldVote = dataStorage.getCommentVote(userId, commentId);
+    if (oldVote == null) {
+      dataStorage.addCommentVote(userId, commentId, commentVote);
+    } else {
+      if (oldVote.getVote() == commentVote.getVote()) {
+        return;
+      } else {
+        dataStorage.removeCommentVote(userId, commentId);
+      }
+    }
+  }
+
+  @Override
+  public void removeCommentVote(int userId, int commentId) throws DataAccessException {
+    Comment comment = dataStorage.getComment(commentId);
+    if (comment == null) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Comment id {} does not exist.", commentId);
+        return;
+      }
+    }
+    
+    dataStorage.removeCommentVote(userId, commentId);
   }
 
 }

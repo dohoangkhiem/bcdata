@@ -120,7 +120,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     String ticket = Utils.getExecutionId();
     String tempFile = logDir + Utils.FILE_SEPARATOR + ticket + Utils.FILE_SEPARATOR + ticket + ".R";
     File temp = new File(tempFile);
-    String updatedCode = "options(device=png)\npng(width=1200)\n" + code;
+    //String updatedCode = "options(device=png)\npng(width=1200)\n" + code;
     try {
       if (!temp.getParentFile().isDirectory()) {
         temp.getParentFile().mkdirs();

@@ -1,8 +1,8 @@
-.workspace-container#main-content {
+.workbench-container#main-content {
   position: relative;
 }
 
-.workspace-container#main-content .workspace-browser {
+.workbench-container#main-content .workbench-browser {
   position: fixed;
   top: 60px;
   bottom: 20px;
@@ -13,39 +13,39 @@
   border-radius: 4px;
 }
 
-.workspace-container#main-content .workspace-ide {
+.workbench-container#main-content .workbench-ide {
   margin-right: 270px;
   background-color: #FFFFFF;
 }
 
-.workspace-ide .workspace-main-tabs {
+.workbench-ide .workbench-main-tabs {
   height: 100%;
   padding: 2px;
   border: 0 none;
 }
 
-.workspace-ide .app-actions {
+.workbench-ide .app-actions {
   margin: 10px 10px 0 0;
   float: right;
 }
 
-.workspace-ide-content .app-status {
+.workbench-ide-content .app-status {
   float: right;
 }
 
-.workspace-main-tabs .workspace-main-tabs-bar li .ui-icon-close { 
+.workbench-main-tabs .workbench-main-tabs-bar li .ui-icon-close { 
   float: left; 
   margin: 0.2em 0.2em 0 0; 
   cursor: pointer; 
   border: 1px solid transparent;
 }
 
-.workspace-main-tabs .workspace-main-tabs-bar li .ui-icon-close:hover {
+.workbench-main-tabs .workbench-main-tabs-bar li .ui-icon-close:hover {
   border-radius: 3px;
   border: 1px solid #BEBEBE;
 }
 
-.workspace-main-tabs .workspace-main-tabs-bar {
+.workbench-main-tabs .workbench-main-tabs-bar {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -54,27 +54,27 @@
   user-select: none;
 }
 
-.workspace-main-tabs .workspace-main-tabs-bar li a {
+.workbench-main-tabs .workbench-main-tabs-bar li a {
   outline: none;
 }
 
-.workspace-main-tabs > div.ui-tabs-panel {
+.workbench-main-tabs > div.ui-tabs-panel {
   padding: 10px;
 }
 
-.workspace-main-tabs .workspace-content-container, .workspace-main-tabs .workspace-content-container .workspace-content-layout {
+.workbench-main-tabs .workbench-content-container, .workbench-main-tabs .workbench-content-container .workbench-content-layout {
   height: 100%;
 }
 
-.workspace-ide-content .app-code-container {
+.workbench-ide-content .app-code-container {
   margin-top: 15px;  
 }
 
-.workspace-ide-content .app-code-container, .workspace-ide-content .app-code-container .app-code-layout {
+.workbench-ide-content .app-code-container, .workbench-ide-content .app-code-container .app-code-layout {
   height: 400px;
 }
 
-.workspace-ide-content .app-code-container .app-code-layout-center>div {
+.workbench-ide-content .app-code-container .app-code-layout-center>div {
   height: 378px;
   position: relative;
   padding: 0;
@@ -82,12 +82,12 @@
   border: 0 none;
 }
 
-.workspace-ide .workspace-ide-content .app-code-editor {
+.workbench-ide .workbench-ide-content .app-code-editor {
   border: 1px solid #D3D3D3;
   margin: 1em 0 0 0;
 }
 
-.workspace-ide-content .code-editor {
+.workbench-ide-content .code-editor {
   width: 100%;
   font-size: 13px;
   resize: none;
@@ -97,12 +97,12 @@
   height: 378px;
 }
 
-.workspace-ide .app-execution-logs-tabs {
+.workbench-ide .app-execution-logs-tabs {
   margin-top: 10px;
   padding: 1em .5em;
 }
 
-.workspace-ide-content .app-execution-logs .console-actions {
+.workbench-ide-content .app-execution-logs .console-actions {
   margin-top: 5px;
 }
 
@@ -110,21 +110,21 @@
   float: right;
 }
 
-.workspace-ide-content .app-output-tabs {
+.workbench-ide-content .app-output-tabs {
   margin-top: 10px;
 }
 
 /** Visualization styles **/
 
-.workspace-ide-content .app-output-viz {
+.workbench-ide-content .app-output-viz {
   overflow-y: auto;  
 }
 
-.workspace-ide-content .app-output-viz .app-output-viz-dashboard {
+.workbench-ide-content .app-output-viz .app-output-viz-dashboard {
   position: relative;
 }
 
-.workspace-ide-content .app-output-viz .dashboard-ruler {
+.workbench-ide-content .app-output-viz .dashboard-ruler {
   position: absolute;
   top: 0;
   left: 0;
@@ -188,14 +188,14 @@
   background: url('../../images/ruler-top.gif') repeat-x scroll left bottom transparent;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard {
+.workbench-ide-content .app-output-viz .viz-dashboard {
   min-height: 450px;
   border: 0 none;
   width: 800px;
   background: url('../../images/grid.gif') repeat scroll left top transparent;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container {
   border: 1px solid #999999;
   background: none repeat scroll left top #FFFFFF;
   border-top-left-radius: 5px;
@@ -203,24 +203,24 @@
   overflow: hidden;
 }
 
-.workspace-ide-content .app-output-viz .app-output-actions {
+.workbench-ide-content .app-output-viz .app-output-actions {
   margin: 10px 0;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container-hover {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container-hover {
   /*border: 1px dotted #888888;*/
   border: 1px dotted #347C17;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .ui-resizable-handle {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container .ui-resizable-handle {
   opacity: 0;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container-hover .ui-resizable-handle {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container-hover .ui-resizable-handle {
   opacity: 1;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container > iframe {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container > iframe {
   border: 1px dashed #DDDDDD;  
   overflow: hidden;
 }
@@ -239,7 +239,7 @@
   cursor: crosshair;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle .permalink {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle .permalink {
   opacity: 0;
   float: right;
   color: #333333;
@@ -248,7 +248,7 @@
   text-decoration: none;
 }
 
-.workspace-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle-hover .permalink {
+.workbench-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle-hover .permalink {
   opacity: 0.9;
 }
 
@@ -276,7 +276,7 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
   margin: 1em 0 0 0;
 }
 
-.workspace-main-tabs .dataset-view-container, .workspace-main-tabs .dataset-view-container .dataset-view-layout {
+.workbench-main-tabs .dataset-view-container, .workbench-main-tabs .dataset-view-container .dataset-view-layout {
   height: 100%;
 }
 

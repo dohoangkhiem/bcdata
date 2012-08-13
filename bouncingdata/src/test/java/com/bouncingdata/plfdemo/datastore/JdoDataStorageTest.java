@@ -26,26 +26,26 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
   public void testJdoDataStorage() {
     assertNotNull(jdoDataStorage);
     
-    User demo = jdoDataStorage.getUser("demo");
+    /*User demo = jdoDataStorage.findUserByUsername("demo");
     assertNotNull(demo);
     List<Application> apps = jdoDataStorage.getApplicationList(demo.getId());
     assertNotNull(apps);
-    System.out.println("Number of application by demo: " + apps.size());
+    System.out.println("Number of application by demo: " + apps.size());*/
   }
   
-  public void testTransactional() {
+  public void _testTransactional() {
     User test = new User();
     test.setUsername("testUser");
     test.setPassword("testPassword");
     test.setEmail("test@bouncingdata.com");
     jdoDataStorage.createUser(test);
-    User test1 = jdoDataStorage.getUser("testUser");
+    User test1 = jdoDataStorage.findUserByUsername("testUser");
     assertNotNull(test1);
     System.out.println(test1.getEmail());
   }
   
-  public void testUpdateApplication() {
-    User demo = jdoDataStorage.getUser("demo");
+  public void _testUpdateApplication() {
+    User demo = jdoDataStorage.findUserByUsername("demo");
     List<Application> apps = jdoDataStorage.getApplicationList(demo.getId());
     assertTrue(apps.size() > 0);
     Application app = apps.get(0);
@@ -56,7 +56,7 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
     assertTrue(app.getName().equals("testApplication"));
   }
   
-  public void testGetComment() {
+  /*public void _testGetComment() {
     User test = new User();
     test.setUsername("testUser");
     test.setPassword("testPassword");
@@ -67,7 +67,7 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
     c.setAnalysis(analysis);
     c.setUser(test);
     c.setTitle("testComment");
-    c.setContent("This is a test comment");
+    c.setMessage("This is a test comment");
     c.setAccepted(true);
     c.setOrder(1);
     c.setParentId(-1);
@@ -79,8 +79,8 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
     Comment c1 = comments.get(0);
     assertTrue(c1.getId() == c.getId());
     assertTrue(c1.getTitle().equals(c.getTitle()));
-    assertTrue(c1.getContent().equals(c.getContent()));
+    assertTrue(c1.getMessage().equals(c.getMessage()));
   }
-  
+  */
   
 }

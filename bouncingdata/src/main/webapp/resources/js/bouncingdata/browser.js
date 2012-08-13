@@ -181,16 +181,16 @@ Browser.prototype.loadItems = function(itemMap, type) {
     
     $openLink.click(function(itemObj, type) {
       return function() {
-        var workspace = com.bouncingdata.Workspace;
+        var workbench = com.bouncingdata.Workbench;
         // check if this action about to open an existing app. or blank tab for new app.
-        if (itemObj && (itemObj.guid in workspace.tabsInfo)) {
-          workspace.$tabs.tabs('select', '#' + workspace.tabsInfo[itemObj.guid].tabId);
+        if (itemObj && (itemObj.guid in workbench.tabsInfo)) {
+          workbench.$tabs.tabs('select', '#' + workbench.tabsInfo[itemObj.guid].tabId);
           return false;
         }
         if (type == "application") {
-          workspace.createTab(itemObj);          
+          workbench.createTab(itemObj);          
         } else if (type == "dataset") {
-          workspace.createTab(itemObj, null, 'dataset');
+          workbench.createTab(itemObj, null, 'dataset');
         }
         return false;
       }

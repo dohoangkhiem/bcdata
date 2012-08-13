@@ -6,9 +6,12 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 
 import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
+import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
@@ -123,8 +126,8 @@ public interface DataStorage {
    */
   public Application getApplicationByGuid(String guid) throws DataAccessException;
   
-  public User getUser(String username) throws DataAccessException;
-  
+  public User getUser(int userId) throws DataAccessException;
+    
   /**
    * @param userId
    * @return
@@ -134,23 +137,93 @@ public interface DataStorage {
   
   /*public List<Object> readDataset(String dataset) throws DataAccessException;*/
   
+  /**
+   * @param visualization
+   * @throws DataAccessException
+   */
   public void createVisualization(Visualization visualization) throws DataAccessException; 
   
+  /**
+   * @param guid
+   * @return
+   * @throws DataAccessException
+   */
   public Dataset getDatasetByGuid(String guid) throws DataAccessException;
   
+  /**
+   * @param analysisId
+   * @return
+   * @throws DataAccessException
+   */
   public Analysis getAnalysis(int analysisId) throws DataAccessException;
   
+  /**
+   * @param guid
+   * @return
+   * @throws DataAccessException
+   */
   public Analysis getAnalysisByGuid(String guid) throws DataAccessException;
   
+  /**
+   * @param guid
+   * @param status
+   * @param isNew
+   * @throws DataAccessException
+   */
   public void saveDashboard(String guid, String status, boolean isNew) throws DataAccessException;
   
+  /**
+   * @param app
+   * @throws DataAccessException
+   */
   public void invalidateViz(Application app) throws DataAccessException;
   
+  /**
+   * @param analysisId
+   * @return
+   * @throws DataAccessException
+   */
   public List<Comment> getComments(int analysisId) throws DataAccessException;
   
-  public void addComment(Comment comment) throws DataAccessException;
+  /**
+   * @param userId
+   * @param analysisId
+   * @param comment
+   * @throws DataAccessException
+   */
+  public void addComment(int userId, int analysisId, Comment comment) throws DataAccessException;
   
+  /**
+   * @param commentId
+   * @throws DataAccessException
+   */
   public void removeComment(int commentId) throws DataAccessException;
   
+  /**
+   * @param comment
+   * @throws DataAccessException
+   */
   public void updateComment(Comment comment) throws DataAccessException;
+  
+  /**
+   * @param commentId
+   * @return
+   * @throws DataAccessException
+   */
+  public Comment getComment(int commentId) throws DataAccessException;
+  
+  public CommentVote getCommentVote(int userId, int commentId) throws DataAccessException;
+  
+  public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws DataAccessException;
+  
+  public void removeCommentVote(int userId, int commentId) throws DataAccessException;
+  
+  public AnalysisVote getAnalysisVote(int userId, int analysisId) throws DataAccessException;
+  
+  public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote) throws DataAccessException;
+  
+  public void removeAnalysisVote(int userId, int analysisId) throws DataAccessException;
+  
+  //public void addActivity(int userId, Activity activity) throws DataAccessException;
+ 
 }

@@ -1,22 +1,27 @@
 package com.bouncingdata.plfdemo.datastore.pojo.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Index;
+import javax.jdo.annotations.Join;
 import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 
 @PersistenceCapable
 public class Application {
-  
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
   private String name;
   private String description;
   private String language;
+  @Index(name="app_guid_idx", unique="true")
+  @Unique
   private String guid;
   private int author;
   private int lineCount;
@@ -24,6 +29,9 @@ public class Application {
   private Date createAt;
   private Date lastUpdate;
   private String tags;
+  @NotPersistent
+  @Join
+  private Set<Tag> _tags;
   
   private String authorName;
   
@@ -89,12 +97,6 @@ public class Application {
   public void setPublished(boolean isPublished) {
     this.isPublished = isPublished;
   }
-  public String getTags() {
-    return tags;
-  }
-  public void setTags(String tags) {
-    this.tags = tags;
-  }
   public String getAuthorName() {
     return authorName;
   }
@@ -106,6 +108,18 @@ public class Application {
   }
   public void setUser(User user) {
     this.user = user;
+  }
+  public String getTags() {
+    return tags;
+  }
+  public void setTags(String tags) {
+    this.tags = tags;
+  }
+  public Set<Tag> get_tags() {
+    return _tags;
+  }
+  public void set_tags(Set<Tag> _tags) {
+    this._tags = _tags;
   }
   
   

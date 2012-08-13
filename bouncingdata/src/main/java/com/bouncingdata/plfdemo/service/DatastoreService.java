@@ -9,6 +9,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
+import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
@@ -95,5 +96,15 @@ public interface DatastoreService {
   public void invalidateViz(Application application) throws Exception;
   
   public List<Comment> getComments(int analysisId) throws Exception;
+  
+  public void addComment(int userId, int analysisId, Comment comment) throws Exception;
+  
+  public Comment getComment(int commentId) throws Exception;
+  
+  public CommentVote getCommentVote(int userId, int commentId) throws Exception;
+  
+  public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws Exception;
+  
+  public void removeCommentVote(int userId, int commentId) throws Exception;
   
 }

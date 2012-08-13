@@ -1,4 +1,4 @@
-function Workspace() {
+function Workbench() {
   /*the tabs counter, always increase, = the number of tabs which was created
   this.tabsCounter = 0;
   
@@ -19,8 +19,8 @@ function Workspace() {
   this.untitledCounter = 0;*/
 }
 
-Workspace.prototype.init = function() {
-  console.info('Initializing Workspace..');
+Workbench.prototype.init = function() {
+  console.info('Initializing Workbench..');
   var me = this;
   
   //the tabs counter, always increase, = the number of tabs which was created
@@ -47,7 +47,7 @@ Workspace.prototype.init = function() {
     $('#main-content input:submit').button();
     
     //Init popup dialog
-    $('.workspace-container #new-app-dialog').dialog({
+    $('.workbench-container #new-app-dialog').dialog({
       autoOpen: false,
       height: 345,
       width: 460,
@@ -71,12 +71,12 @@ Workspace.prototype.init = function() {
     });
     
     // get the tab template
-    me.$tabTemplate = $('#workspace-content-template').template();
+    me.$tabTemplate = $('#workbench-content-template').template();
     me.$dsTemplate = $('#data-view-template').template();
     
     // initialize tabs
-    me.$tabs = $('.workspace-container #workspace-main-tabs').tabs({
-      tabTemplate: "<li class='tab-header workspace-tab-header'><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close' title='Close this tab'>Remove Tab</span></li>",
+    me.$tabs = $('.workbench-container #workbench-main-tabs').tabs({
+      tabTemplate: "<li class='tab-header workbench-tab-header'><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close' title='Close this tab'>Remove Tab</span></li>",
       
       add: function(event, ui) {
         // trick here: select before finish the adding, by this way the layout achieves the full width
@@ -89,7 +89,7 @@ Workspace.prototype.init = function() {
           var app = null;
           if (guid) app = me.tabsInfo[guid].app;
           var $tabContent = me.makeTabContent(ui.panel.id, app, 'app');
-          $(ui.panel).append($tabContent).addClass('workspace-tab-panel');
+          $(ui.panel).append($tabContent).addClass('workbench-tab-panel');
           
           // complete UI & functionalities for this tab
           me.processTab(index, $tabContent);
@@ -111,9 +111,9 @@ Workspace.prototype.init = function() {
     });
     
     // handles double click on tab bar
-    $('#workspace-main-tabs .workspace-main-tabs-bar').dblclick(function(e) {
+    $('#workbench-main-tabs .workbench-main-tabs-bar').dblclick(function(e) {
       var $target = $(e.target);
-      var $p = $target.parents('li.workspace-tab-header');
+      var $p = $target.parents('li.workbench-tab-header');
       if ($p && $p.length > 0) return false;
       me.createTab(null);
       return false;
@@ -130,12 +130,12 @@ Workspace.prototype.init = function() {
     me.createTab(null);
     
     // 
-    $('.workspace-ide .app-actions').click(function(e) {     
+    $('.workbench-ide .app-actions').click(function(e) {     
       var $target = $(e.target);
       if (($target[0].nodeName == "input" || $target[0].nodeName == "INPUT") && $target.hasClass("app-action")) {       
         // determine tab
         //var $tab = me.getSelectedTabId(); 
-          //$target.parents('.workspace-tab-panel');
+          //$target.parents('.workbench-tab-panel');
         // execute
         var tabId = me.getSelectedTabId();
         var index = me.getTabIndex(tabId);
@@ -154,14 +154,14 @@ Workspace.prototype.init = function() {
 }
 
 /**
- * Create a new tab to view application workspace or dataset
+ * Create a new tab to view application workbench or dataset
  */
-Workspace.prototype.createTab = function(obj, tabName, type) {
+Workbench.prototype.createTab = function(obj, tabName, type) {
   if (type == 'dataset') return this.openDataset(obj, tabName);
   else return this.openApp(obj, tabName);
 } 
 
-Workspace.prototype.openApp = function(app, tabName) {
+Workbench.prototype.openApp = function(app, tabName) {
   var index = this.getNumberOfTabs();
   this.tabsIndex[index] = {type: 'app'};
   if (!app) {
@@ -188,7 +188,7 @@ Workspace.prototype.openApp = function(app, tabName) {
 /**
  * 
  */
-Workspace.prototype.openDataset = function(dataset, tabName) {
+Workbench.prototype.openDataset = function(dataset, tabName) {
   var index = this.getNumberOfTabs();
   this.tabsIndex[index] = {type: 'dataset'};
   
@@ -206,7 +206,7 @@ Workspace.prototype.openDataset = function(dataset, tabName) {
 /**
  * Removes a tab with given index (zero-based)
  */
-Workspace.prototype.removeTab = function(index) {
+Workbench.prototype.removeTab = function(index) {
   if (this.getNumberOfTabs() == 1) {
     return;
   }
@@ -225,13 +225,13 @@ Workspace.prototype.removeTab = function(index) {
 /**
  * Callback function to be called after the main layout was resized.
  */
-Workspace.prototype.resizeAll = function() {
+Workbench.prototype.resizeAll = function() {
   // do resize the current layout  
   var $tab = this.getSelectedTabContainer();
   var index = this.getSelectedIndex();
   var type = this.tabsIndex[index].type;
   if (type == 'app') {
-    var $layout = $('.workspace-content-layout', $tab).layout();
+    var $layout = $('.workbench-content-layout', $tab).layout();
     if ($layout) $layout.resizeAll();
   } else if (type == 'dataset') {
     var $layout = $('.dataset-view-layout', $tab).layout();
@@ -239,7 +239,7 @@ Workspace.prototype.resizeAll = function() {
   }
 }
 
-Workspace.prototype.resizeEditor = function($tab) {
+Workbench.prototype.resizeEditor = function($tab) {
   var editorDom = $('.app-code-editor .code-editor', $tab)[0];
   var editor = ace.edit(editorDom);
   editor.resize();
@@ -248,7 +248,7 @@ Workspace.prototype.resizeEditor = function($tab) {
 /**
  * Builds tab content from the template for particular application or dataset 
  */
-Workspace.prototype.makeTabContent = function(tabId, obj, type) {
+Workbench.prototype.makeTabContent = function(tabId, obj, type) {
   type = type || 'app';
   if (type == 'app') {
     var tabObj = {
@@ -279,7 +279,7 @@ Workspace.prototype.makeTabContent = function(tabId, obj, type) {
 /**
  * Some magic works to make the tab content appears & functions correctly
  */
-Workspace.prototype.processTab = function(tabIndex, $tabContent) {
+Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   
   var type = this.tabsIndex[tabIndex].type;
   var $tab = $tabContent.parent();
@@ -397,7 +397,7 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
     east__initClosed: true,
     applyDefaultStyles: true,
     center__onresize: function() {
-      com.bouncingdata.Workspace.resizeEditor($tab);
+      com.bouncingdata.Workbench.resizeEditor($tab);
     }
   });
   
@@ -459,7 +459,7 @@ Workspace.prototype.processTab = function(tabIndex, $tabContent) {
 /**
  * Executes code from the tab with given index
  */
-Workspace.prototype.execute = function(tabIndex) {
+Workbench.prototype.execute = function(tabIndex) {
   var me = this;
   var guid = this.tabsIndex[tabIndex].guid;
   var tabId = this.getTabId(tabIndex);
@@ -470,9 +470,13 @@ Workspace.prototype.execute = function(tabIndex) {
   
   var url, language, app;
   if (guid) {
+    app = this.tabsInfo[guid].app;
+    if (app.authorName && (app.authorName != com.bouncingdata.Main.username)) {
+      console.debug('No permission to execute this application.');
+      return false;
+    }
     url = ctx + "/app/e/" + guid;
     language = this.tabsInfo[guid].app.language;
-    app = this.tabsInfo[guid].app;
   } else {
     url = ctx + "/main/execute"; 
     language = $('.new-app-info select.language-select', $tab).val();
@@ -525,7 +529,7 @@ Workspace.prototype.execute = function(tabIndex) {
 /**
  * Saves the application code at the tab tabIndex
  */
-Workspace.prototype.saveCode = function(tabIndex) {
+Workbench.prototype.saveCode = function(tabIndex) {
   var me = this;
   var $tab = this.getTabContainer(tabIndex);
   var code = this.getCode($tab);
@@ -582,7 +586,7 @@ Workspace.prototype.saveCode = function(tabIndex) {
 /**
  * Clone content from given tab to new tab
  */
-Workspace.prototype.cloneApp = function(tabIndex) {
+Workbench.prototype.cloneApp = function(tabIndex) {
   var $tab = this.getTabContainer(tabIndex);
   var guid = this.tabsIndex[tabIndex].guid; 
   if (guid) {
@@ -598,7 +602,7 @@ Workspace.prototype.cloneApp = function(tabIndex) {
 /**
  * Creates new application
  */
-Workspace.prototype.createApp = function(appname, language, description, code, isPublic, tags) {
+Workbench.prototype.createApp = function(appname, language, description, code, isPublic, tags) {
   var data = { 
     appname: appname,
     language: language,
@@ -630,7 +634,7 @@ Workspace.prototype.createApp = function(appname, language, description, code, i
 /**
  * 
  */
-Workspace.prototype.bindAppToTab = function(index, app) {
+Workbench.prototype.bindAppToTab = function(index, app) {
   if (!app) return;
   var tabId = this.getTabId(index);
   this.tabsIndex[index].guid = app.guid;
@@ -650,19 +654,19 @@ Workspace.prototype.bindAppToTab = function(index, app) {
   this.updateActionStatus(true, true);
 }
 
-Workspace.prototype.setCode = function(code, $tab) {
+Workbench.prototype.setCode = function(code, $tab) {
   var editorDom = $('.app-code-editor .code-editor', $tab)[0];
   var editor = ace.edit(editorDom);
   editor.getSession().getDocument().setValue(code);
 }
 
-Workspace.prototype.getCode = function($tab) {
+Workbench.prototype.getCode = function($tab) {
   var editorDom = $('.app-code-editor .code-editor', $tab)[0];
   var editor = ace.edit(editorDom);
   return editor.getSession().getDocument().getValue();
 }
 
-Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
+Workbench.prototype.renderOutput = function(datasets, visuals, $tab, app) {
   /*var $dsContainer = $(".app-output-datasets .dataset-container", $tab);
   $dsContainer.empty();
   // render datasets
@@ -679,13 +683,16 @@ Workspace.prototype.renderOutput = function(datasets, visuals, $tab, app) {
   com.bouncingdata.Dashboard.load(visuals, null, $dashboard, true);
 }
 
-Workspace.prototype.loadDashboard = function(visuals, dashboard, $tab, app) {
+Workbench.prototype.loadDashboard = function(visuals, dashboard, $tab, app) {
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
   $dashboard.attr('guid', app['guid']).attr('tabid', $tab.attr('id')); 
-  com.bouncingdata.Dashboard.load(visuals, dashboard, $dashboard, true);
+  com.bouncingdata.Dashboard.load(visuals, dashboard, $dashboard, app.authorName==com.bouncingdata.Main.username);
 }
 
-Workspace.prototype.reloadDashboard = function(app, $tab) {
+/**
+ * Reloads after execute
+ */
+Workbench.prototype.reloadDashboard = function(app, $tab) {
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
   // retrieves application visualizations
   $.ajax({
@@ -703,7 +710,7 @@ Workspace.prototype.reloadDashboard = function(app, $tab) {
   });
 }
 
-Workspace.prototype.renderVisualization = function(name, source, $visualsContainer, app) {
+Workbench.prototype.renderVisualization = function(name, source, $visualsContainer, app) {
   var $vsItem = $('<div class="visualization-item"></div>');
   $vsItem.load().appendTo($visualsContainer);
   var $frame = $('<iframe class="visualization-item-frame"></iframe>'); 
@@ -719,14 +726,14 @@ Workspace.prototype.renderVisualization = function(name, source, $visualsContain
   }
 }
 
-Workspace.prototype.renderBase64PNG = function(name, source, $visualsContainer) {
+Workbench.prototype.renderBase64PNG = function(name, source, $visualsContainer) {
   var $vsItem = $('<div class="visualization-item" id="visualization-item-' + name + '"></div>');
   $vsItem.load().appendTo($visualsContainer);
   $('<img src="data:image/png;base64,' + source + '" />').load().appendTo($vsItem);
   $('<span class="visualization-item-title">' + name + '</span>').load().appendTo($vsItem);
 }
 
-Workspace.prototype.renderDataset = function(name, data, $dsContainer) {
+Workbench.prototype.renderDataset = function(name, data, $dsContainer) {
   if (data.length <= 0) return;
   var $dsItem = $('<div class="dataset-item" style="margin-top: 2em;"></div>');
   $dsItem.load().appendTo($dsContainer);
@@ -736,7 +743,7 @@ Workspace.prototype.renderDataset = function(name, data, $dsContainer) {
   this.renderDatatable(data, $table);
 }
 
-Workspace.prototype.renderDatatable = function(data, $table) {
+Workbench.prototype.renderDatatable = function(data, $table) {
   if (!data || data.length <= 0) return;
     
   //prepare data
@@ -770,40 +777,46 @@ Workspace.prototype.renderDatatable = function(data, $table) {
 /**
  * 
  */
-Workspace.prototype.setStatus = function($tab, status) {
+Workbench.prototype.setStatus = function($tab, status) {
+  var $message = $("#ajax-message", $tab);
+  var $loading = $("#ajax-loading", $tab);
   if (status) {
     switch(status) {
     case "running":
-      $("#ajax-message", $tab).text("Running...").css("color", "green");
-      $("#ajax-loading", $tab).css("display", "inline");
+      $message.text("Running...").css("color", "green");
+      $loading.css("opacity", 1);
       break;
     case "loading":
-      $("#ajax-message", $tab).text("Loading...").css("color", "green");
-      $("#ajax-loading", $tab).css("display", "inline");
+      $message.text("Loading...").css("color", "green");
+      $loading.css("opacity", 1);
       break;
     case "finished-running":
-      $("#ajax-message", $tab).text("Finished running.").css("color", "green");;
-      $("#ajax-loading", $tab).css("display", "none");
+      $message.text("Finished running.").css("color", "green");;
+      $loading.css("opacity", 0);
       break;
     case "updating":
-      $("#ajax-message", $tab).text("Updating...").css("color", "green");
-      $("#ajax-loading", $tab).css("display", "inline");
+      $message.text("Updating...").css("color", "green");
+      $loading.css("opacity", 1);
       break;
     case "updated":
-      $("#ajax-loading", $tab).css("display", "none")
-      $("#ajax-message", $tab).text("Updated.").css("color", "green");;
+      $loading.css("opacity", 0)
+      $message.text("Updated.").css("color", "green");;
       break;
     case "error":
-      $("#ajax-loading", $tab).css("display", "none")
-      $("#ajax-message", $tab).text("Error").css("color", "red");;
+      $loading.css("opacity", 0);
+      $message.text("Error").css("color", "red");
+      break;
+    default:
+      $message.text("");
+    $loading.css("opacity", 0);
     }
   } else {
-    $("#ajax-message", $tab).text("");
-    $("#ajax-loading", $tab).css("display", "none");
+    $message.text("");
+    $loading.css("opacity", 0);
   }
 }
 
-Workspace.prototype.updateActionStatus = function(isSaved, isOwner) {
+Workbench.prototype.updateActionStatus = function(isSaved, isOwner) {
   if (isSaved) {
     if (isOwner) {
       $('.app-actions #save-app').show();
@@ -824,7 +837,7 @@ Workspace.prototype.updateActionStatus = function(isSaved, isOwner) {
 /**
  * Starts console prompt and handles console action
  */
-Workspace.prototype.startPrompt = function(jqconsole, language) {
+Workbench.prototype.startPrompt = function(jqconsole, language) {
   var me = this;
   jqconsole.Prompt(true, function(input) {
     $.ajax({
@@ -849,12 +862,12 @@ Workspace.prototype.startPrompt = function(jqconsole, language) {
 /**
  * 
  */
-/*Workspace.prototype.getJqConsole = function(tabIndex) {
+/*Workbench.prototype.getJqConsole = function(tabIndex) {
   var $tab = this.getTabContainer(tabIndex);
   return $('.app-execution-logs .console', $tab).jqconsole(); 
 }*/
 
-/*Workspace.prototype.getJqConsole = function($tab) {
+/*Workbench.prototype.getJqConsole = function($tab) {
   return $('.app-execution-logs .console', $tab).jqconsole(); 
 }*/
 
@@ -862,21 +875,21 @@ Workspace.prototype.startPrompt = function(jqconsole, language) {
 /**
  * Gets the current number of tabs, it differs from tab counter
  */
-Workspace.prototype.getNumberOfTabs = function() {
+Workbench.prototype.getNumberOfTabs = function() {
   return $('li.tab-header a', this.$tabs).length;
 }
 
 /**
  * Gets the current selected tab index (zero-based: 0, 1, 2, ...)
  */
-Workspace.prototype.getSelectedIndex = function() {
+Workbench.prototype.getSelectedIndex = function() {
   return this.$tabs.tabs('option', 'selected');
 }
 
 /**
  * Gets the current selected tab id (i.e: tabs-1, tabs-2, ...)
  */
-Workspace.prototype.getSelectedTabId = function() {
+Workbench.prototype.getSelectedTabId = function() {
   var index = this.$tabs.tabs('option', 'selected');
   var href = $('li.tab-header a', this.$tabs)[index].href; 
   return href.substring(href.indexOf('#') + 1);
@@ -885,7 +898,7 @@ Workspace.prototype.getSelectedTabId = function() {
 /**
  * 
  */
-Workspace.prototype.getSelectedTabContainer = function() {
+Workbench.prototype.getSelectedTabContainer = function() {
   return $('#' + this.getSelectedTabId(), this.$tabs);
 }
 
@@ -894,7 +907,7 @@ Workspace.prototype.getSelectedTabContainer = function() {
  * @param index: zero-based tab index
  * @return id of the div element which contains the content of the corresponding tab, i.e: tabs-1 at index 0
  */
-Workspace.prototype.getTabId = function(index) {
+Workbench.prototype.getTabId = function(index) {
   var href = $('li.tab-header a', this.$tabs)[index].href;
   return href.substring(href.indexOf('#') + 1)
 }
@@ -902,7 +915,7 @@ Workspace.prototype.getTabId = function(index) {
 /**
  * Gets the div element contains the tab at index (0, 1, 2, ...) 
  */
-Workspace.prototype.getTabContainer = function(index) {
+Workbench.prototype.getTabContainer = function(index) {
   var tabId = this.getTabId(index);
   return $('#' + tabId, this.$tabs);
 }
@@ -910,8 +923,8 @@ Workspace.prototype.getTabContainer = function(index) {
 /**
  * Retrieves the index of the tab with given tabId 
  */
-Workspace.prototype.getTabIndex = function(tabId) {
+Workbench.prototype.getTabIndex = function(tabId) {
   return $("li.tab-header", this.$tabs).index($("li:has(a[href='#" + tabId +"'])"));
 }
 
-com.bouncingdata.Workspace = new Workspace();
+com.bouncingdata.Workbench = new Workbench();

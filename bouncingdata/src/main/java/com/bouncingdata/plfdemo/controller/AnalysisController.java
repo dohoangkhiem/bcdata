@@ -1,6 +1,7 @@
 package com.bouncingdata.plfdemo.controller;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,20 +11,24 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
+import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
@@ -40,7 +45,7 @@ public class AnalysisController {
 
   @Autowired
   private ApplicationStoreService appStoreService;
-
+  
   @RequestMapping(value="/{guid}", method=RequestMethod.GET)
   public String viewAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
     logger.debug("Received request for analysis {}", guid);
@@ -91,6 +96,11 @@ public class AnalysisController {
     }
   }
   
+  /**
+   * 
+   * @param guid
+   * @return
+   */
   @RequestMapping(value = "/commentlist/{guid}", method = RequestMethod.GET)
   public @ResponseBody List<Comment> getCommentList(@PathVariable String guid) {
     try {
@@ -101,6 +111,95 @@ public class AnalysisController {
     } catch (Exception e) {
       logger.debug("Error occurs when retrieving comment list for analysis {}", guid);
       return null;
+    }
+  }
+  
+  @RequestMapping(value = "/commentpost/{guid}", method = RequestMethod.POST)
+  public @ResponseBody Comment postComment(@PathVariable String guid, @RequestParam(value="message", required=true) String message,
+    @RequestParam(value="parentId", required=true) int parentId, ModelMap model, Principal principal) throws Exception {  
+    
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) {
+      logger.debug("User not found!");
+      return null;
+    }
+    Analysis analysis = datastoreService.getDashboard(guid);
+    if (analysis == null) {
+      logger.debug("The analysis {} does not exist anymore.", guid);
+      return null;
+    }
+    
+    Comment c = new Comment();
+    c.setAccepted(true);
+    c.setCreateAt(new Date());
+    c.setLastUpdate(new Date());
+    c.setMessage(message);
+    c.setParentId(parentId);
+    
+    datastoreService.addComment(user.getId(), analysis.getId(), c);
+    return c;
+  }
+  
+  /**
+   * Votes the analysis
+   * @param guid
+   * @param vote
+   * @param model
+   * @param principal
+   */
+  @RequestMapping(value = "/vote/{guid}", method = RequestMethod.POST)
+  public @ResponseBody void vote(@PathVariable String guid, @RequestParam(value="vote", required=true) int vote, ModelMap model, Principal principal) {
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) {
+      logger.debug("User not found!");
+      return;
+    }
+    
+    // check if this user has voted on this analysis
+    
+    
+    vote = vote>0?1:-1;
+    // add vote to AnalysisVotes table
+    // update score in Analysis
+    
+    // return Analysis object
+    
+  }
+  
+  /**
+   * Votes comment
+   * @param guid
+   * @param vote
+   * @param model
+   * @param principal
+   */
+  @RequestMapping(value = "/commentvote/{guid}", method = RequestMethod.POST)
+  public @ResponseBody void voteComment(@PathVariable String guid, @RequestParam(value="commentId", required=true) int commentId, @RequestParam(value="vote", required=true) int vote, ModelMap model, Principal principal) {
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) {
+      return;
+    }
+    
+    vote = vote>=0?1:-1;
+    
+    try {
+      Comment comment = datastoreService.getComment(commentId);
+      if (comment == null) {
+        return;
+      }
+      
+      if (!guid.equals(comment.getAnalysis().getGuid())) {
+        //logging
+        return;
+      }
+      
+      CommentVote commentVote = new CommentVote();
+      commentVote.setVote(vote);
+      commentVote.setVoteAt(new Date());
+      commentVote.setActive(true);
+      datastoreService.addCommentVote(user.getId(), commentId, commentVote);
+    } catch (Exception e) {
+      logger.debug("Failed to add new vote to comment id {}, user id {}", commentId, user.getId());
     }
   }
 }

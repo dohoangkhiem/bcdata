@@ -2,25 +2,34 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 
 import java.util.List;
 
-import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 
 @PersistenceCapable
 public class Analysis {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
+  @Index(name="analysis_guid_idx", unique="true")
+  @Unique
   private String guid;
   private String status;
+  private int score;
   @Persistent(mappedBy="analysis") List<Comment> comments;
   
   public Analysis(String guid, String status) {
     this.guid = guid;
     this.status = status;
   }
+  
+  public Analysis() {
+    super();
+  }
+  
   public int getId() {
     return id;
   }
@@ -44,6 +53,14 @@ public class Analysis {
   }
   public void setComments(List<Comment> comments) {
     this.comments = comments;
+  }
+
+  public int getScore() {
+    return score;
+  }
+
+  public void setScore(int score) {
+    this.score = score;
   }
   
 }

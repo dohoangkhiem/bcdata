@@ -12,11 +12,13 @@ public class Comment {
   @PrimaryKey
   @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
   private int id;
+  @Persistent(defaultFetchGroup="true")
   private User user;
+  @Persistent(defaultFetchGroup="true")
   private Analysis analysis;
   private int order;
   private String title;
-  private String content;
+  private String message;
   private Date createAt;
   private Date lastUpdate;
   private int lastUpdateBy;
@@ -57,11 +59,11 @@ public class Comment {
   public void setTitle(String title) {
     this.title = title;
   }
-  public String getContent() {
-    return content;
+  public String getMessage() {
+    return message;
   }
-  public void setContent(String content) {
-    this.content = content;
+  public void setMessage(String content) {
+    this.message = content;
   }
   public Date getCreateAt() {
     return createAt;
@@ -111,6 +113,5 @@ public class Comment {
   public void setAccepted(boolean accepted) {
     this.accepted = accepted;
   }
-  
-  
+
 }
