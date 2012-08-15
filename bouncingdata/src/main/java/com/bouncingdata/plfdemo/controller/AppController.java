@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bouncingdata.plfdemo.datastore.pojo.ApplicationDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
-import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ApplicationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
@@ -48,7 +48,7 @@ public class AppController {
   @RequestMapping(value="/a/{guid}", method = RequestMethod.GET)
   public @ResponseBody ApplicationDetail getApplication(@PathVariable String guid) {
     try {
-      Application app = datastoreService.getApplication(guid);
+      Application app = datastoreService.getApplicationByGuid(guid);
       if (app == null) return null;
       
       List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
@@ -78,7 +78,7 @@ public class AppController {
       ApplicationDetail detail = new ApplicationDetail(code, datasets, visualsMap, dashboard);
       return detail;
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
       return null;
     }
   }
@@ -86,7 +86,7 @@ public class AppController {
   @RequestMapping(value="/v/{guid}", method = RequestMethod.GET)
   public @ResponseBody DashboardDetail getVisualizationMap(@PathVariable String guid) {
     try {
-      Application app = datastoreService.getApplication(guid);
+      Application app = datastoreService.getApplicationByGuid(guid);
       if (app == null) return null;
     
       List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
@@ -112,7 +112,7 @@ public class AppController {
       
       return new DashboardDetail(visualsMap, dashboard);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
       return null;
     }
   }
@@ -120,7 +120,7 @@ public class AppController {
   @RequestMapping(value="/v/e/{guid}", method = RequestMethod.GET)
   public @ResponseBody DashboardDetail updateDashboardForExecution(@PathVariable String guid) {
     try {
-      Application app = datastoreService.getApplication(guid);
+      Application app = datastoreService.getApplicationByGuid(guid);
       if (app == null) return null;
     
       List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
@@ -154,7 +154,7 @@ public class AppController {
       
       return new DashboardDetail(visualsMap, dashboardPos);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
       return null;
     }
   }
@@ -164,17 +164,17 @@ public class AppController {
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
     try {
-      Application app = datastoreService.getApplication(appGuid);
+      Application app = datastoreService.getApplicationByGuid(appGuid);
       if (app == null) return new ExecutionResult(null, null, null, -1, "Application not found.");
       
-      if (app.getAuthor() != user.getId()) {
+      if (app.getUser().getId() != user.getId()) {
         return new ExecutionResult(null, null, null, -1, "No permission to run this app.");
       }
       
       try {
         appStoreService.saveApplicationCode(appGuid, app.getLanguage(), code);
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.error("", e);
       }
       
       if ("python".equals(app.getLanguage())) {
@@ -186,7 +186,7 @@ public class AppController {
       }
       
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
       return new ExecutionResult(null, null, null, -3, "Unknown error");
     }
     
@@ -200,18 +200,18 @@ public class AppController {
     if (user == null) return null;
     
     try {
-      Application app = datastoreService.getApplication(appGuid);
+      Application app = datastoreService.getApplicationByGuid(appGuid);
       if (app == null) {
         return "Cannot find application";
       }
       
-      if (app.getAuthor() != user.getId()) {
+      if (app.getUser().getId() != user.getId()) {
         return "No permission";
       }
       
       try {
         appStoreService.saveApplicationCode(appGuid, app.getLanguage(), code);
-        return "OK";
+        //return "OK";
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -221,10 +221,10 @@ public class AppController {
       datastoreService.updateApplication(app);
       
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
     }
     
-    return null;
+    return "OK";
   }
   
   @RequestMapping(value="/v/d/update/{guid}", method = RequestMethod.POST)
@@ -233,28 +233,42 @@ public class AppController {
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return "KO";
     try {
-      Application app = datastoreService.getApplication(guid);
+      Application app = datastoreService.getApplicationByGuid(guid);
       if (app == null) return "KO";
       
-      if (app.getAuthor() != user.getId()) {
+      if (app.getUser().getId() != user.getId()) {
         return "KO";
       }
       
       datastoreService.updateDashboard(guid, status);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
       return "KO";
     }
     return "OK";
   }
   
   @RequestMapping(value="/v/d/create/{guid}/{status}", method = RequestMethod.GET)
-  public void createDashboard(@PathVariable String guid, @PathVariable String status) {
+  public @ResponseBody void createDashboard(@PathVariable String guid, @PathVariable String status) {
     logger.debug("Receive create dashboard request {}, {}", guid, status);
     try {
       datastoreService.createDashboard(guid, status);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("", e);
+    }
+  }
+  
+  @RequestMapping(value="/a/publish/{guid}", method=RequestMethod.POST)
+  public @ResponseBody void publishAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
+    logger.debug("Publishing analysis with guid {}", guid);
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) return;
+    try {
+      Analysis analysis = datastoreService.getDashboard(guid);
+      if (analysis == null) return;
+      datastoreService.publishAnalysis(user, analysis);
+    } catch (Exception e) {
+      logger.error("", e);
     }
   }
   

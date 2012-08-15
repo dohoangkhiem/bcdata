@@ -32,9 +32,9 @@
     </property>
   </bean>
   
-  <bean id="transactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
+  <!-- bean id="transactionManager" class="org.springframework.orm.jdo.JdoTransactionManager">
     <property name="persistenceManagerFactory">
       <ref local="pmf" />
     </property>
-  </bean>
+  </bean-->
 </beans>

@@ -2,9 +2,14 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 
 import java.util.Date;
 
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+
+@PersistenceCapable
 public class Tag {
   private int id;
   private String tag;
+  @Persistent(defaultFetchGroup="true")
   private User creator;
   private int popularity;
   private Date createAt;

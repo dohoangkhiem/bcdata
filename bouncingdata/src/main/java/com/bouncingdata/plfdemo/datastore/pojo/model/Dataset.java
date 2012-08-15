@@ -16,7 +16,8 @@ public class Dataset {
   private String description;
   private String schema;
   private String guid;
-  private int author;
+  @Persistent(defaultFetchGroup="true")
+  private User user;
   private String tags;
   private Date createAt;
   private Date lastUpdate;
@@ -53,12 +54,12 @@ public class Dataset {
   public void setGuid(String guid) {
     this.guid = guid;
   }
-  public int getAuthor() {
+  /*public int getAuthor() {
     return author;
   }
   public void setAuthor(int author) {
     this.author = author;
-  }
+  }*/
   public String getTags() {
     return tags;
   }
@@ -88,6 +89,12 @@ public class Dataset {
   }
   public void setAppId(int appId) {
     this.appId = appId;
+  }
+  public User getUser() {
+    return user;
+  }
+  public void setUser(User user) {
+    this.user = user;
   }
     
 }

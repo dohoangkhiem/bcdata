@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
 
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
@@ -31,18 +31,27 @@ public interface DatastoreService {
    */
   public List<Application> getApplicationList(int userId) throws Exception;
   
+  public Application getApplication(int appId) throws Exception;
+  
   /**
    * @param guid
    * @return
    * @throws Exception
    */
-  public Application getApplication(String guid) throws Exception;
+  public Application getApplicationByGuid(String guid) throws Exception;
   
   public Dataset getDataset(String guid) throws Exception;
   
   /**
-   * Stores new application
-   * @param application the <code>Application</code> to save
+   * @param name
+   * @param description
+   * @param language
+   * @param author
+   * @param authorName
+   * @param lineCount
+   * @param isPublished
+   * @param tags
+   * @return the id of newly created application
    * @throws Exception
    */
   public String createApplication(String name, String description, String language, int author, String authorName, int lineCount, boolean isPublished, String tags) throws Exception;
@@ -106,5 +115,7 @@ public interface DatastoreService {
   public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws Exception;
   
   public void removeCommentVote(int userId, int commentId) throws Exception;
+  
+  public void publishAnalysis(User user, Analysis analysis) throws Exception;
   
 }

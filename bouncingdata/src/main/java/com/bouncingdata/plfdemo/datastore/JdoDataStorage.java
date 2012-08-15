@@ -12,9 +12,11 @@ import javax.jdo.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
 
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
@@ -22,9 +24,9 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
 import com.bouncingdata.plfdemo.datastore.pojo.model.GroupAuthority;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Membership;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 
@@ -37,7 +39,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public List<Dataset> getDatasetList(int userId) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Dataset.class);
-    q.setFilter("author==" + userId);
+    q.setFilter("user.id==" + userId);
     List<Dataset> results = null;
     try {
       results = (List<Dataset>) q.execute();
@@ -53,7 +55,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public List<Application> getApplicationList(int userId) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Application.class);
-    q.setFilter("author==" + userId);
+    q.setFilter("user.id==" + userId);
     List<Application> results = null;
     try {
       results = (List<Application>) q.execute();
@@ -69,7 +71,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public List<Application> getPrivateApplication(int userId) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Application.class);
-    q.setFilter("author==" + userId + " && isPublised==false");
+    q.setFilter("user.id==" + userId + " && isPublised==false");
     List<Application> results = null;
     try {
       results = (List<Application>) q.execute();
@@ -85,7 +87,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public List<Application> getPublicApplication(int userId) throws DataAccessException {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Application.class);
-    q.setFilter("author==" + userId + " && isPublised==true");
+    q.setFilter("user.id==" + userId + " && isPublised==true");
     List<Application> results = null;
     try {
       results = (List<Application>) q.execute();
@@ -198,9 +200,24 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
 
   @Override
   public void createApplication(Application application) throws DataAccessException {
-    List<Application> apps = new ArrayList<Application>();
-    apps.add(application);
-    persistData(apps);
+    if (application.getUser() == null) {
+      return;
+    }
+    PersistenceManager pm = getPersistenceManager();
+    User user = pm.getObjectById(User.class, application.getUser().getId());
+    if (user == null) {
+      return;
+    }
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      application.setUser(user);
+      pm.makePersistent(application);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
   }
 
   private <T> void persistData(Collection<T> collection) {
@@ -272,25 +289,27 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
 
   @Override
   public void updateApplication(Application application) throws DataAccessException {
+    if (application.getUser() == null) return;
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
+    User user = pm.getObjectById(User.class, application.getUser().getId());
+    if (user == null) {
+      return;
+    }
     try {
       tx.begin();
-      Application app = getApplicationByGuid(application.getGuid());
+      Application app = pm.getObjectById(Application.class, application.getId());
       app.setName(application.getName());
       app.setDescription(application.getDescription());
       app.setLanguage(app.getLanguage());
-      app.setAuthorName(app.getAuthorName());
+      //
+      app.setUser(user);
       app.setLastUpdate(new Date());
       app.setPublished(application.isPublished());
       app.setTags(application.getTags());
       app.setLineCount(app.getLineCount());
-      app.setAuthor(application.getAuthor());
       tx.commit();
-    } catch (Exception e) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Exception occurs when update application " + application.getGuid(), e);
-      }
+    } finally {
       if (tx.isActive()) {
         tx.rollback();
       }
@@ -385,12 +404,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         ld.add(d);
         persistData(ld);
       } 
-    } catch (Exception e) {
-      if (logger.isDebugEnabled()) logger.debug("", e);
+    } finally {
       if (tx.isActive()) {
         tx.rollback();
       }
-    } finally {
       q.closeAll();
       pm.close();
     }
@@ -409,11 +426,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         v.setActive(false);
       }
       tx.commit();
-    } catch (Exception e) {
+    } finally {
       if (tx.isActive()) {
         tx.rollback();
       }
-    } finally {
       q.closeAll();
       pm.close();
     }
@@ -447,12 +463,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       comment.setAnalysis(analysis);
       pm.makePersistent(comment);
       tx.commit();
-    } catch (Exception e) {
-      if (logger.isDebugEnabled()) logger.debug("", e);
+    } finally {
       if (tx.isActive()) {
         tx.rollback();
       }
-    } finally {
       pm.close();
     }
   }
@@ -467,15 +481,12 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         tx.begin();
         pm.deletePersistent(comment);
         tx.commit();
-      } catch (Exception e) {
-        if (tx.isActive()) tx.rollback();
       } finally {
+        if (tx.isActive()) tx.rollback();
         pm.close();
       }
     } else {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Comment id {} does not exist.", commentId);
-      }
+      throw new DataRetrievalFailureException("Comment id" + commentId + " does not exist.");
     }
   }
 
@@ -539,10 +550,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     User user = pm.getObjectById(User.class, userId);
     Comment comment = pm.getObjectById(Comment.class, commentId);
     if (user == null || comment == null) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Try to add comment vote, userId = {}, commentId = {}. User or Comment object is null.", userId, commentId);
-      }
-      return;
+      throw new DataRetrievalFailureException("User or Comment object not found, userId " + userId + ", commentId " + commentId);
     }
     try {
       tx.begin();
@@ -556,13 +564,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         comment.setUpVote(comment.getUpVote()+1);
       } else {
         comment.setDownVote(comment.getDownVote()+1);
-      } 
-        
+      }      
       tx.commit();
-    } catch (Exception e) {
-      logger.debug("Exception when persist comment vote {}", e);
-      if (tx.isActive()) tx.rollback();
     } finally {
+      if (tx.isActive()) tx.rollback();
       pm.close();
     }
   }
@@ -589,15 +594,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         }
         tx.commit();
       }
-    } catch (Exception e) {
-      logger.debug("Exception occurs when removing comment vote {}", e);
-      if (tx.isActive()) tx.rollback();
     } finally {
+      if (tx.isActive()) tx.rollback();
       q.closeAll();
       pm.close();
-    }
-    //pm.deletePersistentAll(results);
-    
+    }    
   }
 
   @Override
@@ -616,5 +617,185 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public void removeAnalysisVote(int userId, int analysisId) throws DataAccessException {
     // TODO Auto-generated method stub
 
+  }
+
+  @Override
+  public Application getApplication(int appId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    try {
+      return pm.getObjectById(Application.class, appId);
+    } finally {
+      pm.close();
+    }
+  }
+
+  @Override
+  public Activity getActivity(int activityId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    try {
+      return pm.getObjectById(Activity.class, activityId);
+    } finally {
+      pm.close();
+    }
+    
+  }
+
+  @Override
+  public void createActivity(Activity activity) throws DataAccessException {
+    if (activity.getUser() == null) {
+      return;
+    }
+    PersistenceManager pm = getPersistenceManager();
+    User user = pm.getObjectById(User.class, activity.getUser().getId());
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      activity.setUser(user);
+      pm.makePersistent(activity);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void removeActivity(int activityId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      Activity activity = pm.getObjectById(Activity.class, activityId);
+      pm.deletePersistent(activity);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+    
+  }
+
+  @Override
+  public void updateActivity(Activity activity) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Activity pstObj = pm.getObjectById(Activity.class, activity.getId());
+    if (pstObj == null) {
+      throw new DataRetrievalFailureException("Can't find activity with id " + activity.getId());
+    }
+    
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      pstObj.setObjectId(activity.getObjectId());
+      pstObj.setAction(activity.getAction());
+      pstObj.setTime(activity.getTime());
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+    
+  }
+
+  @Override
+  public List<Activity> getUserActitity(int userId, Date cutPoint) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Activity.class);
+    q.setFilter("user.id == " + userId + " && time >= cut_point");
+    q.declareImports("java.util.Date");
+    q.declareParameters("Date cut_point");
+    q.setOrdering("time DESC");
+    try {
+      List<Activity> activities = (List<Activity>) q.execute(cutPoint);
+      activities = (List<Activity>) pm.detachCopyAll(activities);
+      return activities;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public List<User> getFollowers(int userId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Following.class);
+    q.setFilter("user.id == " + userId);
+    try {
+      List<Following> followings = (List<Following>) q.execute();
+      followings = (List<Following>) pm.detachCopyAll(followings);
+      List<User> results = new ArrayList<User>();
+      for(Following f : followings) {
+        results.add(f.getFollower());
+      }
+      return results;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public List<User> getFollowingUsers(int userId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Following.class);
+    q.setFilter("follower.id == " + userId);
+    try {
+      List<Following> followings = (List<Following>) q.execute();
+      followings = (List<Following>) pm.detachCopyAll(followings);
+      List<User> results = new ArrayList<User>();
+      for (Following f : followings) {
+        results.add(f.getUser());
+      }
+      return results;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public List<Activity> getFeed(int userId, Date cutPoint) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    // get list of feed (now, is list of following users)
+    Query q = pm.newQuery(Following.class);
+    q.setFilter("follower.id == " + userId);
+    try {
+      List<Following> followings =  (List<Following>) q.execute();
+  
+      // query from the 'activities' table, with condition: actor is in the above list
+      q = pm.newQuery(Activity.class);
+      StringBuilder filter = new StringBuilder();
+      filter.append("(");
+      for (Following f : followings) {
+        filter.append("user.id == " + f.getUser().getId() + " ||");
+      }
+      
+      filter.append(" user.id == " + userId + ")");
+      q.setFilter(filter.toString() + " && (time >= cut_point)");
+      q.declareImports("import java.util.Date");
+      q.declareParameters("Date cut_point");
+      q.setOrdering("time DESC");
+      List<Activity> activities = (List<Activity>) q.execute(cutPoint);
+      activities = (List<Activity>) pm.detachCopyAll(activities);
+      return activities;
+    } finally {
+      q.closeAll();
+      pm.close();
+    } 
+  }
+
+  @Override
+  public List<Following> getFollowingList(int userId) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Following.class);
+    q.setFilter("user.id == " + userId);
+    try {
+      List<Following> followings = (List<Following>) q.execute();
+      followings = (List<Following>) pm.detachCopyAll(followings);
+      return followings;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
   }
 }

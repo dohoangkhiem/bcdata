@@ -19,7 +19,7 @@ import java.util.UUID;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 
 public class Utils {

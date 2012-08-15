@@ -31,19 +31,19 @@ Browser.prototype.init = function() {
     
     // initializes search
     var searchFunc = function() {
-      var query = $.trim($('#workspace-browser #search-form #query').val()); 
+      var query = $.trim($('#workbench-browser #search-form #query').val()); 
       if (query.length > 0) {
         me.search(query); 
       }
     }
-    $('#workspace-browser #search-form #query').keypress(function(e) {
+    $('#workbench-browser #search-form #query').keypress(function(e) {
       var code = (e.keyCode ? e.keyCode : e.which);
       if(code == 13) {
         searchFunc();
         return false;
       } else return true;
     });
-    $('#workspace-browser #search-form #search-submit').click(function() {
+    $('#workbench-browser #search-form #search-submit').click(function() {
       searchFunc();
       return false;
     });
@@ -147,7 +147,7 @@ Browser.prototype.loadItems = function(itemMap, type) {
     
     if (type == "application") {
       $itemDetail.append('<div class="browser-item-info application-language"><strong>Language: </strong>' + itemObj['language'] + '</div>');
-      $itemDetail.append('<div class="browser-item-info"><strong>Author: </strong>' + itemObj['authorName'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info"><strong>Author: </strong>' + itemObj.user.username + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Line count: </strong>' + itemObj['lineCount'] + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Is public: </strong>' + itemObj['published'] + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Create date: </strong>' + new Date(itemObj['createAt']) + '</div>');
@@ -156,7 +156,7 @@ Browser.prototype.loadItems = function(itemMap, type) {
     } else if (type == "dataset") {
       //$itemDetail.append('<div class="dataset-detail-datastore"><strong>Datastore: </strong>' + itemObj['datastore'] + '</div>');
       $itemDetail.append('<div class="browser-item-info dataset-detail-schema"><strong>Schema: </strong>' + itemObj['schema']  + '</div>');
-      $itemDetail.append('<div class="browser-item-info dataset-detail-author"><strong>Author: </strong>' + itemObj['authorName'] + '</div>');
+      $itemDetail.append('<div class="browser-item-info dataset-detail-author"><strong>Author: </strong>' + itemObj.user.username + '</div>');
       $itemDetail.append('<div class="browser-item-info dataset-detail-rowcount"><strong>Row count: </strong>' + itemObj['rowCount'] + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Create date: </strong>' + new Date(itemObj['createAt']) + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Last update: </strong>' + new Date(itemObj['lastUpdate']) + '</div>');

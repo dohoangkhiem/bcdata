@@ -1,4 +1,4 @@
-package com.bouncingdata.plfdemo.datastore.pojo;
+package com.bouncingdata.plfdemo.datastore.pojo.dto;
 
 public enum VisualizationType {
   PNG("png"), HTML("html");

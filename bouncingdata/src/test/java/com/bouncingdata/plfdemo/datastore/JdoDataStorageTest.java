@@ -1,18 +1,21 @@
 package com.bouncingdata.plfdemo.datastore;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractTransactionalJUnit38SpringContextTests;
+import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
+import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 @ContextConfiguration
-public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContextTests {
+public class JdoDataStorageTest extends AbstractJUnit38SpringContextTests {
   
   @Autowired
   private JdoDataStorage jdoDataStorage;
@@ -26,11 +29,11 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
   public void testJdoDataStorage() {
     assertNotNull(jdoDataStorage);
     
-    /*User demo = jdoDataStorage.findUserByUsername("demo");
+    User demo = jdoDataStorage.findUserByUsername("demo");
     assertNotNull(demo);
     List<Application> apps = jdoDataStorage.getApplicationList(demo.getId());
     assertNotNull(apps);
-    System.out.println("Number of application by demo: " + apps.size());*/
+    System.out.println("Number of application by demo: " + apps.size());
   }
   
   public void _testTransactional() {
@@ -49,14 +52,24 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
     List<Application> apps = jdoDataStorage.getApplicationList(demo.getId());
     assertTrue(apps.size() > 0);
     Application app = apps.get(0);
-    app.setName("testApplication");
+    app.setName("zzztestApplicationzzz");
     jdoDataStorage.updateApplication(app);
-    app = jdoDataStorage.getApplicationByGuid(app.getGuid());
+    app = jdoDataStorage.getApplication(app.getId());
     assertNotNull(app);
-    assertTrue(app.getName().equals("testApplication"));
+    assertTrue(app.getName().equals("zzztestApplicationzzz"));
   }
   
-  /*public void _testGetComment() {
+  public void testGetFeed() {
+    User demo = jdoDataStorage.findUserByUsername("demo");
+    assertNotNull(demo);
+    Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.DATE, -1);
+    List<Activity> activities = jdoDataStorage.getFeed(demo.getId(), calendar.getTime());
+    assertNotNull(activities);
+    assertTrue(activities.size() > 0);
+  }
+  
+  /*public void testGetComment() {
     User test = new User();
     test.setUsername("testUser");
     test.setPassword("testPassword");
@@ -72,7 +85,7 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
     c.setOrder(1);
     c.setParentId(-1);
     
-    jdoDataStorage.addComment(c);
+    jdoDataStorage.addComment(test.getId(), analysisId, comment)
     
     List<Comment> comments = jdoDataStorage.getComments(analysis.getId());
     assertNotNull(comments);
@@ -80,7 +93,6 @@ public class JdoDataStorageTest extends AbstractTransactionalJUnit38SpringContex
     assertTrue(c1.getId() == c.getId());
     assertTrue(c1.getTitle().equals(c.getTitle()));
     assertTrue(c1.getMessage().equals(c.getMessage()));
-  }
-  */
+  }*/
   
 }

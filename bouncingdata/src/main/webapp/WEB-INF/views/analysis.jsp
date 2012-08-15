@@ -11,32 +11,6 @@
 	 
 	});
 </script>
-<script id="comment-template" type="text/x-jquery-tmpl">
-	<li class="comment-item" id="comment-\${id}" nodeid="\${id}">
-    <div class="comment-item-body">
-      <div class="comment-header">
-        <div class="comment-author">\${username}</div>
-      </div>
-      <div class="comment-message">\${message}</div>
-      <div class="comment-footer">
-        <span class="comment-date">\${date}</span>&nbsp;
-        <span class="up-vote">\${upVote}</span>&nbsp;
-        <a class="up-vote-link" href="#"><span class="up-vote-icon">Vote up</span></a>&nbsp;
-        <span class="down-vote">\${downVote}</span>&nbsp;
-        <a class="down-vote-link" href="#"><span class="down-vote-icon">Vote down</span></a>&nbsp;
-        <a class="comment-reply" href="#">Reply</a>
-      </div>
-    </div>
-    <ul class="children"></ul>
-  </li>
-</script>
-<script id="comment-editor-template" type="text/x-jquery-tmpl">
-  <div class="comment-editor inline-editor">
-    <textarea class="reply-text" rows="\${rows}"></textarea>
-    <input class="reply-button" type="button" value="Reply" />
-    <div class="clear"></div>
-  </div>
-</script>
 <div id="main-content" class="analysis-container">
   <div class="analysis-info right-content">
     <div class="anls-main-info">
@@ -48,7 +22,7 @@
         <strong>Analysis: </strong><span>${anlsApp.name }</span>
       </p>
       <p class="line-item">
-        <strong>Author: </strong><span>${anlsApp.authorName }</span>
+        <strong>Author: </strong><span>${anlsApp.user.username }</span>
       </p>
       <p class="line-item">
         <strong>Description: </strong><span>${anlsApp.description }</span>

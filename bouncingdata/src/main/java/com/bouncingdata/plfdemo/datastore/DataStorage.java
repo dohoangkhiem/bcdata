@@ -1,11 +1,12 @@
 package com.bouncingdata.plfdemo.datastore;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
@@ -14,12 +15,17 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 
 /**
  * @author khiem
+ */
+/**
+ * @author khiem
+ *
  */
 public interface DataStorage {
 
@@ -121,11 +127,28 @@ public interface DataStorage {
   public void updateApplication(Application application) throws DataAccessException;
   
   /**
+   * @param appId
+   * @return
+   * @throws DataAccessException
+   */
+  /**
+   * @param appId
+   * @return
+   * @throws DataAccessException
+   */
+  public Application getApplication(int appId) throws DataAccessException;
+  
+  /**
    * @param guid
    * @throws DataAccessException
    */
   public Application getApplicationByGuid(String guid) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @return
+   * @throws DataAccessException
+   */
   public User getUser(int userId) throws DataAccessException;
     
   /**
@@ -212,18 +235,113 @@ public interface DataStorage {
    */
   public Comment getComment(int commentId) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @param commentId
+   * @return
+   * @throws DataAccessException
+   */
   public CommentVote getCommentVote(int userId, int commentId) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @param commentId
+   * @param commentVote
+   * @throws DataAccessException
+   */
   public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @param commentId
+   * @throws DataAccessException
+   */
   public void removeCommentVote(int userId, int commentId) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @param analysisId
+   * @return
+   * @throws DataAccessException
+   */
   public AnalysisVote getAnalysisVote(int userId, int analysisId) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @param analysisId
+   * @param analysisVote
+   * @throws DataAccessException
+   */
   public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote) throws DataAccessException;
   
+  /**
+   * @param userId
+   * @param analysisId
+   * @throws DataAccessException
+   */
   public void removeAnalysisVote(int userId, int analysisId) throws DataAccessException;
   
-  //public void addActivity(int userId, Activity activity) throws DataAccessException;
+  /**
+   * @param activityId
+   * @return
+   * @throws DataAccessException
+   */
+  public Activity getActivity(int activityId) throws DataAccessException;
+  
+  /**
+   * @param activity
+   * @throws DataAccessException
+   */
+  public void createActivity(Activity activity) throws DataAccessException;
+  
+  /**
+   * @param activityId
+   * @throws DataAccessException
+   */
+  public void removeActivity(int activityId) throws DataAccessException;
+  
+  /**
+   * @param activity
+   * @throws DataAccessException
+   */
+  public void updateActivity(Activity activity) throws DataAccessException;
+  
+  /**
+   * @param userId
+   * @param cutPoint
+   * @return
+   * @throws DataAccessException
+   */
+  public List<Activity> getUserActitity(int userId, Date cutPoint) throws DataAccessException;
+  
+  /**
+   * @param userId
+   * @return
+   * @throws DataAccessException
+   */
+  public List<Following> getFollowingList(int userId)  throws DataAccessException;
+  
+  /**
+   * Retrieves list of users which is following this user
+   * @param userId
+   * @return <code>List</code> of <code>User</code> objects
+   * @throws DataAccessException
+   */
+  public List<User> getFollowers(int userId) throws DataAccessException;
+  
+  /**
+   * Retrieves list of users which this user is currently following
+   * @param userId
+   * @return
+   * @throws DataAccessException
+   */
+  public List<User> getFollowingUsers(int userId) throws DataAccessException;
  
+  /**
+   * @param userId
+   * @param cutPoint
+   * @return
+   * @throws DataAccessException
+   */
+  public List<Activity> getFeed(int userId, Date cutPoint) throws  DataAccessException;
 }

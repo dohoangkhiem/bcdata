@@ -1,4 +1,4 @@
-package com.bouncingdata.plfdemo.datastore.pojo;
+package com.bouncingdata.plfdemo.datastore.pojo.dto;
 
 import java.util.Map;
 import java.util.Properties;

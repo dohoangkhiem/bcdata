@@ -56,6 +56,9 @@ Workbench.prototype.init = function() {
       buttons: {
         "Save": function() {
           //
+          if (!$('#new-app-name', $(this)).val()) {
+            return;
+          }
           console.info('Creating app.');
           me.createApp($('#new-app-name', $(this)).val(), $('#new-app-language', $(this)).val(), 
               $('#new-app-description', $(this)).val(), me.getCode(me.getSelectedTabContainer()), 
@@ -105,7 +108,7 @@ Workbench.prototype.init = function() {
       // each time show the tab
       show: function(event, ui) {       
         var guid = me.tabsIndex[ui.index].guid;
-        me.updateActionStatus(guid, !guid?null:(me.tabsInfo[guid].app.authorName == com.bouncingdata.Main.username));
+        me.updateActionStatus(guid, !guid?null:(me.tabsInfo[guid].app.user.username == com.bouncingdata.Main.username));
       }
 
     });
@@ -255,7 +258,7 @@ Workbench.prototype.makeTabContent = function(tabId, obj, type) {
         tabId: tabId,
         appName: obj?obj.name:'',
         appLang: obj?obj.language:'',
-        appAuthor: obj?obj.authorName:'',
+        appAuthor: obj?obj.user.username:'',
         guid: obj?obj.guid:''
     }
     return $.tmpl(this.$tabTemplate, tabObj);
@@ -263,7 +266,7 @@ Workbench.prototype.makeTabContent = function(tabId, obj, type) {
     var tabObj = {
         tabId: tabId,
         dsName: obj?obj.name:'',
-        dsAuthor: obj?obj.authorName:'',
+        dsAuthor: obj?obj.user.username:'',
         dsSchema: obj?obj.schema:'',
         dsRowCount: obj?obj.rowCount:'',
         dsCreateDate: obj?new Date(obj.createAt):'',
@@ -433,6 +436,24 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     window.open(ctx + "/anls/" + guid);
   });
 
+  $(".dashboard-publish", $tab).click(function() {
+    $.ajax({
+      url: ctx + '/app/a/publish/' + guid,
+      type: 'post',
+      data: {},
+      success: function(result) {
+        console.debug("Successfully published analysis.");
+        if (window.confirm("Your analysis has published! View your analysis now?")) {
+          window.open(ctx + "/anls/" + guid);
+        }
+      },
+      error: function(result) {
+        console.debug("Failed to publis analysis.");
+      }
+    });
+    return false;
+  });
+  
   /*
   $(function() {
     // just for demo
@@ -471,7 +492,7 @@ Workbench.prototype.execute = function(tabIndex) {
   var url, language, app;
   if (guid) {
     app = this.tabsInfo[guid].app;
-    if (app.authorName && (app.authorName != com.bouncingdata.Main.username)) {
+    if (app.user.username && (app.user.username != com.bouncingdata.Main.username)) {
       console.debug('No permission to execute this application.');
       return false;
     }
@@ -543,7 +564,7 @@ Workbench.prototype.saveCode = function(tabIndex) {
   
   if (guid) {
     var app = this.tabsInfo[guid].app;
-    var authorName = app.authorName;
+    var authorName = app.user.username;
     if (authorName && (authorName != com.bouncingdata.Main.username)) {
       console.debug('No permission to save this application.');
       return false;
@@ -603,6 +624,10 @@ Workbench.prototype.cloneApp = function(tabIndex) {
  * Creates new application
  */
 Workbench.prototype.createApp = function(appname, language, description, code, isPublic, tags) {
+  if (!appname) {
+    console.debug("Application name must be not empty");
+    return;
+  }
   var data = { 
     appname: appname,
     language: language,
@@ -686,7 +711,7 @@ Workbench.prototype.renderOutput = function(datasets, visuals, $tab, app) {
 Workbench.prototype.loadDashboard = function(visuals, dashboard, $tab, app) {
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
   $dashboard.attr('guid', app['guid']).attr('tabid', $tab.attr('id')); 
-  com.bouncingdata.Dashboard.load(visuals, dashboard, $dashboard, app.authorName==com.bouncingdata.Main.username);
+  com.bouncingdata.Dashboard.load(visuals, dashboard, $dashboard, app.user.username==com.bouncingdata.Main.username);
 }
 
 /**

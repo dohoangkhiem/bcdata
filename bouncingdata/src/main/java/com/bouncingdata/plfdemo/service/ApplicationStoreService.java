@@ -11,8 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
 

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
-import com.bouncingdata.plfdemo.datastore.pojo.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
@@ -96,13 +96,13 @@ public class MainController {
     int userId = user.getId();
     String guid = null;
     try {
-      guid = datastoreService.createApplication(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tags);     
+      guid = datastoreService.createApplication(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tags);
     } catch (Exception e) {
       logger.error("Failed to create application " + appname + " for user " + user.getUsername(), e);
     }
     
     if (guid == null) {
-      logger.debug("Can't get the guid of application {} so the code cannot saved", appname);
+      logger.error("Can't get the guid of application {} so the code cannot saved", appname);
       return null;
     }
     

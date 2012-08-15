@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bouncingdata.plfdemo.datastore.pojo.DashboardDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.DashboardPosition;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
@@ -50,7 +50,7 @@ public class AnalysisController {
   public String viewAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
     logger.debug("Received request for analysis {}", guid);
     try {
-      Application app = datastoreService.getApplication(guid);
+      Application app = datastoreService.getApplicationByGuid(guid);
       if (app == null) return null;
       
       model.addAttribute("anlsApp", app);

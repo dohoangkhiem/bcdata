@@ -23,7 +23,7 @@ public class Application {
   @Index(name="app_guid_idx", unique="true")
   @Unique
   private String guid;
-  private int author;
+  //private int author;
   private int lineCount;
   private boolean isPublished;
   private Date createAt;
@@ -33,9 +33,9 @@ public class Application {
   @Join
   private Set<Tag> _tags;
   
-  private String authorName;
-  
-  @NotPersistent private User user;
+  //private String authorName;
+  @Persistent(defaultFetchGroup="true")
+  private User user;
   
   public int getId() {
     return id;
@@ -67,12 +67,12 @@ public class Application {
   public void setGuid(String guid) {
     this.guid = guid;
   }
-  public int getAuthor() {
+  /*public int getAuthor() {
     return author;
   }
   public void setAuthor(int author) {
     this.author = author;
-  }
+  }*/
   public int getLineCount() {
     return lineCount;
   }
@@ -97,12 +97,12 @@ public class Application {
   public void setPublished(boolean isPublished) {
     this.isPublished = isPublished;
   }
-  public String getAuthorName() {
+  /*public String getAuthorName() {
     return authorName;
   }
   public void setAuthorName(String authorName) {
     this.authorName = authorName;
-  }
+  }*/
   public User getUser() {
     return user;
   }

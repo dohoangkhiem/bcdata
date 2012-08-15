@@ -3,25 +3,29 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class Activity {
+public class Following {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
   @Persistent(defaultFetchGroup="true")
+  @Index(name="user_source_idx")
   private User user;
   @Persistent(defaultFetchGroup="true")
-  private String action;
-  private int objectId;
-  private Date time;
+  @Index(name="user_follower_idx")
+  private User follower;
+  private Date followFrom;
   
-  @NotPersistent
-  private Object object;
+  public Following(User user, User follower, Date from) {
+    this.user = user;
+    this.follower = follower;
+    this.followFrom = from;
+  }
   
   public int getId() {
     return id;
@@ -35,29 +39,16 @@ public class Activity {
   public void setUser(User user) {
     this.user = user;
   }
-  public String getAction() {
-    return action;
+  public User getFollower() {
+    return follower;
   }
-  public void setAction(String verb) {
-    this.action = verb;
+  public void setFollower(User follower) {
+    this.follower = follower;
   }
-  public int getObjectId() {
-    return objectId;
+  public Date getFollowFrom() {
+    return followFrom;
   }
-  public void setObjectId(int objectId) {
-    this.objectId = objectId;
+  public void setFollowFrom(Date followFrom) {
+    this.followFrom = followFrom;
   }
-  public Date getTime() {
-    return time;
-  }
-  public void setTime(Date time) {
-    this.time = time;
-  }
-  public Object getObject() {
-    return object;
-  }
-  public void setObject(Object object) {
-    this.object = object;
-  }
-  
 }

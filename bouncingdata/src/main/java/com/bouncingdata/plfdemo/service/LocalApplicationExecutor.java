@@ -8,9 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,9 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationDetail;
-import com.bouncingdata.plfdemo.datastore.pojo.VisualizationType;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
@@ -39,8 +37,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   @Autowired
   private DatastoreService datastoreService;
   
-  @Autowired
-  private ApplicationStoreService appStoreService;
+  /*@Autowired
+  private ApplicationStoreService appStoreService;*/
   
   public void setLogDir(String ld) {
     this.logDir = ld;
@@ -253,7 +251,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
         else if ("html".equals(extension)) type = VisualizationType.HTML;
         
         v.setAppId(app.getId());
-        v.setAuthor(app.getAuthor());
+        v.setAuthor(app.getUser().getId());
         v.setName(filename.substring(0, filename.lastIndexOf(".")));
         v.setType(type.getType());
         String guid = Utils.generateGuid();
@@ -315,7 +313,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
    * Get snapshot visualizations for a execution
    * @param executionId
    * @return
-   */
+   *//*
   private List<String> getEncodedVisualizations(String executionId) {
     // scan visualization dir
     String visualizationPath = logDir + Utils.FILE_SEPARATOR + executionId; // + Utils.FILE_SEPARATOR + "visualizations";
@@ -344,11 +342,10 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
           // Read in the bytes
           int offset = 0;
           int numRead = 0;
-          while (offset < bytes.length
-                 && (numRead = is.read(bytes, offset, bytes.length-offset)) >= 0) {
-              offset += numRead;
+          while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+            offset += numRead;
           }
-  
+
           // Ensure all the bytes have been read in
           if (offset < bytes.length) {
               throw new IOException("Could not completely read file " + snapshot.getName());
@@ -363,4 +360,5 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     
     return encodedSnapshots;
   }
+  */
 }

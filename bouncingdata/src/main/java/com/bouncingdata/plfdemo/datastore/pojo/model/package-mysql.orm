@@ -21,8 +21,8 @@
       <field name="guid">
         <column name="guid" jdbc-type="VARCHAR" length="40" />
       </field>
-      <field name="author">
-        <column name="author" jdbc-type="INTEGER" />
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
       </field>
       <field name="tags">
         <column name="tags" jdbc-type="VARCHAR" length="1000" />
@@ -59,11 +59,8 @@
       <field name="guid">
         <column name="guid" jdbc-type="VARCHAR" length="40" />
       </field>
-      <field name="author">
-        <column name="author" jdbc-type="INTEGER" />
-      </field>
-      <field name="authorName">
-        <column name="author_name" jdbc-type="VARCHAR" length="40" />
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
       </field>
       <field name="tags">
         <column name="tags" jdbc-type="VARCHAR" length="1000" />
@@ -80,9 +77,6 @@
       <field name="isPublished">
         <column name="is_published" jdbc-type="BIT" />
       </field>
-      <!--field name="user">
-        <column name="user" jdbc-type="INTEGER" />
-      </field-->
     </class>
     
     <class name="User" identity-type="datastore" table="spring_users">
@@ -315,6 +309,57 @@
       </field>
       <field name="isActive">
         <column name="is_active" jdbc-type="BIT" />
+      </field>
+    </class>
+    <class name="Activity" identity-type="datastore" table="activities">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field>
+      <field name="action">
+        <column name="action" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="objectId">
+        <column name="object_id" jdbc-type="INTEGER" />
+      </field>
+      <field name="time">
+        <column name="time" jdbc-type="TIMESTAMP" />
+      </field>
+    </class>
+    <class name="Tag" identity-type="datastore" table="tags">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="tag">
+        <column name="tag" jdbc-type="VARCHAR" length="100" />
+      </field>
+      <field name="creator">
+        <column name="creator" jdbc-type="INTEGER" />
+      </field>
+      <field name="popularity">
+        <column name="popularity" jdbc-type="INTEGER" />
+      </field>
+      <field name="createAt">
+        <column name="create_at" jdbc-type="TIMESTAMP" />
+      </field>
+    </class>
+    <class name="Following" identity-type="datastore" table="followings">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field>
+      <field name="follower">
+        <column name="follower" jdbc-type="INTEGER" />
+      </field>    
+      <field name="followFrom">
+        <column name="follow_from" jdbc-type="TIMESTAMP" />
       </field>
     </class>
   </package>

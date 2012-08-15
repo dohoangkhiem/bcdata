@@ -1,6 +1,6 @@
 package com.bouncingdata.plfdemo.service;
 
-import com.bouncingdata.plfdemo.datastore.pojo.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 

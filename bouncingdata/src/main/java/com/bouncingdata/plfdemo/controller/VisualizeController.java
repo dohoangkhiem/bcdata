@@ -12,17 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
-import com.bouncingdata.plfdemo.service.DatastoreService;
 
 @Controller
 @RequestMapping("/visualize")
 public class VisualizeController {
   
   private Logger logger = LoggerFactory.getLogger(VisualizeController.class);
-  
-  @Autowired
-  private DatastoreService datastoreService;
-  
+   
   @Autowired
   private ApplicationStoreService appStoreService;
     
