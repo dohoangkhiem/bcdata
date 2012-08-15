@@ -1,0 +1,39 @@
+#main-content .stream-container #stream .event {
+  margin: 20px 0;
+}
+
+#main-content #stream .event .event-actor {
+  float: left;
+}
+
+#main-content #stream .event .avatar {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #DDDDDD;
+}
+
+#main-content #stream .event .event-content {
+  float: left;
+  border: 1px solid #DDDDDD;
+  border-radius: 2px;
+  margin-left: 10px;
+  padding: 4px;
+  width: 500px;
+}
+
+#main-content #stream .event .event-content .thumbnail {
+  width: 150px;
+  height: 200px;
+  border: 1px solid #EEEEEE;
+  margin-right: 5px;
+  float: left;
+}
+
+#main-content #stream .event .event-content  .title, #main-content #stream .event .event-content .description {
+}
+
+#main-content #stream .event .event-content .time {
+  float: right;
+  color: #CCCCCC;
+}
+

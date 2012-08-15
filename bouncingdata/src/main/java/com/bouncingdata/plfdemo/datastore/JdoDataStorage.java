@@ -777,6 +777,9 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       q.setOrdering("time DESC");
       List<Activity> activities = (List<Activity>) q.execute(cutPoint);
       activities = (List<Activity>) pm.detachCopyAll(activities);
+      for (Activity ac : activities) {
+        ac.setObject(pm.getObjectById(Analysis.class, ac.getObjectId()));
+      }
       return activities;
     } finally {
       q.closeAll();

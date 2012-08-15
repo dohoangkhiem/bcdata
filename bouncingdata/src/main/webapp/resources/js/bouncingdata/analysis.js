@@ -144,6 +144,15 @@ Analysis.prototype.loadCommentList = function(guid) {
         me.voteComment(guid, $comment.attr('nodeid'), -1);
         return false;
       });
+      
+      $('.comment-score', $commentList).each(function() {
+        var $score = $(this);
+        var score = $score.text();
+        if (score > 0) {
+          $score.attr('class', 'comment-score comment-score-positive');
+        } else if (score == 0) $score.attr('class', 'comment-score');
+        else $score.attr('class', 'comment-score comment-score-negative');
+      });
     },
     error: function(result) {
       console.debug(result);
@@ -239,16 +248,20 @@ Analysis.prototype.voteComment = function(guid, commentId, vote) {
     type: 'post',
     success: function(result) {
       var $commentBody = $('li.comment-item#comment-' + commentId + ' > div.comment-item-body');
+      var $score = $('span.comment-score', $commentBody);
       if (vote >= 0) {
-        me.votingCache[commentId]++;  
-        var $vote = $('span.up-vote', $commentBody);
-        var voteCount = $vote.text();
-        $vote.text(++voteCount);
+        me.votingCache[commentId]++;          
+        $score.text($score.text() - (-1));
       } else {
         me.votingCache[commentId]--;
-        var $vote = $('span.down-vote', $commentBody);
-        var voteCount = $vote.text();
-        $vote.text(++voteCount);
+        $score.text($score.text() - 1);
+      }
+      var score = $score.text();
+      if (score > 0) {
+        $score.attr('class', 'comment-score comment-score-positive');
+      } else {
+        if (score == 0) $score.attr('class', 'comment-score'); 
+        else $score.attr('class', 'comment-score comment-score-negative');
       }
     },
     error: function(result) {

@@ -1,5 +1,6 @@
 package com.bouncingdata.plfdemo.service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -265,5 +266,12 @@ public class DatastoreServiceImpl implements DatastoreService {
       logger.error("Failed to add publish activity for user {}, analysisId {}", user.getUsername(), analysis.getId());
       logger.error("Exception detail", e);
     }
+  }
+
+  @Override
+  public List<Activity> getRecentFeed(int userId) throws Exception {
+    Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.DATE, -5);
+    return dataStorage.getFeed(userId, calendar.getTime());
   }
 }

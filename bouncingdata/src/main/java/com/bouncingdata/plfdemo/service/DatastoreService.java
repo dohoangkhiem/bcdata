@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
@@ -117,5 +118,7 @@ public interface DatastoreService {
   public void removeCommentVote(int userId, int commentId) throws Exception;
   
   public void publishAnalysis(User user, Analysis analysis) throws Exception;
+  
+  public List<Activity> getRecentFeed(int userId) throws Exception;
   
 }

@@ -222,6 +222,9 @@
       <field name="status">
         <column name="status" jdbc-type="LONGVARCHAR" />
       </field>
+      <field name="published">
+        <column name="published" jdbc-type="BIT" />
+      </field>
     </class>
     
     <class name="Comment" identity-type="datastore" table="comments">

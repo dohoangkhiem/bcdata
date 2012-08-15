@@ -8,6 +8,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.bouncingdata.plfdemo.utils.Action;
+
 @PersistenceCapable
 public class Activity {
   @PrimaryKey
@@ -58,6 +60,21 @@ public class Activity {
   }
   public void setObject(Object object) {
     this.object = object;
+  }
+  
+  public String getDescription() {
+    StringBuilder desc = new StringBuilder("<strong>" + user.getUsername() + "</strong>");
+    String guid = ((Analysis)object).getGuid();
+    if (Action.PUBLISH.getAction().equals(action)) {
+      desc.append(" has published analysis ");
+      desc.append("<a href='#'>" + guid  + "<a>");
+    } else if (Action.UPDATE.getAction().equals(action)) {
+      desc.append(" has updated analysis ");
+      desc.append("<a href='#'>" + guid  + "<a>");
+    }
+    desc.append("\n");
+    desc.append(time.toString());
+    return desc.toString();
   }
   
 }

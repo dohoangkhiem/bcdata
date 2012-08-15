@@ -283,3 +283,15 @@ li.comment-item .comment-footer a:hover {
   color: #333;  
   cursor: pointer;
 }
+
+li.comment-item .comment-score.comment-score-positive {
+  color: green;
+}
+
+li.comment-item .comment-score.comment-score-negative {
+  color: red;
+}
+
+li.comment-item .comment-score {
+  color: orange;
+}

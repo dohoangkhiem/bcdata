@@ -34,9 +34,10 @@
         <div class="comment-message">\${message}</div>
         <div class="comment-footer">
           <span class="comment-date">\${date}</span>&nbsp;
-          <span class="up-vote">\${upVote}</span>&nbsp;
+          <strong><span class="comment-score">\${upVote - downVote}</span>&nbsp;</strong>
+          <!--span class="up-vote">\${upVote}</span>&nbsp;-->
           <a class="up-vote-link" href="#"><span class="up-vote-icon">Vote up</span></a>&nbsp;
-          <span class="down-vote">\${downVote}</span>&nbsp;
+          <!--span class="down-vote">\${downVote}</span>&nbsp;-->
           <a class="down-vote-link" href="#"><span class="down-vote-icon">Vote down</span></a>&nbsp;
           <a class="comment-reply" href="#">Reply</a>
         </div>

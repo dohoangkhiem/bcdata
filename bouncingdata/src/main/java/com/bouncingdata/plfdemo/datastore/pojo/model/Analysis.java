@@ -18,6 +18,7 @@ public class Analysis {
   @Unique
   private String guid;
   private String status;
+  private boolean published;
   private int score;
   @Persistent(mappedBy="analysis") List<Comment> comments;
   
@@ -61,6 +62,14 @@ public class Analysis {
 
   public void setScore(int score) {
     this.score = score;
+  }
+
+  public boolean isPublished() {
+    return published;
+  }
+
+  public void setPublished(boolean published) {
+    this.published = published;
   }
   
 }

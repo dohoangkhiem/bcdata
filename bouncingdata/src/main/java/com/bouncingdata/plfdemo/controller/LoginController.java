@@ -22,24 +22,10 @@ public class LoginController {
   
   @Autowired
   private DatastoreService datastoreService;
-    
-  @RequestMapping(value="/", method = RequestMethod.GET)
-  public String main(ModelMap model, Principal principal) {
-    String username = principal.getName();
-    model.addAttribute("username", username);
-    return "create";
-  }
-  
-  @RequestMapping(value="/test", method = RequestMethod.GET)
-  public String test() {
-    return "test";
-  }
-  
-  @RequestMapping(value={"/new", "/home", "/profile"}, method = RequestMethod.GET)
+        
+  @RequestMapping(value={"/new", "/test", "/profile"}, method = RequestMethod.GET)
   public String newVersion(ModelMap model, Principal principal) {
-    String username = principal.getName();
-    model.addAttribute("username", username);
-    return "home";
+    return "test";
   }
   
   @RequestMapping(value="/create", method = RequestMethod.GET)
