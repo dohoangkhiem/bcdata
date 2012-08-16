@@ -25,7 +25,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
@@ -50,12 +50,12 @@ public class AnalysisController {
   public String viewAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
     logger.debug("Received request for analysis {}", guid);
     try {
-      Application app = datastoreService.getApplicationByGuid(guid);
-      if (app == null) return null;
+      Analysis anls = datastoreService.getAnalysisByGuid(guid);
+      if (anls == null) return null;
       
-      model.addAttribute("anlsApp", app);
+      model.addAttribute("anls", anls);
       
-      List<Visualization> visuals = datastoreService.getApplicationVisualization(app.getId());
+      List<Visualization> visuals = datastoreService.getAnalysisVisualization(anls.getId());
       Map<String, VisualizationDetail> visualsMap = null;
       if (visuals != null) {
         visualsMap = new HashMap<String, VisualizationDetail>();
@@ -77,14 +77,11 @@ public class AnalysisController {
         }
       }
 
-      Analysis d = datastoreService.getDashboard(guid);
-      Map<String, DashboardPosition> dashboard = Utils.parseDashboard(d);
+      Map<String, DashboardPosition> dashboard = Utils.parseDashboard(anls);
 
       DashboardDetail dbDetail = new DashboardDetail(visualsMap, dashboard);
       ObjectMapper mapper = new ObjectMapper();
       model.addAttribute("dashboardDetail", mapper.writeValueAsString(dbDetail));
-
-      model.addAttribute("anlsTitle", app.getName());
       
       String code = appStoreService.getApplicationCode(guid, null);
       model.addAttribute("anlsCode", StringEscapeUtils.escapeJavaScript(code));
@@ -104,7 +101,7 @@ public class AnalysisController {
   @RequestMapping(value = "/commentlist/{guid}", method = RequestMethod.GET)
   public @ResponseBody List<Comment> getCommentList(@PathVariable String guid) {
     try {
-      Analysis anls = datastoreService.getDashboard(guid);
+      Analysis anls = datastoreService.getAnalysisByGuid(guid);
       if (anls == null) return null;
       
       return datastoreService.getComments(anls.getId());
@@ -123,7 +120,7 @@ public class AnalysisController {
       logger.debug("User not found!");
       return null;
     }
-    Analysis analysis = datastoreService.getDashboard(guid);
+    Analysis analysis = datastoreService.getAnalysisByGuid(guid);
     if (analysis == null) {
       logger.debug("The analysis {} does not exist anymore.", guid);
       return null;
@@ -146,24 +143,32 @@ public class AnalysisController {
    * @param vote
    * @param model
    * @param principal
+   * @throws Exception 
    */
   @RequestMapping(value = "/vote/{guid}", method = RequestMethod.POST)
-  public @ResponseBody void vote(@PathVariable String guid, @RequestParam(value="vote", required=true) int vote, ModelMap model, Principal principal) {
+  public @ResponseBody void vote(@PathVariable String guid, @RequestParam(value="vote", required=true) int vote, ModelMap model, Principal principal) throws Exception {
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) {
-      logger.debug("User not found!");
+      return;
+    }
+
+    Analysis anls = datastoreService.getAnalysisByGuid(guid);
+    if (anls == null) {
       return;
     }
     
-    // check if this user has voted on this analysis
-    
-    
     vote = vote>0?1:-1;
-    // add vote to AnalysisVotes table
-    // update score in Analysis
     
-    // return Analysis object
-    
+    try {
+      
+      AnalysisVote anlsVote = new AnalysisVote();
+      anlsVote.setVote(vote);
+      anlsVote.setVoteAt(new Date());
+      anlsVote.setActive(true);
+      datastoreService.addAnalysisVote(user.getId(), anls.getId(), anlsVote);
+    } catch (Exception e) {
+      logger.debug("Failed to add new vote to analysis id {}, user id {}", anls.getId(), user.getId());
+    }
   }
   
   /**

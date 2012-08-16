@@ -40,45 +40,7 @@
         <column name="app_id" jdbc-type="INTEGER" />
       </field>
     </class>
-    
-    <class name="Application" identity-type="datastore" table="applications">
-    	<datastore-identity column="id" strategy="identity" />
-      <inheritance strategy="new-table" />
-      <field name="id" primary-key="true">
-        <column name="id" jdbc-type="INTEGER" />
-      </field>
-      <field name="name">
-        <column name="name" jdbc-type="VARCHAR" length="100" />
-      </field>
-      <field name="description">
-        <column name="description" jdbc-type="LONGVARCHAR" />
-      </field>
-      <field name="language">
-        <column name="language" jdbc-type="VARCHAR" length="20" />
-      </field>
-      <field name="guid">
-        <column name="guid" jdbc-type="VARCHAR" length="40" />
-      </field>
-      <field name="user">
-        <column name="user" jdbc-type="INTEGER" />
-      </field>
-      <field name="tags">
-        <column name="tags" jdbc-type="VARCHAR" length="1000" />
-      </field>
-      <field name="createAt">
-        <column name="create_at" jdbc-type="TIMESTAMP" />
-      </field>
-      <field name="lastUpdate">
-        <column name="last_update" jdbc-type="TIMESTAMP" />
-      </field>
-      <field name="lineCount">
-        <column name="line_count" jdbc-type="INTEGER" />
-      </field>
-      <field name="isPublished">
-        <column name="is_published" jdbc-type="BIT" />
-      </field>
-    </class>
-    
+        
     <class name="User" identity-type="datastore" table="spring_users">
       <inheritance strategy="new-table" />
       <field name="id" primary-key="true">
@@ -216,14 +178,41 @@
       <field name="id" primary-key="true">
         <column name="id" jdbc-type="INTEGER" />
       </field>
-      <field name="guid">
-        <column name="guid" jdbc-type="VARCHAR" length="40" />
-      </field>
       <field name="status">
         <column name="status" jdbc-type="LONGVARCHAR" />
       </field>
       <field name="published">
         <column name="published" jdbc-type="BIT" />
+      </field>
+      <field name="name">
+        <column name="name" jdbc-type="VARCHAR" length="100" />
+      </field>
+      <field name="description">
+        <column name="description" jdbc-type="LONGVARCHAR" />
+      </field>
+      <field name="language">
+        <column name="language" jdbc-type="VARCHAR" length="20" />
+      </field>
+      <field name="guid">
+        <column name="guid" jdbc-type="VARCHAR" length="40" />
+      </field>
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
+      </field>
+      <field name="tags">
+        <column name="tags" jdbc-type="VARCHAR" length="1000" />
+      </field>
+      <field name="createAt">
+        <column name="create_at" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="lastUpdate">
+        <column name="last_update" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="lineCount">
+        <column name="line_count" jdbc-type="INTEGER" />
+      </field>
+      <field name="score">
+        <column name="score" jdbc-type="INTEGER" />
       </field>
     </class>
     
@@ -330,6 +319,9 @@
       </field>
       <field name="time">
         <column name="time" jdbc-type="TIMESTAMP" />
+      </field>
+      <field name="isPublic">
+        <column name="is_public" jdbc-type="BIT" />
       </field>
     </class>
     <class name="Tag" identity-type="datastore" table="tags">

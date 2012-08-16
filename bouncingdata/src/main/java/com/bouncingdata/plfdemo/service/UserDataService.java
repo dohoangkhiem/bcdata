@@ -31,7 +31,7 @@ public class UserDataService {
   
   public Map<String, String> getApplicationDataset(int appId) throws Exception {
     
-    List<Dataset> datasets = dataStorage.getApplicationDataset(appId);
+    List<Dataset> datasets = dataStorage.getAnalysisDataset(appId);
     if (datasets == null) return null;
     
     Map<String, String> dsMap = new HashMap<String, String>();

@@ -12,7 +12,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
-@PersistenceCapable
+@Deprecated
 public class Application {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)

@@ -4,7 +4,7 @@
 <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/analysis.js" />"></script>
 <script>
 	$(function() {
-	  com.bouncingdata.Analysis.init('${anlsApp.guid}');
+	  com.bouncingdata.Analysis.init('${anls.guid}');
 	  
 	  var dbDetail = $.parseJSON('${dashboardDetail}');
 	  com.bouncingdata.Dashboard.view(dbDetail.visualizations, dbDetail.dashboard, $('#main-content #anls-dashboard'));
@@ -19,19 +19,19 @@
         <div class="anls-info-title-line"></div>
       </div>
       <p class="line-item">
-        <strong>Analysis: </strong><span>${anlsApp.name }</span>
+        <strong>Analysis: </strong><span>${anls.name }</span>
       </p>
       <p class="line-item">
-        <strong>Author: </strong><span>${anlsApp.user.username }</span>
+        <strong>Author: </strong><span>${anls.user.username }</span>
       </p>
       <p class="line-item">
-        <strong>Description: </strong><span>${anlsApp.description }</span>
+        <strong>Description: </strong><span>${anls.description }</span>
       </p>
       <p class="line-item">
-        <strong>Create at: </strong><span>${anlsApp.createAt }</span>
+        <strong>Create at: </strong><span>${anls.createAt }</span>
       </p>
       <p class="line-item">
-        <strong>Tags: </strong><span>${anlsApp.tags }</span>
+        <strong>Tags: </strong><span>${anls.tags }</span>
       </p>  
     </div>
     <div class="anls-related-info">
@@ -46,9 +46,11 @@
     <div class="center-content-wrapper">
       <div class="top-rule"></div>
       <div class="anls-header">
-        <div class="anls-title"><h2>${anlsTitle}</h2></div>
+        <div class="anls-title"><h2>${anls.name}</h2></div>
         <div class="anls-vote">
-  
+          <h3 class="anls-score">${anls.score}</h3>&nbsp;
+          <a href="#" class="anls-vote-up">Vote up</a>&nbsp;
+          <a href="#" class="anls-vote-down">Vote down</a>
         </div>
       </div>
       <div class="anls-header-rule"></div>
@@ -64,7 +66,7 @@
               </script>
             </div>
           </div>
-          <div class="anls-data" id="anls-data"></div>
+          <div class="anls-data" id="anls-data">Sorry, no data at the moment.</div>
         </div>
         
         <ul class="anls-tabs">
@@ -79,12 +81,7 @@
         <div class="comment-form" id="comment-form">
           <form>
             <fieldset>
-            <!-- p>
-              <label for="comment-title">Title</label>
-              <input type="text" id="comment-title" />
-            </p-->
             <p>
-              <!-- label for="comment-content">Content</label-->
               <textarea rows="5" id="message"></textarea>
             </p>  
             <p>
@@ -94,6 +91,7 @@
           </form>
         </div>
         <div class="clear"></div>
+        <label id="comments"></label>
         <div class="comments">
           <h3 class="comments-count">Comments</h3>
           <ul id="comment-list" class="comment-list">            

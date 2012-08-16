@@ -274,24 +274,33 @@
   float: right;
 }
 
-li.comment-item .comment-footer a {
+li.comment-item .comment-footer a, .anls-header .anls-vote a {
   color: blue;  
   text-decoration: none;
 }
 
-li.comment-item .comment-footer a:hover {
+li.comment-item .comment-footer a:hover, .anls-header .anls-vote a:hover {
   color: #333;  
   cursor: pointer;
 }
 
-li.comment-item .comment-score.comment-score-positive {
+li.comment-item .comment-score.comment-score-positive, .anls-score.anls-score-positive {
   color: green;
 }
 
-li.comment-item .comment-score.comment-score-negative {
+li.comment-item .comment-score.comment-score-negative, .anls-score.anls-score.negative {
   color: red;
 }
 
-li.comment-item .comment-score {
+li.comment-item .comment-score, .anls-score {
   color: orange;
+}
+
+.anls-header .anls-vote {
+  margin-top: 4px;
+}
+
+.anls-header .anls-vote .anls-score {
+  margin: 0;
+  display: inline;
 }

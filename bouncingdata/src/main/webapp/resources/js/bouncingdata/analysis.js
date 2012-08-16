@@ -41,6 +41,25 @@ Analysis.prototype.init = function(guid) {
     return false;
   }
   
+  var $score = $('.anls-header .anls-score');
+  var score = $score.text();
+  if (score > 0) {
+    $score.attr('class', 'anls-score anls-score-positive');
+  } else {
+    if (score == 0) $score.attr('class', 'anls-score'); 
+    else $score.attr('class', 'anls-score anls-score-negative');
+  }
+  
+  $('.anls-header a.anls-vote-up').click(function() {
+    me.voteAnalysis(guid, 1);
+    return false;
+  });
+  
+  $('.anls-header a.anls-vote-down').click(function() {
+    me.voteAnalysis(guid, -1);
+    return false;
+  });
+  
   this.votingCache = {};
 }
 
@@ -230,10 +249,49 @@ Analysis.prototype.addComment = function(guid, commentObj) {
   });
 }
 
+Analysis.prototype.voteAnalysis = function(guid, vote) {
+  var me = this;
+  if (this.votingCache[guid] && this.votingCache[guid] * vote > 0) {
+    console.debug("You have voted this analysis " + guid + "already");
+    return;
+  }
+  
+  if (!this.votingCache[guid]) this.votingCache[guid] = 0;
+  
+  $.ajax({
+    url: ctx + "/anls/vote/" + guid,
+    data: {
+      vote: vote
+    },
+    type: 'post',
+    success: function(result) {
+      var $score = $('.anls-header .anls-score');
+      if (vote >= 0) {
+        me.votingCache[guid]++;          
+        $score.text($score.text() - (-1));
+      } else {
+        me.votingCache[guid]--;
+        $score.text($score.text() - 1);
+      }
+      var score = $score.text();
+      if (score > 0) {
+        $score.attr('class', 'anls-score anls-score-positive');
+      } else {
+        if (score == 0) $score.attr('class', 'anls-score'); 
+        else $score.attr('class', 'anls-score anls-score-negative');
+      }
+    },
+    error: function(result) {
+      console.debug("Failed to vote analysis " + guid);
+      console.debug(result);
+    }
+  });
+}
+
 Analysis.prototype.voteComment = function(guid, commentId, vote) {
   var me = this;
   if (this.votingCache[commentId] && (this.votingCache[commentId] * vote > 0)) {
-    console.debug("You have voted this already");
+    console.debug("You have voted this comment #" + commentId + " already");
     return;
   }
   
@@ -265,7 +323,7 @@ Analysis.prototype.voteComment = function(guid, commentId, vote) {
       }
     },
     error: function(result) {
-      console.debug("Failed to vote comment");
+      console.debug("Failed to vote comment #" + commentId);
       console.debug(result);
     }
   });

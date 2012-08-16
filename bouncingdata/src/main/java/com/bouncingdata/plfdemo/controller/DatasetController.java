@@ -33,7 +33,7 @@ public class DatasetController {
   @RequestMapping(value="/{guid}", method = RequestMethod.GET)
   public @ResponseBody List<Map> getDataset(@PathVariable String guid) {
     try {
-      Dataset ds = datastoreService.getDataset(guid);
+      Dataset ds = datastoreService.getDatasetByGuid(guid);
       if (ds == null) {
         logger.debug("Can't find the dataset {}", guid);
         return null;
@@ -50,7 +50,7 @@ public class DatasetController {
   public @ResponseBody QueryResult queryDataset(@RequestParam(value="guid", required=true) String guid, 
       @RequestParam(value="query", required=true) String query) {
     try {
-      Dataset ds = datastoreService.getDataset(guid);
+      Dataset ds = datastoreService.getDatasetByGuid(guid);
       if (ds == null) {
         logger.debug("Can't find the dataset {}", guid);
         return null;

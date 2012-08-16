@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
@@ -68,12 +68,12 @@ public class MainController {
   
   @RequestMapping(value="/application", method = RequestMethod.GET)
   @ResponseBody
-  public List<Application> getApplications(ModelMap model, Principal principal) {
+  public List<Analysis> getApplications(ModelMap model, Principal principal) {
     User user = (User) ((Authentication) principal).getPrincipal();
     try {
       if (user == null) return null;
       int userId = user.getId();
-      return datastoreService.getApplicationList(userId);
+      return datastoreService.getAnalysisList(userId);
     } catch (Exception e) {
       logger.error("Failed to retrieve application list for user " + user.getUsername(), e);
       return null;
@@ -96,7 +96,7 @@ public class MainController {
     int userId = user.getId();
     String guid = null;
     try {
-      guid = datastoreService.createApplication(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tags);
+      guid = datastoreService.createAnalysis(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tags);
     } catch (Exception e) {
       logger.error("Failed to create application " + appname + " for user " + user.getUsername(), e);
     }

@@ -21,6 +21,7 @@ public class Activity {
   private String action;
   private int objectId;
   private Date time;
+  private boolean isPublic;
   
   @NotPersistent
   private Object object;
@@ -76,5 +77,10 @@ public class Activity {
     desc.append(time.toString());
     return desc.toString();
   }
-  
+  public boolean isPublic() {
+    return isPublic;
+  }
+  public void setPublic(boolean isPublic) {
+    this.isPublic = isPublic;
+  } 
 }

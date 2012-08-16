@@ -1,3 +1,7 @@
+#main-content .stream-container {
+  padding: 10px;
+}
+
 #main-content .stream-container #stream .event {
   margin: 20px 0;
 }
@@ -21,15 +25,32 @@
   width: 500px;
 }
 
+#main-content #stream .event .event-content {
+}
+
 #main-content #stream .event .event-content .thumbnail {
-  width: 150px;
-  height: 200px;
   border: 1px solid #EEEEEE;
-  margin-right: 5px;
+  margin: 10px 5px 0 0;
   float: left;
 }
 
+#main-content #stream .event .event-content .thumbnail a {
+  width: 150px;
+  height: 200px;
+  display: block;
+}
+
+#main-content #stream .event .event-content  .title {
+}
+
+#main-content #stream .event .event-content  .title a {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+}
+
 #main-content #stream .event .event-content  .title, #main-content #stream .event .event-content .description {
+  
 }
 
 #main-content #stream .event .event-content .time {
@@ -37,3 +58,27 @@
   color: #CCCCCC;
 }
 
+#stream .event .event-score.event-score-positive {
+  color: green;
+}
+
+#stream .event .event-score.event-score-negative {
+  color: red;
+}
+
+#stream .event .event-footer {
+  float: right;
+}
+
+#stream .event .event-score {
+  color: orange;
+}
+
+#stream .event .event-footer a {
+  color: #000;
+  text-decoration: none;
+}
+
+#stream .event .event-footer a:hover {
+  color: #333;
+}

@@ -10,7 +10,6 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
@@ -38,28 +37,28 @@ public interface DataStorage {
   public List<Dataset> getDatasetList(int userId) throws DataAccessException;
   
   /**
-   * Retrieves all <code>Application</code>s owned by an user.
+   * Retrieves all <code>Analysis</code>s owned by an user.
    * @param user the user id to retrieve
-   * @return a <code>List</code> of <code>Application</code> objects
+   * @return a <code>List</code> of <code>Analysis</code> objects
    * @throws DataAccessException
    */
-  public List<Application> getApplicationList(int userId) throws DataAccessException;
+  public List<Analysis> getAnalysisList(int userId) throws DataAccessException;
   
   /**
-   * Retrieves all private <code>Application</code>s owned by user.
+   * Retrieves all private <code>Analysis</code>s owned by user.
    * @param user user id to retrieve
-   * @return <code>List</code> of <code>Application</code>
+   * @return <code>List</code> of <code>Analysis</code>
    * @throws DataAccessException
    */
-  public List<Application> getPrivateApplication(int userId) throws DataAccessException;
+  public List<Analysis> getPrivateAnalyses(int userId) throws DataAccessException;
   
   /**
-   * Retrieves all public <code>Application</code>s by user
+   * Retrieves all public <code>Analysis</code>s by user
    * @param user user id
-   * @return <code>List</code> of <code>Application</code>
+   * @return <code>List</code> of <code>Analysis</code>
    * @throws DataAccessException
    */
-  public List<Application> getPublicApplication(int userId) throws DataAccessException;
+  public List<Analysis> getPublicAnalyses(int userId) throws DataAccessException;
     
   /**
    * Finds the <code>User</code> by username.
@@ -78,23 +77,23 @@ public interface DataStorage {
   public ExecutionLog getExecutionLog(String executionId) throws DataAccessException;
   
   /**
-   * Retrieves all <code>Dataset</code>s related to an <code>Application</code>
-   * @param applicationId the application id
+   * Retrieves all <code>Dataset</code>s related to an <code>Analysis</code>
+   * @param analysisId the analysis id
    * @return a <code>List</code> of <code>Dataset</code>s
    * @throws DataAccessException
    */
-  public List<Dataset> getApplicationDataset(int applicationId) throws DataAccessException;
+  public List<Dataset> getAnalysisDataset(int analysisId) throws DataAccessException;
   
   /**
-   * Retrieves all <code>Visualization</code>s related to an <code>Application</code>.
-   * @param applicationId the application id
+   * Retrieves all <code>Visualization</code>s related to an <code>Analysis</code>.
+   * @param analysisId the analysis id
    * @return a <code>List</code> of <code>Visualization</code>s
    * @throws DataAccessException
    */
-  public List<Visualization> getApplicationVisualization(int applicationId) throws DataAccessException;
+  public List<Visualization> getAnalysisVisualization(int analysisId) throws DataAccessException;
   
   /**
-   * Searches applications and datasets by query string.
+   * Searches Analysiss and datasets by query string.
    * @param query the query string
    * @return <code>SearchResult</code> object
    * @throws DataAccessException
@@ -115,16 +114,16 @@ public interface DataStorage {
   public void createGroup(Group group) throws DataAccessException;
   
   /**
-   * @param application the <code>Application</code>
+   * @param Analysis the <code>Analysis</code>
    * @throws DataAccessException
    */
-  public void createApplication(Application application) throws DataAccessException;
+  public void createAnalysis(Analysis Analysis) throws DataAccessException;
   
   /**
-   * @param application
+   * @param Analysis
    * @throws DataAccessException
    */
-  public void updateApplication(Application application) throws DataAccessException;
+  public void updateAnalysis(Analysis Analysis) throws DataAccessException;
   
   /**
    * @param appId
@@ -132,17 +131,17 @@ public interface DataStorage {
    * @throws DataAccessException
    */
   /**
-   * @param appId
+   * @param id the id of analysis
    * @return
    * @throws DataAccessException
    */
-  public Application getApplication(int appId) throws DataAccessException;
+  public Analysis getAnalysis(int analysisId) throws DataAccessException;
   
   /**
    * @param guid
    * @throws DataAccessException
    */
-  public Application getApplicationByGuid(String guid) throws DataAccessException;
+  public Analysis getAnalysisByGuid(String guid) throws DataAccessException;
   
   /**
    * @param userId
@@ -172,34 +171,20 @@ public interface DataStorage {
    * @throws DataAccessException
    */
   public Dataset getDatasetByGuid(String guid) throws DataAccessException;
-  
+      
   /**
-   * @param analysisId
-   * @return
+   * Update status of the analysis dashboard
+   * @param guid the guid of analysis
+   * @param status the dashboard status to save
    * @throws DataAccessException
    */
-  public Analysis getAnalysis(int analysisId) throws DataAccessException;
-  
-  /**
-   * @param guid
-   * @return
-   * @throws DataAccessException
-   */
-  public Analysis getAnalysisByGuid(String guid) throws DataAccessException;
-  
-  /**
-   * @param guid
-   * @param status
-   * @param isNew
-   * @throws DataAccessException
-   */
-  public void saveDashboard(String guid, String status, boolean isNew) throws DataAccessException;
+  public void updateDashboard(String guid, String status) throws DataAccessException;
   
   /**
    * @param app
    * @throws DataAccessException
    */
-  public void invalidateViz(Application app) throws DataAccessException;
+  public void invalidateViz(Analysis app) throws DataAccessException;
   
   /**
    * @param analysisId

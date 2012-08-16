@@ -43,7 +43,7 @@
           </div>
           <div class="browser-separator"></div>
           <div class="application-list-panel">
-            <h4 style="cursor: pointer;">Applications</h4>
+            <h4 style="cursor: pointer;">Analyses</h4>
             <div id="application-list"></div>
           </div>
           <div class="show-all"><a id="show-all-button" href="javascript:void(0)">Back</a></div>
@@ -70,7 +70,7 @@
       <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
         <form>
           <fieldset>
-            <label for="new-app-name">Application name</label>
+            <label for="new-app-name">Analysis name</label>
             <input type="text" id="new-app-name" maxlength="40"></input><br>
             <label for="new-app-language">Language</label>
             <select id="new-app-language">
@@ -79,7 +79,7 @@
             </select> <br>
             <label for="new-app-description">Description</label>
             <textarea rows="3" id="new-app-description" style="resize: none;"></textarea><br>
-            <label for="new-app-public">Published this application?</label>
+            <label for="new-app-public">Publish this analysis?</label>
             <select id="new-app-public">
               <option value="1">Public</option>
               <option value="0">Private</option>

@@ -18,7 +18,7 @@
   <mvc:annotation-driven />
  
   <!-- Forwards requests to the "/" resource to the "create" view -->
-  <mvc:view-controller path="/" view-name="home" />
+  <mvc:view-controller path="/" view-name="create" />
   
   <!-- Resources mapping -->
   <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />

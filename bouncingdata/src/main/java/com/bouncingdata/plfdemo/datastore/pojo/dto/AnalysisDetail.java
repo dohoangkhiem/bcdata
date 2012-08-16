@@ -1,17 +1,16 @@
 package com.bouncingdata.plfdemo.datastore.pojo.dto;
 
 import java.util.Map;
-import java.util.Properties;
 
 
-public class ApplicationDetail {
+public class AnalysisDetail {
   
   String code;
   Map<String, String> datasets;
   Map<String, VisualizationDetail> visualizations;
   Map<String, DashboardPosition> dashboard;
   
-  public ApplicationDetail(String code, Map<String, String> datasets,
+  public AnalysisDetail(String code, Map<String, String> datasets,
       Map<String, VisualizationDetail> visualizations, Map<String, DashboardPosition> dashboard) {
     super();
     this.code = code;

@@ -431,28 +431,42 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
       });
     });
   }
+  
 
   $(".dashboard-preview", $tab).click(function() {
-    window.open(ctx + "/anls/" + guid);
-  });
+    if (guid) {
+      window.open(ctx + "/anls/" + guid);
+    }
+    return false;
+  }).css('display', app?'inline':'none');
 
   $(".dashboard-publish", $tab).click(function() {
+    var $publish = $(this);
+    var value = !app.published;
     $.ajax({
       url: ctx + '/app/a/publish/' + guid,
       type: 'post',
-      data: {},
+      data: {
+        value: value
+      },
       success: function(result) {
-        console.debug("Successfully published analysis.");
-        if (window.confirm("Your analysis has published! View your analysis now?")) {
-          window.open(ctx + "/anls/" + guid);
+        console.debug("Successfully" + value?"publish":"un-publish" + " analysis.");
+        app.published = value;
+        if (value) {
+          if (window.confirm("Your analysis has published! View your analysis now?")) {
+            window.open(ctx + "/anls/" + guid);
+          }
+        } else {
+          window.alert("Your analysis has become private");
         }
+        $publish.attr('value', value?"Make private":"Publish");
       },
       error: function(result) {
         console.debug("Failed to publis analysis.");
       }
     });
     return false;
-  });
+  }).css('display', app?'inline':'none').attr('value', app&&app.published?"Make private":"Publish");
   
   /*
   $(function() {

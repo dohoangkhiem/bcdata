@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
@@ -49,7 +49,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executePython(Application app, String code, User user) {
+  public ExecutionResult executePython(Analysis app, String code, User user) {
     // get execution ticket
     final String ticket = Utils.getExecutionId();
     
@@ -57,7 +57,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     if (app == null) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), String.valueOf(user.getId()), user.getUsername(), mode);
+    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), app==null?"":app.getGuid(), String.valueOf(user.getId()), user.getUsername(), mode);
     pb.redirectErrorStream(true);
     
     String output = null;
@@ -114,7 +114,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executeR(Application app, String code, User user) {
+  public ExecutionResult executeR(Analysis app, String code, User user) {
     String ticket = Utils.getExecutionId();
     String tempFile = logDir + Utils.FILE_SEPARATOR + ticket + Utils.FILE_SEPARATOR + ticket + ".R";
     File temp = new File(tempFile);
@@ -136,7 +136,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     if (app == null) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket, app==null?"-1":String.valueOf(app.getId()), String.valueOf(user.getId()), user.getUsername(), mode);
+    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket, app==null?"-1":String.valueOf(app.getId()), app==null?"":app.getGuid(), String.valueOf(user.getId()), user.getUsername(), mode);
     if (!pb.environment().containsKey("R_DEFAULT_DEVICE")) {
       pb.environment().put("R_DEFAULT_DEVICE", "png");
     }
@@ -218,7 +218,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     return datasets;
   }
   
-  private void processVisualizations(String executionId, Application app) throws Exception {
+  private void processVisualizations(String executionId, Analysis app) throws Exception {
     try {
       datastoreService.invalidateViz(app);
     } catch (Exception e) {

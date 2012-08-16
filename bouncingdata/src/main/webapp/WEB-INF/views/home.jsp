@@ -17,18 +17,32 @@
               <div class="event-content">
                 <div class="info">
                   <strong>${activity.user.username }</strong>&nbsp;
-                  <span class="action">${activity.action }ed</span>
+                  <span class="action">${activity.action }</span>
                   <div class="time">${activity.time}</div> 
                 </div>
                 <div class="thumbnail">
-                  <img src="#" />
+                  <a target="_blank" href="<c:url value="/anls/${activity.object.guid}" />">
+                    <img class="thumb-img" src="#" />
+                  </a>
                 </div>
                 <p class="title">
-                  ${activity.object.guid}
+                  <a target="_blank" href="<c:url value="/anls/${activity.object.guid}" />">${activity.object.name}</a>
                 </p>
                 <p class="description">
-                  analysis ${activity.object.guid}
                 </p>
+                <div class="clear"></div>
+                <div class="event-footer">
+                  <c:if test="${activity.object.score > 0}">
+                    <strong class="event-score event-score-positive">+${activity.object.score }</strong>    
+                  </c:if>
+                  <c:if test="${activity.object.score == 0}">
+                    <strong class="event-score">0</strong>    
+                  </c:if>
+                  <c:if test="${activity.object.score < 0}">
+                    <strong class="event-score event-score-negative">-${activity.object.score }</strong>    
+                  </c:if>
+                  &nbsp;<a target="_blank" href="<c:url value="/anls/${activity.object.guid}#comments" />"><strong>${activity.object.commentCount }</strong>&nbsp;comments</a>
+                </div>
               </div>
               <div class="clear"></div>
             </div>

@@ -16,7 +16,7 @@ import com.bouncingdata.plfdemo.datastore.DataStorage;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Application;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
@@ -39,33 +39,33 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public List<Application> getApplicationList(int userId) throws Exception {
-    return dataStorage.getApplicationList(userId);
+  public List<Analysis> getAnalysisList(int userId) throws Exception {
+    return dataStorage.getAnalysisList(userId);
   }
 
   @Override
-  public String createApplication(String name, String description, String language, int userId, String authorName, int lineCount, boolean isPublished, String tags) throws Exception {
-    Application application = new Application();
-    application.setName(name);
-    application.setDescription(description);
-    application.setLanguage(language);
-    application.setLineCount(lineCount);
-    application.setPublished(isPublished);
-    application.setTags(tags);
+  public String createAnalysis(String name, String description, String language, int userId, String authorName, int lineCount, boolean isPublished, String tags) throws Exception {
+    Analysis Analysis = new Analysis();
+    Analysis.setName(name);
+    Analysis.setDescription(description);
+    Analysis.setLanguage(language);
+    Analysis.setLineCount(lineCount);
+    Analysis.setPublished(isPublished);
+    Analysis.setTags(tags);
     // generate guid
     String guid = Utils.generateGuid();
-    application.setGuid(guid);
+    Analysis.setGuid(guid);
     Date date = Utils.getCurrentDate();
-    application.setCreateAt(date);
-    application.setLastUpdate(date);
+    Analysis.setCreateAt(date);
+    Analysis.setLastUpdate(date);
     try {
       User user = dataStorage.getUser(userId);
-      application.setUser(user);
-      dataStorage.createApplication(application);
+      Analysis.setUser(user);
+      dataStorage.createAnalysis(Analysis);
       return guid;
     } catch (DataAccessException e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Failed to create application {}. UserId", name, userId);
+        logger.debug("Failed to create Analysis {}. UserId", name, userId);
         logger.debug("Root cause: ", e);
       }
       return null;
@@ -73,8 +73,8 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public void updateApplication(Application application) throws Exception {
-    dataStorage.updateApplication(application);
+  public void updateAnalysis(Analysis Analysis) throws Exception {
+    dataStorage.updateAnalysis(Analysis);
   }
 
   @Override
@@ -83,13 +83,13 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
   
   @Override
-  public Application getApplication(int appId) throws Exception {
-    return dataStorage.getApplication(appId);
+  public Analysis getAnalysis(int appId) throws Exception {
+    return dataStorage.getAnalysis(appId);
   }
 
   @Override
-  public Application getApplicationByGuid(String guid) throws Exception {
-    return dataStorage.getApplicationByGuid(guid);
+  public Analysis getAnalysisByGuid(String guid) throws Exception {
+    return dataStorage.getAnalysisByGuid(guid);
   }
 
   @Override
@@ -113,13 +113,13 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public List<Dataset> getApplicationDataset(int appId) throws Exception {
-    return dataStorage.getApplicationDataset(appId);
+  public List<Dataset> getAnalysisDataset(int appId) throws Exception {
+    return dataStorage.getAnalysisDataset(appId);
   }
 
   @Override
-  public List<Visualization> getApplicationVisualization(int appId) throws Exception {
-    return dataStorage.getApplicationVisualization(appId);
+  public List<Visualization> getAnalysisVisualization(int appId) throws Exception {
+    return dataStorage.getAnalysisVisualization(appId);
   }
 
   @Override
@@ -131,7 +131,7 @@ public class DatastoreServiceImpl implements DatastoreService {
 
   @Override
   public Map<String, String> getDataSetMap(int appId) throws Exception {
-    List<Dataset> datasets = getApplicationDataset(appId);
+    List<Dataset> datasets = getAnalysisDataset(appId);
     if (datasets != null) {
       Map<String, String> result = new HashMap<String, String>();
       for (Dataset ds : datasets) {
@@ -149,42 +149,23 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public Dataset getDataset(String guid) throws Exception {
+  public Dataset getDatasetByGuid(String guid) throws Exception {
     return dataStorage.getDatasetByGuid(guid);
   }
 
   @Override
-  public Analysis getDashboard(String guid) throws Exception {
-    return dataStorage.getAnalysisByGuid(guid);
-  }
-
-  @Override
-  public void invalidateViz(Application application) throws Exception {
-    dataStorage.invalidateViz(application);    
+  public void invalidateViz(Analysis Analysis) throws Exception {
+    dataStorage.invalidateViz(Analysis);    
   }
   
   @Override
   public void updateDashboard(String guid, String status) throws Exception {
     try {
-      dataStorage.saveDashboard(guid, status, false);
-      
-      Analysis analysis = dataStorage.getAnalysisByGuid(guid);
-      Application application = dataStorage.getApplicationByGuid(guid);
-      Activity activity = new Activity();
-      activity.setAction(Action.UPDATE.getAction());
-      activity.setObjectId(analysis.getId());
-      activity.setTime(new Date());
-      activity.setUser(application.getUser());
-      dataStorage.createActivity(activity);
+      dataStorage.updateDashboard(guid, status);
     } catch (DataAccessException e) {
-      logger.error("Failed to update dashboard or create new update activity for analysis with guid {}", guid);
-      logger.error("Exceptio detail", e);
+      logger.error("Failed to update dashboard of analysis with guid {}", guid);
+      logger.error("Exception detail", e);
     }
-  }
-
-  @Override
-  public void createDashboard(String guid, String status) throws Exception {
-    dataStorage.saveDashboard(guid, status, true);
   }
 
   @Override
@@ -196,7 +177,6 @@ public class DatastoreServiceImpl implements DatastoreService {
     }
     
     return dataStorage.getComments(analysisId);
-
   }
   
   @Override
@@ -253,14 +233,18 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
   
   @Override
-  public void publishAnalysis(User user, Analysis analysis) throws Exception {
+  public void publishAnalysis(User user, Analysis analysis, boolean value) throws Exception {
     try {
+      analysis.setPublished(value);
+      dataStorage.updateAnalysis(analysis);
+      
       // add activity 
       Activity activity = new Activity();
       activity.setAction(Action.PUBLISH.getAction());
       activity.setUser(user);
       activity.setObjectId(analysis.getId());
       activity.setTime(new Date());
+      activity.setPublic(value);
       dataStorage.createActivity(activity);
     } catch (DataAccessException e) {
       logger.error("Failed to add publish activity for user {}, analysisId {}", user.getUsername(), analysis.getId());
@@ -273,5 +257,44 @@ public class DatastoreServiceImpl implements DatastoreService {
     Calendar calendar = Calendar.getInstance();
     calendar.add(Calendar.DATE, -5);
     return dataStorage.getFeed(userId, calendar.getTime());
+  }
+
+  @Override
+  public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote) throws Exception {
+    Analysis anls = dataStorage.getAnalysis(analysisId);
+    if (anls == null) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Analysis id {} does not exist.", analysisId);
+        return;
+      }
+    }
+    
+    // check if this user has voted before
+    AnalysisVote oldVote = dataStorage.getAnalysisVote(userId, analysisId);
+    if (oldVote == null) {
+      dataStorage.addAnalysisVote(userId, analysisId, analysisVote);
+    } else {
+      if (oldVote.getVote() == analysisVote.getVote()) {
+        return;
+      } else {
+        dataStorage.removeAnalysisVote(userId, analysisId);
+      }
+    }
+  }
+
+  @Override
+  public void executeAnalysis(User user, Analysis analysis) throws Exception {
+    // add activity 
+    Activity activity = new Activity();
+    activity.setAction(Action.UPDATE.getAction());
+    activity.setUser(user);
+    activity.setObjectId(analysis.getId());
+    activity.setTime(new Date());
+    activity.setPublic(analysis.isPublished());
+    try {
+      dataStorage.createActivity(activity);
+    } catch (DataAccessException e) {
+      logger.debug("", e);
+    }
   }
 }

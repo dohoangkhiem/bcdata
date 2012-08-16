@@ -24,7 +24,7 @@ public class ActivityController {
   @Autowired
   private DatastoreService datastoreService;
   
-  @RequestMapping(value={"/", "/home"}, method=RequestMethod.GET)
+  @RequestMapping(value={"/a", "/home"}, method=RequestMethod.GET)
   public String getActivityStream(ModelMap model, Principal principal) {
     try {
       User user = (User) ((Authentication)principal).getPrincipal();
