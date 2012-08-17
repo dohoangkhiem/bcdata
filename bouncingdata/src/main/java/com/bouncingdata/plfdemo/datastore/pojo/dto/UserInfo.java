@@ -3,16 +3,19 @@ package com.bouncingdata.plfdemo.datastore.pojo.dto;
 import java.util.Date;
 
 public class UserInfo {
+  private int id;
   private String username;
   private String firstName;
   private String lastName;
   private String email;
   private Date joinedDate;
   private Date lastLogin;
+  private boolean isFriend;
   
-  public UserInfo(String username, String firstName, String lastName,
+  public UserInfo(int id, String username, String firstName, String lastName,
       String email, Date joinedDate, Date lastLogin) {
     super();
+    this.id = id;
     this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -56,6 +59,22 @@ public class UserInfo {
   }
   public void setLastLogin(Date lastLogin) {
     this.lastLogin = lastLogin;
+  }
+
+  public boolean isFriend() {
+    return isFriend;
+  }
+
+  public void setFriend(boolean isFriend) {
+    this.isFriend = isFriend;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
   
   

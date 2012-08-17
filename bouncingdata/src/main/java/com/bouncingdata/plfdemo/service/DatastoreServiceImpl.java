@@ -1,5 +1,6 @@
 package com.bouncingdata.plfdemo.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bouncingdata.plfdemo.datastore.DataStorage;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
@@ -110,6 +112,11 @@ public class DatastoreServiceImpl implements DatastoreService {
     // hash password
     // persist data
     dataStorage.createUser(user);
+  }
+  
+  @Override
+  public User getUser(int userId) throws Exception {
+    return dataStorage.getUser(userId);
   }
 
   @Override
@@ -296,5 +303,53 @@ public class DatastoreServiceImpl implements DatastoreService {
     } catch (DataAccessException e) {
       logger.debug("", e);
     }
+  }
+
+  @Override
+  public List<UserInfo> getFollowers(int userId) throws Exception {
+    List<User> users = dataStorage.getFollowers(userId);
+    List<UserInfo> userInfos = new ArrayList<UserInfo>();
+    for (User u : users) {
+      UserInfo ui = new UserInfo(u.getId(), u.getUsername(), u.getFirstName(), u.getLastName(), u.getEmail(), null, null);
+      ui.setFriend(dataStorage.isFollowing(userId, ui.getId()));
+      userInfos.add(ui);
+    }
+    return userInfos;
+  }
+
+  @Override
+  public List<UserInfo> getFollowingUsers(int userId) throws Exception {
+    List<User> users = dataStorage.getFollowingUsers(userId);
+    List<UserInfo> userInfos = new ArrayList<UserInfo>();
+    for (User u : users) {
+      UserInfo ui = new UserInfo(u.getId(), u.getUsername(), u.getFirstName(), u.getLastName(), u.getEmail(), null, null);
+      ui.setFriend(true);
+      userInfos.add(ui);
+    }
+    return userInfos;
+  }
+
+  @Override
+  public List<UserInfo> findFriends(User finder, String query) throws Exception {
+    List<User> users = dataStorage.findFriends(finder, query);
+    List<UserInfo> userInfos = new ArrayList<UserInfo>();
+    for (User u : users) {
+      UserInfo ui = new UserInfo(u.getId(), u.getUsername(), u.getFirstName(), u.getLastName(), u.getEmail(), null, null);
+      ui.setFriend(dataStorage.isFollowing(finder.getId(), ui.getId()));
+      userInfos.add(ui);
+    }
+    return userInfos;
+  }
+
+  @Override
+  public void createFollowing(int followerId, int targetId) throws Exception {
+    if (dataStorage.isFollowing(followerId, targetId)) return;
+    dataStorage.createFollowing(followerId, targetId);
+  }
+
+  @Override
+  public void removeFollowing(int followerId, int targetId) throws Exception {
+    dataStorage.removeFollowing(followerId, targetId);
+    
   }
 }

@@ -1,0 +1,35 @@
+#main-content.connect-page .connect-page-tabs>ul {
+  border-bottom: 1px solid #AAAAAA;
+  border-width: 0 0 1px 0;
+  background: #fff;
+}
+
+#main-content.connect-page .connect-page-tabs {
+  min-height: 600px;
+}
+
+#main-content.connect-page #connections .followings, #main-content.connect-page #connections .followers {
+  width: 45%;
+  float: left;
+}
+
+#main-content.connect-page #find-friends .search-form {
+  margin: 10px 0;
+}
+
+#main-content.connect-page #find-friends .search-form #friend-name {
+  height: 22px;
+  border: 1px solid #D3D3D3;
+  font-size: 12px;
+  width: 200px;
+  padding-left: 5px;
+}
+
+#main-content.connect-page #find-friends .find-friends-result .user-info {
+  margin: 10px 0;
+}
+
+#main-content.connect-page a.follow-link, #main-content.connect-page a.unfollow-link {
+  color: blue;
+  text-decoration: none;
+}

@@ -329,4 +329,31 @@ public interface DataStorage {
    * @throws DataAccessException
    */
   public List<Activity> getFeed(int userId, Date cutPoint) throws  DataAccessException;
+  
+  /**
+   * Finds friends for a <code>finder</code> user.
+   * @param finder the finder
+   * @param query the query string
+   * @return <code>List</code> of <code>User</code> objects
+   * @throws DataAccessException
+   */
+  public List<User> findFriends(User finder, String query) throws DataAccessException;
+  
+  /**
+   * Creates a new connection from a follower to a target user
+   * @param follower the follower user id
+   * @param target the target user id
+   * @throws DataAccessException
+   */
+  public void createFollowing(int follower, int target) throws DataAccessException;
+  
+  /**
+   * Removes connection(s) between a follower and a target user.
+   * @param follower the follower user id
+   * @param target the target user id
+   * @throws DataAccessException
+   */
+  public void removeFollowing(int follower, int target) throws DataAccessException;
+  
+  public boolean isFollowing(int follower, int target) throws DataAccessException;
 }

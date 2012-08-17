@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
@@ -109,6 +110,13 @@ public interface DatastoreService {
   public void createUser(User user) throws Exception;
   
   /**
+   * @param userId
+   * @return
+   * @throws Exception
+   */
+  public User getUser(int userId) throws Exception;
+  
+  /**
    * @param dataset
    * @return
    * @throws Exception
@@ -201,5 +209,25 @@ public interface DatastoreService {
    * @throws Exception
    */
   public List<Activity> getRecentFeed(int userId) throws Exception;
+  
+  /**
+   * @param userId
+   * @return
+   * @throws DataAccessException
+   */
+  public List<UserInfo> getFollowers(int userId) throws Exception;
+  
+  /**
+   * @param userId
+   * @return
+   * @throws Exception
+   */
+  public List<UserInfo> getFollowingUsers(int userId) throws Exception;
+  
+  public List<UserInfo> findFriends(User finder, String query) throws Exception;
+  
+  public void createFollowing(int followerId, int targetId) throws Exception;
+  
+  public void removeFollowing(int followerId, int targetId) throws Exception;
   
 }

@@ -22,4 +22,8 @@
     <put-attribute name="footer-content" value="/WEB-INF/views/layout/bouncingdata/footer.jsp" />
   </definition>
   
+  <definition name="connect" extends="based-layout">
+    <put-attribute name="main-content" value="/WEB-INF/views/connect.jsp"></put-attribute>
+  </definition>
+  
 </tiles-definitions>

@@ -47,7 +47,7 @@ Workbench.prototype.init = function() {
     $('#main-content input:submit').button();
     
     //Init popup dialog
-    $('.workbench-container #new-app-dialog').dialog({
+    me.$newAnlsDialog = $('.workbench-container #new-app-dialog').dialog({
       autoOpen: false,
       height: 345,
       width: 460,
@@ -71,6 +71,14 @@ Workbench.prototype.init = function() {
       },
       close: function() {     
       }
+    });
+    
+    me.$publishDialog = $('.workbench-container #publish-dialog').dialog({
+      autoOpen: false,
+      height: 250,
+      width: 400,
+      modal: true,
+      resizable: false
     });
     
     // get the tab template
@@ -440,10 +448,43 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     return false;
   }).css('display', app?'inline':'none');
 
+  
   $(".dashboard-publish", $tab).click(function() {
     var $publish = $(this);
     var value = !app.published;
-    $.ajax({
+    var publishFunc = function() {
+      me.publish(guid, value, function() {
+        console.debug("Successfully" + value?"publish":"un-publish" + " analysis.");
+        app.published = value;
+        if (value) {
+          if (window.confirm("Your analysis has published! View your analysis now?")) {
+            window.open(ctx + "/anls/" + guid);
+          }
+        } else {
+          window.alert("Your analysis has become private");
+        }
+        $publish.attr('value', value?"Make private":"Publish");
+      });
+    };
+      
+    if (value) {
+      me.$publishDialog.dialog("option", "buttons", {
+        "Save": function() {
+          publishFunc();
+          $(this).dialog("close");          
+        }, 
+        "Cancel": function() {
+          $(this).dialog("close");
+        } 
+      });
+      me.$publishDialog.dialog("open");
+      me.$publishDialog.css('z-index', 10000).css('position', 'relative');
+      $('#anls-name', me.$publishDialog).text(app.name);
+    } else {
+      publishFunc();
+    }
+    
+    /*$.ajax({
       url: ctx + '/app/a/publish/' + guid,
       type: 'post',
       data: {
@@ -464,7 +505,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
       error: function(result) {
         console.debug("Failed to publis analysis.");
       }
-    });
+    });*/
     return false;
   }).css('display', app?'inline':'none').attr('value', app&&app.published?"Make private":"Publish");
   
@@ -605,7 +646,7 @@ Workbench.prototype.saveCode = function(tabIndex) {
     }
   } else {
     // create new app.
-    var $dialog = $('#new-app-dialog');
+    var $dialog = me.$newAnlsDialog;
     $dialog.dialog("open");
     // reset form
     $('form', $dialog).each(function() {
@@ -616,6 +657,28 @@ Workbench.prototype.saveCode = function(tabIndex) {
     $('#new-app-name', $dialog).focus();
     return;
   }
+}
+
+/**
+ * Publish an analysis
+ * @param guid the guid of analysis
+ * @param value boolean value indicates publish or un-publish action
+ * @param callback the callback function
+ */
+Workbench.prototype.publish = function(guid, value, callback) {
+  $.ajax({
+    url: ctx + '/app/a/publish/' + guid,
+    type: 'post',
+    data: {
+      value: value
+    },
+    success: function(result) {
+      if (callback) callback();
+    },
+    error: function(result) {
+      console.debug("Failed to publis analysis.");
+    }
+  });
 }
 
 /**

@@ -89,6 +89,16 @@
           </fieldset>
         </form>
       </div>
+      <div class="popup publish-dialog" id="publish-dialog" title="Publish your analysis">
+        <form>
+          <fieldset>
+            <label for="anls-name">Analysis</label>
+            <span id="anls-name"></span><br>
+            <label for="publish-msg">Message</label>
+            <textarea id="publish-msg" rows="3"></textarea>
+          </fieldset>
+        </form>
+      </div>
     </div> 
   </div>
 </div>

@@ -13,14 +13,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.UUID;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 public class Utils {
   
@@ -160,7 +161,7 @@ public class Utils {
     String st = status.substring(0, status.length() - 1);
     return st;
   }
-  
+    
   public static void main(String args[]) {
     System.out.println("MySQL Connect Example.");
     Connection conn = null;

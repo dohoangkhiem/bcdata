@@ -20,6 +20,14 @@
     <div class="nav-item-text">Create</div>
   </a>
 </div>
+<div class="nav-item" id="nav-connect">
+  <form action="<c:url value='/connect'/>" method="GET" id="nav-connect-form" style="padding: 0px;margin: 0px;"></form>
+  <a href="<c:url value='/connect'/>" class="nav-item-link" id="nav-connect-link">
+    <div class="nav-item-icon"></div>
+    <div class="nav-item-text">Connect</div>
+  </a>
+</div>
+
 <script type="text/javascript">
 	$('.main-navigation .nav-item').each(function() {
 	  var $form = $('form', this);

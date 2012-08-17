@@ -834,4 +834,71 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       pm.close();
     }
   }
+
+  @Override
+  public List<User> findFriends(User finder, String query) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(User.class);
+    q.setFilter("(this.username !=\"" + finder.getUsername() + "\") && (this.username.matches(\".*" + query + ".*\") || this.firstName.matches(\".*" + query + ".*\")"
+      + " || this.lastName.matches(\".*" + query + ".*\") || this.email.matches(\".*" + query + ".*\"))");
+    try {
+      List<User> results = (List<User>) q.execute();
+      results = (List<User>) pm.detachCopyAll(results);
+      return results;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void createFollowing(int follower, int target) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    User followerUser = pm.getObjectById(User.class, follower);
+    User targetUser = pm.getObjectById(User.class, target);
+    if (followerUser == null || targetUser == null) return;
+    Following f = new Following(targetUser, followerUser, new Date());
+    try {
+      tx.begin();
+      pm.makePersistent(f);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+  
+  @Override
+  public void removeFollowing(int follower, int target) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    User followerUser = pm.getObjectById(User.class, follower);
+    User targetUser = pm.getObjectById(User.class, target);
+    if (followerUser == null || targetUser == null) return;
+    Query q = pm.newQuery(Following.class);
+    q.setFilter("user.id==" + target + " && follower.id==" + follower);
+    try {
+      tx.begin();
+      q.deletePersistentAll();
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+
+  @Override
+  public boolean isFollowing(int follower, int target) throws DataAccessException {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Following.class);
+    q.setFilter("user.id==" + target + " && follower.id==" + follower);
+    try {
+      List<Following> results = (List<Following>) q.execute();
+      return (results != null && results.size() > 0);
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
 }
