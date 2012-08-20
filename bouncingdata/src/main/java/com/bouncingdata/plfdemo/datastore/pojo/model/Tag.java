@@ -9,8 +9,7 @@ import javax.jdo.annotations.Persistent;
 public class Tag {
   private int id;
   private String tag;
-  @Persistent(defaultFetchGroup="true")
-  private User creator;
+  private int creator;
   private int popularity;
   private Date createAt;
   
@@ -35,10 +34,10 @@ public class Tag {
   public void setTag(String tag) {
     this.tag = tag;
   }
-  public User getCreator() {
+  public int getCreator() {
     return creator;
   }
-  public void setCreator(User creator) {
+  public void setCreator(int creator) {
     this.creator = creator;
   }
 

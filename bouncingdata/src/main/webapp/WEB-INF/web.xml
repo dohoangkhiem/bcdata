@@ -10,6 +10,16 @@
       /WEB-INF/spring/spring-security.xml
     </param-value>
   </context-param>
+  
+  <error-page>
+    <exception-type>java.lang.Throwable</exception-type>
+    <location>/WEB-INF/views/layout/bouncingdata/error-layout.jsp</location>
+  </error-page>
+  
+  <error-page>
+    <error-code>404</error-code>
+    <location>/WEB-INF/views/layout/bouncingdata/error-layout.jsp</location>
+  </error-page>
 
   <!-- Spring Security -->
   <filter>

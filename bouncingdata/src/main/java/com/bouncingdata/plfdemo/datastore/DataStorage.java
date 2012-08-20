@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.dao.DataAccessException;
-
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
@@ -34,7 +32,7 @@ public interface DataStorage {
    * @return a <code>List</code> of <code>Dataset</code> objects
    * @throws DataAccessException
    */
-  public List<Dataset> getDatasetList(int userId) throws DataAccessException;
+  public List<Dataset> getDatasetList(int userId);
   
   /**
    * Retrieves all <code>Analysis</code>s owned by an user.
@@ -42,7 +40,7 @@ public interface DataStorage {
    * @return a <code>List</code> of <code>Analysis</code> objects
    * @throws DataAccessException
    */
-  public List<Analysis> getAnalysisList(int userId) throws DataAccessException;
+  public List<Analysis> getAnalysisList(int userId);
   
   /**
    * Retrieves all private <code>Analysis</code>s owned by user.
@@ -50,7 +48,7 @@ public interface DataStorage {
    * @return <code>List</code> of <code>Analysis</code>
    * @throws DataAccessException
    */
-  public List<Analysis> getPrivateAnalyses(int userId) throws DataAccessException;
+  public List<Analysis> getPrivateAnalyses(int userId);
   
   /**
    * Retrieves all public <code>Analysis</code>s by user
@@ -58,7 +56,7 @@ public interface DataStorage {
    * @return <code>List</code> of <code>Analysis</code>
    * @throws DataAccessException
    */
-  public List<Analysis> getPublicAnalyses(int userId) throws DataAccessException;
+  public List<Analysis> getPublicAnalyses(int userId);
     
   /**
    * Finds the <code>User</code> by username.
@@ -66,7 +64,7 @@ public interface DataStorage {
    * @return <code>User</code> object, or null if not found
    * @throws DataAccessException
    */
-  public User findUserByUsername(String username) throws DataAccessException;
+  public User findUserByUsername(String username);
   
   /**
    * Gets the <code>ExecutionLog</code> detail by execution id.
@@ -74,7 +72,7 @@ public interface DataStorage {
    * @return an <code>ExecutionLog</code> object
    * @throws DataAccessException
    */
-  public ExecutionLog getExecutionLog(String executionId) throws DataAccessException;
+  public ExecutionLog getExecutionLog(String executionId);
   
   /**
    * Retrieves all <code>Dataset</code>s related to an <code>Analysis</code>
@@ -82,7 +80,7 @@ public interface DataStorage {
    * @return a <code>List</code> of <code>Dataset</code>s
    * @throws DataAccessException
    */
-  public List<Dataset> getAnalysisDataset(int analysisId) throws DataAccessException;
+  public List<Dataset> getAnalysisDataset(int analysisId);
   
   /**
    * Retrieves all <code>Visualization</code>s related to an <code>Analysis</code>.
@@ -90,7 +88,7 @@ public interface DataStorage {
    * @return a <code>List</code> of <code>Visualization</code>s
    * @throws DataAccessException
    */
-  public List<Visualization> getAnalysisVisualization(int analysisId) throws DataAccessException;
+  public List<Visualization> getAnalysisVisualization(int analysisId);
   
   /**
    * Searches Analysiss and datasets by query string.
@@ -98,32 +96,38 @@ public interface DataStorage {
    * @return <code>SearchResult</code> object
    * @throws DataAccessException
    */
-  public SearchResult search(String query) throws DataAccessException;
+  public SearchResult search(String query);
   
   /**
    * Creates new user
    * @param user the <code>User</code> object
    * @throws DataAccessException
    */
-  public void createUser(User user) throws DataAccessException;
+  public void createUser(User user);
   
   /**
    * @param group the <code>Group</code> object
    * @throws DataAccessException
    */
-  public void createGroup(Group group) throws DataAccessException;
+  public void createGroup(Group group);
   
   /**
-   * @param Analysis the <code>Analysis</code>
+   * @param analysis the <code>Analysis</code>
    * @throws DataAccessException
    */
-  public void createAnalysis(Analysis Analysis) throws DataAccessException;
+  public void createAnalysis(Analysis analysis);
   
   /**
-   * @param Analysis
+   * @param analysis
    * @throws DataAccessException
    */
-  public void updateAnalysis(Analysis Analysis) throws DataAccessException;
+  public void updateAnalysis(Analysis analysis);
+  
+  /**
+   * @param analysisId
+   * @throws DataAccessException
+   */
+  public void deleteAnalysis(int analysisId);
   
   /**
    * @param appId
@@ -135,42 +139,42 @@ public interface DataStorage {
    * @return
    * @throws DataAccessException
    */
-  public Analysis getAnalysis(int analysisId) throws DataAccessException;
+  public Analysis getAnalysis(int analysisId);
   
   /**
    * @param guid
    * @throws DataAccessException
    */
-  public Analysis getAnalysisByGuid(String guid) throws DataAccessException;
+  public Analysis getAnalysisByGuid(String guid);
   
   /**
    * @param userId
    * @return
    * @throws DataAccessException
    */
-  public User getUser(int userId) throws DataAccessException;
+  public User getUser(int userId);
     
   /**
    * @param userId
    * @return
    * @throws DataAccessException
    */
-  public Collection<String> getUserAuthorities(int userId) throws DataAccessException;
+  public Collection<String> getUserAuthorities(int userId);
   
-  /*public List<Object> readDataset(String dataset) throws DataAccessException;*/
+  /*public List<Object> readDataset(String dataset);*/
   
   /**
    * @param visualization
    * @throws DataAccessException
    */
-  public void createVisualization(Visualization visualization) throws DataAccessException; 
+  public void createVisualization(Visualization visualization); 
   
   /**
    * @param guid
    * @return
    * @throws DataAccessException
    */
-  public Dataset getDatasetByGuid(String guid) throws DataAccessException;
+  public Dataset getDatasetByGuid(String guid);
       
   /**
    * Update status of the analysis dashboard
@@ -178,20 +182,20 @@ public interface DataStorage {
    * @param status the dashboard status to save
    * @throws DataAccessException
    */
-  public void updateDashboard(String guid, String status) throws DataAccessException;
+  public void updateDashboard(String guid, String status);
   
   /**
    * @param app
    * @throws DataAccessException
    */
-  public void invalidateViz(Analysis app) throws DataAccessException;
+  public void invalidateViz(Analysis app);
   
   /**
    * @param analysisId
    * @return
    * @throws DataAccessException
    */
-  public List<Comment> getComments(int analysisId) throws DataAccessException;
+  public List<Comment> getComments(int analysisId);
   
   /**
    * @param userId
@@ -199,26 +203,26 @@ public interface DataStorage {
    * @param comment
    * @throws DataAccessException
    */
-  public void addComment(int userId, int analysisId, Comment comment) throws DataAccessException;
+  public void addComment(int userId, int analysisId, Comment comment);
   
   /**
    * @param commentId
    * @throws DataAccessException
    */
-  public void removeComment(int commentId) throws DataAccessException;
+  public void removeComment(int commentId);
   
   /**
    * @param comment
    * @throws DataAccessException
    */
-  public void updateComment(Comment comment) throws DataAccessException;
+  public void updateComment(Comment comment);
   
   /**
    * @param commentId
    * @return
    * @throws DataAccessException
    */
-  public Comment getComment(int commentId) throws DataAccessException;
+  public Comment getComment(int commentId);
   
   /**
    * @param userId
@@ -226,7 +230,7 @@ public interface DataStorage {
    * @return
    * @throws DataAccessException
    */
-  public CommentVote getCommentVote(int userId, int commentId) throws DataAccessException;
+  public CommentVote getCommentVote(int userId, int commentId);
   
   /**
    * @param userId
@@ -234,14 +238,14 @@ public interface DataStorage {
    * @param commentVote
    * @throws DataAccessException
    */
-  public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws DataAccessException;
+  public void addCommentVote(int userId, int commentId, CommentVote commentVote);
   
   /**
    * @param userId
    * @param commentId
    * @throws DataAccessException
    */
-  public void removeCommentVote(int userId, int commentId) throws DataAccessException;
+  public void removeCommentVote(int userId, int commentId);
   
   /**
    * @param userId
@@ -249,7 +253,7 @@ public interface DataStorage {
    * @return
    * @throws DataAccessException
    */
-  public AnalysisVote getAnalysisVote(int userId, int analysisId) throws DataAccessException;
+  public AnalysisVote getAnalysisVote(int userId, int analysisId);
   
   /**
    * @param userId
@@ -257,39 +261,39 @@ public interface DataStorage {
    * @param analysisVote
    * @throws DataAccessException
    */
-  public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote) throws DataAccessException;
+  public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote);
   
   /**
    * @param userId
    * @param analysisId
    * @throws DataAccessException
    */
-  public void removeAnalysisVote(int userId, int analysisId) throws DataAccessException;
+  public void removeAnalysisVote(int userId, int analysisId);
   
   /**
    * @param activityId
    * @return
    * @throws DataAccessException
    */
-  public Activity getActivity(int activityId) throws DataAccessException;
+  public Activity getActivity(int activityId);
   
   /**
    * @param activity
    * @throws DataAccessException
    */
-  public void createActivity(Activity activity) throws DataAccessException;
+  public void createActivity(Activity activity);
   
   /**
    * @param activityId
    * @throws DataAccessException
    */
-  public void removeActivity(int activityId) throws DataAccessException;
+  public void removeActivity(int activityId);
   
   /**
    * @param activity
    * @throws DataAccessException
    */
-  public void updateActivity(Activity activity) throws DataAccessException;
+  public void updateActivity(Activity activity);
   
   /**
    * @param userId
@@ -297,14 +301,14 @@ public interface DataStorage {
    * @return
    * @throws DataAccessException
    */
-  public List<Activity> getUserActitity(int userId, Date cutPoint) throws DataAccessException;
+  public List<Activity> getUserActitity(int userId, Date cutPoint);
   
   /**
    * @param userId
    * @return
    * @throws DataAccessException
    */
-  public List<Following> getFollowingList(int userId)  throws DataAccessException;
+  public List<Following> getFollowingList(int userId) ;
   
   /**
    * Retrieves list of users which is following this user
@@ -312,7 +316,7 @@ public interface DataStorage {
    * @return <code>List</code> of <code>User</code> objects
    * @throws DataAccessException
    */
-  public List<User> getFollowers(int userId) throws DataAccessException;
+  public List<User> getFollowers(int userId);
   
   /**
    * Retrieves list of users which this user is currently following
@@ -320,7 +324,7 @@ public interface DataStorage {
    * @return
    * @throws DataAccessException
    */
-  public List<User> getFollowingUsers(int userId) throws DataAccessException;
+  public List<User> getFollowingUsers(int userId);
  
   /**
    * @param userId
@@ -328,7 +332,9 @@ public interface DataStorage {
    * @return
    * @throws DataAccessException
    */
-  public List<Activity> getFeed(int userId, Date cutPoint) throws  DataAccessException;
+  public List<Activity> getFeed(int userId, Date cutPoint, int maxNumber);
+  
+  public List<Activity> getMoreFeed(int userId, List<Following> followings, int lastId, int maxNumber);
   
   /**
    * Finds friends for a <code>finder</code> user.
@@ -337,7 +343,7 @@ public interface DataStorage {
    * @return <code>List</code> of <code>User</code> objects
    * @throws DataAccessException
    */
-  public List<User> findFriends(User finder, String query) throws DataAccessException;
+  public List<User> findFriends(User finder, String query);
   
   /**
    * Creates a new connection from a follower to a target user
@@ -345,7 +351,7 @@ public interface DataStorage {
    * @param target the target user id
    * @throws DataAccessException
    */
-  public void createFollowing(int follower, int target) throws DataAccessException;
+  public void createFollowing(int follower, int target);
   
   /**
    * Removes connection(s) between a follower and a target user.
@@ -353,7 +359,7 @@ public interface DataStorage {
    * @param target the target user id
    * @throws DataAccessException
    */
-  public void removeFollowing(int follower, int target) throws DataAccessException;
+  public void removeFollowing(int follower, int target);
   
-  public boolean isFollowing(int follower, int target) throws DataAccessException;
+  public boolean isFollowing(int follower, int target);
 }

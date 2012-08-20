@@ -199,9 +199,9 @@
       <field name="user">
         <column name="user" jdbc-type="INTEGER" />
       </field>
-      <field name="tags">
+      <!--field name="tags">
         <column name="tags" jdbc-type="VARCHAR" length="1000" />
-      </field>
+      </field-->
       <field name="createAt">
         <column name="create_at" jdbc-type="TIMESTAMP" />
       </field>
@@ -322,6 +322,9 @@
       </field>
       <field name="isPublic">
         <column name="is_public" jdbc-type="BIT" />
+      </field>
+      <field name="message">
+        <column name="message" jdbc-type="VARCHAR" length="1000" />
       </field>
     </class>
     <class name="Tag" identity-type="datastore" table="tags">

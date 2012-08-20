@@ -3,15 +3,14 @@ package com.bouncingdata.plfdemo.datastore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.orm.jdo.support.JdoDaoSupport;
 
@@ -26,16 +25,15 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Group;
 import com.bouncingdata.plfdemo.datastore.pojo.model.GroupAuthority;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 
 @SuppressWarnings("unchecked")
 public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   
-  private Logger logger = LoggerFactory.getLogger(JdoDataStorage.class); 
-
   @Override
-  public List<Dataset> getDatasetList(int userId) throws DataAccessException {
+  public List<Dataset> getDatasetList(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Dataset.class);
     q.setFilter("user.id==" + userId);
@@ -51,7 +49,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Analysis> getAnalysisList(int userId) throws DataAccessException {
+  public List<Analysis> getAnalysisList(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Analysis.class);
     q.setFilter("user.id==" + userId);
@@ -67,7 +65,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Analysis> getPrivateAnalyses(int userId) throws DataAccessException {
+  public List<Analysis> getPrivateAnalyses(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Analysis.class);
     q.setFilter("user.id==" + userId + " && isPublised==false");
@@ -83,7 +81,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Analysis> getPublicAnalyses(int userId) throws DataAccessException {
+  public List<Analysis> getPublicAnalyses(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Analysis.class);
     q.setFilter("user.id==" + userId + " && isPublised==true");
@@ -99,7 +97,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public User findUserByUsername(String username) throws DataAccessException {
+  public User findUserByUsername(String username) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(User.class);
     User user = null;
@@ -115,7 +113,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public ExecutionLog getExecutionLog(String executionId) throws DataAccessException {
+  public ExecutionLog getExecutionLog(String executionId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(ExecutionLog.class);
     q.setFilter("executionId==\"" + executionId + "\"");
@@ -131,7 +129,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Dataset> getAnalysisDataset(int appId) throws DataAccessException {
+  public List<Dataset> getAnalysisDataset(int appId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Dataset.class);
     q.setFilter("appId==" + appId);
@@ -147,7 +145,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Visualization> getAnalysisVisualization(int appId) throws DataAccessException {
+  public List<Visualization> getAnalysisVisualization(int appId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Visualization.class);
     q.setFilter("appId==" + appId + " && isActive==true");
@@ -163,7 +161,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public SearchResult search(String query) throws DataAccessException {
+  public SearchResult search(String query) {
     PersistenceManager pm = getPersistenceManager();
     SearchResult sr = new SearchResult();
     Query q = pm.newQuery(Analysis.class);
@@ -184,34 +182,57 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void createUser(User user) throws DataAccessException {
+  public void createUser(User user) {
     List<User> users = new ArrayList<User>();
     users.add(user);
     persistData(users);
   }
 
   @Override
-  public void createGroup(Group group) throws DataAccessException {
+  public void createGroup(Group group) {
     List<Group> groups = new ArrayList<Group>();
     groups.add(group);
     persistData(groups);
   }
 
   @Override
-  public void createAnalysis(Analysis Analysis) throws DataAccessException {
-    if (Analysis.getUser() == null) {
-      return;
-    }
+  public void createAnalysis(Analysis analysis) {
     PersistenceManager pm = getPersistenceManager();
-    User user = pm.getObjectById(User.class, Analysis.getUser().getId());
-    if (user == null) {
-      return;
-    }
+    User user = pm.getObjectById(User.class, analysis.getUser().getId());
     Transaction tx = pm.currentTransaction();
     try {
       tx.begin();
-      Analysis.setUser(user);
-      pm.makePersistent(Analysis);
+      analysis.setUser(user);
+      Set<Tag> tags = analysis.getTags();
+      if (tags != null) {
+        Set<Tag> tagSet = new HashSet<Tag>();
+        for (Tag t : tags) {
+          if (t.getId() > 0) {
+            Tag tag = pm.getObjectById(Tag.class, t.getId());
+            tagSet.add(tag);
+          } else {
+            tagSet.add(t);
+          }
+        }
+        analysis.setTags(tagSet);
+      }
+      
+      pm.makePersistent(analysis);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+  
+  @Override
+  public void deleteAnalysis(int analysisId) {
+    PersistenceManager pm = getPersistenceManager();
+    Analysis anls = pm.getObjectById(Analysis.class, analysisId);
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      pm.deletePersistent(anls);
       tx.commit();
     } finally {
       if (tx.isActive()) tx.rollback();
@@ -235,7 +256,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public Collection<String> getUserAuthorities(int userId) throws DataAccessException {
+  public Collection<String> getUserAuthorities(int userId) {
     PersistenceManager pm = getPersistenceManager();
     /*Query q = pm.newQuery(Membership.class);
     q.execute();
@@ -270,7 +291,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public Analysis getAnalysisByGuid(String guid) throws DataAccessException {
+  public Analysis getAnalysisByGuid(String guid) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Analysis.class);
     q.setFilter("guid == \"" + guid + "\"");
@@ -290,7 +311,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void updateAnalysis(Analysis analysis) throws DataAccessException {
+  public void updateAnalysis(Analysis analysis) {
     if (analysis.getUser() == null) return;
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
@@ -319,33 +340,15 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     }
   }
 
-  /*@Override
-  public List<Object> readDataset(String dataset) throws DataAccessException {
-    PersistenceManager pm = getPersistenceManager();
-    
-    Query q = getPersistenceManager().newQuery("javax.jdo.query.SQL", "select * from `" + dataset + "`");
-    
-    List<Object> result = (List<Object>) q.execute();
-    return result;
-    
-    Collection results = (Collection) q.execute();
-    
-    for (Iterator itr = results.iterator (); itr.hasNext ();) {
-      Object[] data = (Object[]) itr.next ();  
-      
-    }
-
-  }*/
-
   @Override
-  public void createVisualization(Visualization visualization) throws DataAccessException {
+  public void createVisualization(Visualization visualization) {
     List<Visualization> visuals = new ArrayList<Visualization>();
     visuals.add(visualization);
     persistData(visuals);    
   }
 
   @Override
-  public Dataset getDatasetByGuid(String guid) throws DataAccessException {
+  public Dataset getDatasetByGuid(String guid) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Dataset.class);
     q.setFilter("guid == \"" + guid + "\"");
@@ -363,7 +366,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void updateDashboard(String guid, String status) throws DataAccessException {
+  public void updateDashboard(String guid, String status) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     Query q = pm.newQuery(Analysis.class);
@@ -374,13 +377,8 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       if (db != null && db.size() > 0) {
         Analysis analysis = db.get(0);
         analysis.setStatus(status);
-        tx.commit();
-      } else {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Analysis {} not found.", guid);
-        }
-        return;
       } 
+      tx.commit();
     } finally {
       if (tx.isActive()) {
         tx.rollback();
@@ -391,7 +389,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void invalidateViz(Analysis app) throws DataAccessException {
+  public void invalidateViz(Analysis app) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Visualization.class);
     q.setFilter("appId == " + app.getId() + " && isActive == true");
@@ -413,7 +411,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Comment> getComments(int analysisId) throws DataAccessException {
+  public List<Comment> getComments(int analysisId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Comment.class);
     q.setFilter("analysis.id == " + analysisId);
@@ -429,7 +427,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void addComment(int userId, int analysisId, Comment comment) throws DataAccessException {
+  public void addComment(int userId, int analysisId, Comment comment) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     try {
@@ -449,32 +447,27 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void removeComment(int commentId) throws DataAccessException {
+  public void removeComment(int commentId) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     Comment comment = pm.getObjectById(Comment.class, commentId);
-    if (comment != null) {
-      try {
-        tx.begin();
-        pm.deletePersistent(comment);
-        tx.commit();
-      } finally {
-        if (tx.isActive()) tx.rollback();
-        pm.close();
-      }
-    } else {
-      throw new DataRetrievalFailureException("Comment id" + commentId + " does not exist.");
+    try {
+      tx.begin();
+      pm.deletePersistent(comment);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
     }
   }
 
   @Override
-  public void updateComment(Comment comment) throws DataAccessException {
+  public void updateComment(Comment comment) {
     // TODO Auto-generated method stub
-    
   }
   
   @Override
-  public Comment getComment(int commentId) throws DataAccessException {
+  public Comment getComment(int commentId) {
     PersistenceManager pm = getPersistenceManager();
     try {
       return pm.getObjectById(Comment.class, commentId);
@@ -484,7 +477,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public Analysis getAnalysis(int analysisId) throws DataAccessException {
+  public Analysis getAnalysis(int analysisId) {
     PersistenceManager pm = getPersistenceManager();
     try {
       Analysis anls = pm.getObjectById(Analysis.class, analysisId);
@@ -496,7 +489,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public User getUser(int userId) throws DataAccessException {
+  public User getUser(int userId) {
     PersistenceManager pm = getPersistenceManager();
     try {
       return pm.getObjectById(User.class, userId);
@@ -506,7 +499,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public CommentVote getCommentVote(int userId, int commentId) throws DataAccessException {
+  public CommentVote getCommentVote(int userId, int commentId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(CommentVote.class);
     q.setFilter("user.id == " + userId + " && comment.id == " + commentId + " && isActive == true");
@@ -523,7 +516,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void addCommentVote(int userId, int commentId, CommentVote commentVote) throws DataAccessException {
+  public void addCommentVote(int userId, int commentId, CommentVote commentVote) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     User user = pm.getObjectById(User.class, userId);
@@ -552,7 +545,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void removeCommentVote(int userId, int commentId) throws DataAccessException {
+  public void removeCommentVote(int userId, int commentId) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     Query q = pm.newQuery(CommentVote.class);
@@ -581,7 +574,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public AnalysisVote getAnalysisVote(int userId, int analysisId) throws DataAccessException {
+  public AnalysisVote getAnalysisVote(int userId, int analysisId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(AnalysisVote.class);
     q.setFilter("user.id == " + userId + " && analysis.id == " + analysisId + " && isActive == true");
@@ -598,14 +591,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote) throws DataAccessException {
+  public void addAnalysisVote(int userId, int analysisId, AnalysisVote analysisVote) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     User user = pm.getObjectById(User.class, userId);
     Analysis anls = pm.getObjectById(Analysis.class, analysisId);
-    if (user == null || anls == null) {
-      throw new DataRetrievalFailureException("User or Analysis object not found, userId " + userId + ", analysisId " + analysisId);
-    }
     try {
       tx.begin();
       analysisVote.setUser(user);
@@ -628,7 +618,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void removeAnalysisVote(int userId, int analysisId) throws DataAccessException {
+  public void removeAnalysisVote(int userId, int analysisId) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     Query q = pm.newQuery(AnalysisVote.class);
@@ -657,7 +647,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public Activity getActivity(int activityId) throws DataAccessException {
+  public Activity getActivity(int activityId) {
     PersistenceManager pm = getPersistenceManager();
     try {
       return pm.getObjectById(Activity.class, activityId);
@@ -668,7 +658,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void createActivity(Activity activity) throws DataAccessException {
+  public void createActivity(Activity activity) {
     if (activity.getUser() == null) {
       return;
     }
@@ -687,7 +677,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void removeActivity(int activityId) throws DataAccessException {
+  public void removeActivity(int activityId) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     try {
@@ -703,11 +693,12 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void updateActivity(Activity activity) throws DataAccessException {
+  public void updateActivity(Activity activity) {
     PersistenceManager pm = getPersistenceManager();
     Activity pstObj = pm.getObjectById(Activity.class, activity.getId());
     if (pstObj == null) {
-      throw new DataRetrievalFailureException("Can't find activity with id " + activity.getId());
+      // throw an custom exception?
+      return;
     }
     
     Transaction tx = pm.currentTransaction();
@@ -726,7 +717,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Activity> getUserActitity(int userId, Date cutPoint) throws DataAccessException {
+  public List<Activity> getUserActitity(int userId, Date cutPoint) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Activity.class);
     q.setFilter("user.id == " + userId + " && time >= cut_point");
@@ -744,7 +735,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<User> getFollowers(int userId) throws DataAccessException {
+  public List<User> getFollowers(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Following.class);
     q.setFilter("user.id == " + userId);
@@ -763,7 +754,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<User> getFollowingUsers(int userId) throws DataAccessException {
+  public List<User> getFollowingUsers(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Following.class);
     q.setFilter("follower.id == " + userId);
@@ -782,7 +773,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Activity> getFeed(int userId, Date cutPoint) throws DataAccessException {
+  public List<Activity> getFeed(int userId, Date cutPoint, int maxNumber) {
     PersistenceManager pm = getPersistenceManager();
     // get list of feed (now, is list of following users)
     Query q = pm.newQuery(Following.class);
@@ -799,11 +790,55 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       }
       
       filter.append(" user.id == " + userId + ")");
-      q.setFilter(filter.toString() + " && (time >= cut_point) && isPublic == true");
-      q.declareImports("import java.util.Date");
-      q.declareParameters("Date cut_point");
-      q.setOrdering("time DESC");
-      List<Activity> activities = (List<Activity>) q.execute(cutPoint);
+      List<Activity> activities = null;
+      if (cutPoint != null) {
+        q.setFilter(filter.toString() + " && (time >= cut_point) && isPublic == true");
+        q.declareImports("import java.util.Date");
+        q.declareParameters("Date cut_point");
+        q.setOrdering("time DESC");
+        if (maxNumber > 0) {
+          q.setRange(0, maxNumber);
+        } else q.setRange(0, 20);
+        activities = (List<Activity>) q.execute(cutPoint);
+        activities = (List<Activity>) pm.detachCopyAll(activities);
+      } else {
+        q.setFilter("isPublic == true");
+        q.setOrdering("time DESC");
+        q.setRange(0, maxNumber);
+        activities = (List<Activity>) q.execute(cutPoint);
+        activities = (List<Activity>) pm.detachCopyAll(activities);
+      }
+      
+      // set the target object
+      for (Activity ac : activities) {
+        Analysis anls = pm.getObjectById(Analysis.class, ac.getObjectId());
+        List<Comment> comments = getComments(ac.getObjectId());
+        anls.setCommentCount(comments!=null?comments.size():0);
+        ac.setObject(anls);
+      }
+      return activities;
+      
+    } finally {
+      q.closeAll();
+      pm.close();
+    } 
+  }
+  
+  public List<Activity> getMoreFeed(int userId, List<Following> followings, int lastId, int maxNumber) {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Activity.class);
+    StringBuilder filter = new StringBuilder();
+    filter.append("(");
+    for (Following f : followings) {
+      filter.append("user.id == " + f.getUser().getId() + " ||");
+    }
+    
+    filter.append(" user.id == " + userId + ")");
+    q.setFilter("id < " + lastId + " && isPublic == true");
+    q.setOrdering("time DESC");
+    q.setRange(0, maxNumber);
+    try {  
+      List<Activity> activities = (List<Activity>) q.execute();
       activities = (List<Activity>) pm.detachCopyAll(activities);
       
       // set the target object
@@ -817,11 +852,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     } finally {
       q.closeAll();
       pm.close();
-    } 
+    }
   }
 
   @Override
-  public List<Following> getFollowingList(int userId) throws DataAccessException {
+  public List<Following> getFollowingList(int userId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Following.class);
     q.setFilter("user.id == " + userId);
@@ -836,7 +871,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<User> findFriends(User finder, String query) throws DataAccessException {
+  public List<User> findFriends(User finder, String query) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(User.class);
     q.setFilter("(this.username !=\"" + finder.getUsername() + "\") && (this.username.matches(\".*" + query + ".*\") || this.firstName.matches(\".*" + query + ".*\")"
@@ -852,7 +887,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void createFollowing(int follower, int target) throws DataAccessException {
+  public void createFollowing(int follower, int target) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     User followerUser = pm.getObjectById(User.class, follower);
@@ -870,7 +905,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
   
   @Override
-  public void removeFollowing(int follower, int target) throws DataAccessException {
+  public void removeFollowing(int follower, int target) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
     User followerUser = pm.getObjectById(User.class, follower);
@@ -889,7 +924,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public boolean isFollowing(int follower, int target) throws DataAccessException {
+  public boolean isFollowing(int follower, int target) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Following.class);
     q.setFilter("user.id==" + target + " && follower.id==" + follower);

@@ -8,6 +8,7 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Index;
 import javax.jdo.annotations.Join;
 import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -24,16 +25,17 @@ public class Analysis {
   @Index(name="analysis_guid_idx", unique="true")
   @Unique
   private String guid;
-  @Persistent(defaultFetchGroup="true")
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
   private User user;
   private int lineCount;
   private boolean published;
   private Date createAt;
   private Date lastUpdate;
-  private String tags;
+  //private String tags;
+  //@Persistent(defaultFetchGroup="true")
   @NotPersistent
   @Join
-  private Set<Tag> _tags;
+  private Set<Tag> tags;
   
   // dashboard status
   private String status;
@@ -150,20 +152,12 @@ public class Analysis {
     this.lastUpdate = lastUpdate;
   }
 
-  public String getTags() {
+  public Set<Tag> getTags() {
     return tags;
   }
 
-  public void setTags(String tags) {
+  public void setTags(Set<Tag> tags) {
     this.tags = tags;
-  }
-
-  public Set<Tag> get_tags() {
-    return _tags;
-  }
-
-  public void set_tags(Set<Tag> _tags) {
-    this._tags = _tags;
   }
 
   public int getCommentCount() {

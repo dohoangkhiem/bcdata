@@ -1,4 +1,11 @@
-#main-content .stream-container {
+#main-content .center-content-main {
+  padding: 10px;
+  padding-right: 280px;
+}
+
+#main-content .center-content-side {
+  float: right;
+  width: 260px;
   padding: 10px;
 }
 
@@ -6,54 +13,53 @@
   margin: 20px 0;
 }
 
-#main-content #stream .event .event-actor {
+#stream .event .event-avatar {
   float: left;
+  cursor: pointer;
 }
 
-#main-content #stream .event .avatar {
-  width: 100px;
-  height: 100px;
+#stream .event img.avatar {
+  width: 60px;
+  height: 60px;
   border: 1px solid #DDDDDD;
+  border-radius: 3px;
 }
 
-#main-content #stream .event .event-content {
+#stream .event .event-content {
   float: left;
   border: 1px solid #DDDDDD;
   border-radius: 2px;
   margin-left: 10px;
-  padding: 4px;
+  padding: 5px 10px;
   width: 500px;
 }
 
-#main-content #stream .event .event-content {
+#stream .event-content:hover {
+  border-color: #CCCCCC;
 }
 
-#main-content #stream .event .event-content .thumbnail {
+#stream .event a {
+  color: #000;
+  text-decoration: none;
+}
+
+#stream .event-content:hover a {
+  color: #003366;
+}
+
+#stream .event .event-content .thumbnail {
   border: 1px solid #EEEEEE;
-  margin: 10px 5px 0 0;
+  margin: 10px 10px 0 0;
   float: left;
 }
 
-#main-content #stream .event .event-content .thumbnail a {
+#stream .event .event-content .thumbnail a {
   width: 150px;
   height: 200px;
   display: block;
 }
 
-#main-content #stream .event .event-content  .title {
-}
-
-#main-content #stream .event .event-content  .title a {
-  color: #000;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-#main-content #stream .event .event-content  .title, #main-content #stream .event .event-content .description {
-  
-}
-
-#main-content #stream .event .event-content .time {
+#stream .event .event-content .time {
   float: right;
   color: #CCCCCC;
 }
@@ -74,11 +80,4 @@
   color: orange;
 }
 
-#stream .event .event-footer a {
-  color: #000;
-  text-decoration: none;
-}
 
-#stream .event .event-footer a:hover {
-  color: #333;
-}

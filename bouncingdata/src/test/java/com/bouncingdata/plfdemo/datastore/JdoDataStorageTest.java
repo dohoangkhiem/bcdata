@@ -32,28 +32,42 @@ public class JdoDataStorageTest extends AbstractJUnit38SpringContextTests {
     assertNotNull(apps);
     System.out.println("Number of application by demo: " + apps.size());
   }
-  
-  public void _testTransactional() {
-    User test = new User();
-    test.setUsername("testUser");
-    test.setPassword("testPassword");
-    test.setEmail("test@bouncingdata.com");
-    jdoDataStorage.createUser(test);
-    User test1 = jdoDataStorage.findUserByUsername("testUser");
-    assertNotNull(test1);
-    System.out.println(test1.getEmail());
+    
+  public void testCreateAnalysis() {
+    Analysis anls = new Analysis();
+    anls.setName("testAnalysis");
+    anls.setLanguage("python");
+    anls.setDescription("This is just a test analysis");
+    //anls.setTags("test");
+    String guid="abcd12345ef";
+    anls.setGuid(guid);
+    User demo = jdoDataStorage.findUserByUsername("demo");
+    anls.setUser(demo);
+    jdoDataStorage.createAnalysis(anls);
+    Analysis anls1 = jdoDataStorage.getAnalysisByGuid(guid);
+    assertNotNull(anls1);
+    assertTrue(anls1.getName().equals("testAnalysis"));
+    jdoDataStorage.deleteAnalysis(anls1.getId());
   }
   
-  public void _testUpdateApplication() {
+  public void testUpdateApplication() {
+    Analysis anls = new Analysis();
+    anls.setName("testAnalysis");
+    anls.setLanguage("python");
+    anls.setDescription("This is just a test analysis");
+    //anls.setTags("test");
+    String guid="abcd12345ef";
+    anls.setGuid(guid);
     User demo = jdoDataStorage.findUserByUsername("demo");
-    List<Analysis> apps = jdoDataStorage.getAnalysisList(demo.getId());
-    assertTrue(apps.size() > 0);
-    Analysis app = apps.get(0);
-    app.setName("zzztestApplicationzzz");
-    jdoDataStorage.updateAnalysis(app);
-    app = jdoDataStorage.getAnalysis(app.getId());
-    assertNotNull(app);
-    assertTrue(app.getName().equals("zzztestApplicationzzz"));
+    anls.setUser(demo);
+    jdoDataStorage.createAnalysis(anls);
+    Analysis anls1 = jdoDataStorage.getAnalysisByGuid(guid);
+    anls1.setName("testAnalysis1");
+    jdoDataStorage.updateAnalysis(anls1);
+    anls1 = jdoDataStorage.getAnalysisByGuid(guid);
+    assertNotNull(anls1);
+    assertTrue(anls1.getName().equals("testAnalysis1"));
+    jdoDataStorage.deleteAnalysis(anls1.getId());
   }
   
   public void testGetFeed() {
@@ -61,7 +75,7 @@ public class JdoDataStorageTest extends AbstractJUnit38SpringContextTests {
     assertNotNull(demo);
     Calendar calendar = Calendar.getInstance();
     calendar.add(Calendar.DATE, -1);
-    List<Activity> activities = jdoDataStorage.getFeed(demo.getId(), calendar.getTime());
+    List<Activity> activities = jdoDataStorage.getFeed(demo.getId(), calendar.getTime(), 20);
     assertNotNull(activities);
     //assertTrue(activities.size() > 0);
   }

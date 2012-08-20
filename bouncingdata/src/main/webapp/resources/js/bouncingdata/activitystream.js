@@ -6,8 +6,15 @@ ActivityStream.prototype.init = function() {
   
 }
 
-ActivityStream.prototype.loadMore = function() {
-  
+/**
+ * Loads more recent activity stream.
+ * @param lastId the last (oldest) activity id currently in activity stream.
+ */
+ActivityStream.prototype.loadMore = function(lastId) {
+  $.ajax({
+    url: '',
+    
+  });
 }
 
 

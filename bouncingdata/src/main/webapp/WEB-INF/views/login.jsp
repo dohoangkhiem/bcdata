@@ -11,7 +11,6 @@
   <style>
   .error-block, .message-block-error {
     color: #ff0000;
-    /*background-color: #ffEEEE;*/
     border: 0 none;
     padding: 8px;
   }

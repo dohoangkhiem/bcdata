@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Action;
@@ -46,7 +49,7 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public String createAnalysis(String name, String description, String language, int userId, String authorName, int lineCount, boolean isPublished, String tags) throws Exception {
+  public String createAnalysis(String name, String description, String language, int userId, String authorName, int lineCount, boolean isPublished, Set<Tag> tags) throws Exception {
     Analysis Analysis = new Analysis();
     Analysis.setName(name);
     Analysis.setDescription(description);
@@ -77,6 +80,15 @@ public class DatastoreServiceImpl implements DatastoreService {
   @Override
   public void updateAnalysis(Analysis Analysis) throws Exception {
     dataStorage.updateAnalysis(Analysis);
+  }
+  
+  public void deleteAnalysis(int analysisId) throws Exception {
+    Analysis anls = dataStorage.getAnalysis(analysisId);
+    if (anls == null) {
+      logger.debug("Analysis Id {} does not exist.", analysisId);
+      return;
+    }
+    dataStorage.deleteAnalysis(analysisId);
   }
 
   @Override
@@ -263,7 +275,13 @@ public class DatastoreServiceImpl implements DatastoreService {
   public List<Activity> getRecentFeed(int userId) throws Exception {
     Calendar calendar = Calendar.getInstance();
     calendar.add(Calendar.DATE, -5);
-    return dataStorage.getFeed(userId, calendar.getTime());
+    return dataStorage.getFeed(userId, calendar.getTime(), 20);
+  }
+  
+  @Override
+  public List<Activity> getMoreFeed(int userId, int lastId) throws Exception {
+    List<Following> followings = dataStorage.getFollowingList(userId);
+    return dataStorage.getMoreFeed(userId, followings, lastId , 20);
   }
 
   @Override

@@ -28,7 +28,7 @@ public class LoginController {
     return "test";
   }
   
-  @RequestMapping(value={"/", "/create"}, method = RequestMethod.GET)
+  @RequestMapping(value="/create", method = RequestMethod.GET)
   public String openCreate() {
     return "create";
   }

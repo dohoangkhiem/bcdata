@@ -3,6 +3,7 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -12,9 +13,9 @@ public class CommentVote {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
-  @Persistent(defaultFetchGroup="true")
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
   private User user;
-  @Persistent(defaultFetchGroup="true")
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
   private Comment comment;
   private int vote;
   private Date voteAt;

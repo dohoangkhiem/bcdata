@@ -2,6 +2,7 @@ package com.bouncingdata.plfdemo.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.dao.DataAccessException;
 
@@ -13,6 +14,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 
@@ -73,13 +75,15 @@ public interface DatastoreService {
    * @return the id of newly created Analysis
    * @throws Exception
    */
-  public String createAnalysis(String name, String description, String language, int author, String authorName, int lineCount, boolean isPublished, String tags) throws Exception;
+  public String createAnalysis(String name, String description, String language, int author, String authorName, int lineCount, boolean isPublished, Set<Tag> tags) throws Exception;
   
   /**
    * @param Analysis
    * @throws Exception
    */
   public void updateAnalysis(Analysis Analysis) throws Exception;
+  
+  public void deleteAnalysis(int analysisId) throws Exception;
   
   /**
    * @param appId
@@ -209,6 +213,8 @@ public interface DatastoreService {
    * @throws Exception
    */
   public List<Activity> getRecentFeed(int userId) throws Exception;
+  
+  public List<Activity> getMoreFeed(int userId, int lastId) throws Exception;
   
   /**
    * @param userId

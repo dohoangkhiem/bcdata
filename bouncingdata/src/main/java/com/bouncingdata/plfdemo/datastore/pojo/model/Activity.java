@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -15,13 +16,13 @@ public class Activity {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
-  @Persistent(defaultFetchGroup="true")
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
   private User user;
-  @Persistent(defaultFetchGroup="true")
   private String action;
   private int objectId;
   private Date time;
   private boolean isPublic;
+  private String message;
   
   @NotPersistent
   private Object object;
@@ -82,5 +83,11 @@ public class Activity {
   }
   public void setPublic(boolean isPublic) {
     this.isPublic = isPublic;
+  }
+  public String getMessage() {
+    return message;
+  }
+  public void setMessage(String message) {
+    this.message = message;
   } 
 }

@@ -1,8 +1,16 @@
 package com.bouncingdata.plfdemo.controller;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +27,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
@@ -93,10 +102,42 @@ public class MainController {
       logger.debug("Can't get the user. Skip application creation.");
       return null;
     }
+    
     int userId = user.getId();
+    
+    Set<Tag> tagSet = null;
+    if (tags != null && !tags.isEmpty()) {
+      tagSet = new HashSet<Tag>();
+      ObjectMapper mapper = new ObjectMapper();
+      try {
+        
+        ArrayNode tagArr = mapper.readValue(tags, ArrayNode.class);
+        Iterator<JsonNode> iter =  tagArr.iterator();
+        while (iter.hasNext()) {
+          JsonNode node = iter.next();
+          int id = node.get("id").getIntValue();
+          String value = node.get("tag").getValueAsText();
+          Tag tag = new Tag(value);
+          if (id < 1) {
+            tag.setId(-1);
+            tag.setCreateAt(new Date());
+            tag.setCreator(user.getId());
+            tag.setPopularity(0);
+          } else {
+            tag.setId(id);
+          }
+          tagSet.add(tag);
+        }
+        
+      } catch (IOException e) {
+        logger.debug("Can't parse the tags for analysis name {}, user id {}", appname, userId);
+        logger.debug("Exception details", e);
+      }
+    }
+      
     String guid = null;
     try {
-      guid = datastoreService.createAnalysis(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tags);
+      guid = datastoreService.createAnalysis(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tagSet);
     } catch (Exception e) {
       logger.error("Failed to create application " + appname + " for user " + user.getUsername(), e);
     }
