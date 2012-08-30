@@ -1,5 +1,8 @@
 package com.bouncingdata.plfdemo.utils;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -18,10 +21,17 @@ import java.util.UUID;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.codehaus.jackson.JsonNode;
+
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
-import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
-import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 public class Utils {
   
@@ -161,9 +171,100 @@ public class Utils {
     String st = status.substring(0, status.length() - 1);
     return st;
   }
+  
+  /**
+   * Parses the Excel file (*.xls) to get the column headers and data rows  
+   * @param is the excel input stream
+   * @return <code>List</code> of <code>String</code> array, the first element is the column headers, the rest is data
+   * @throws Exception
+   */
+  public static List<String[]> parseExcel(InputStream is) throws Exception {
+    // read excel file
+    Workbook wb = WorkbookFactory.create(is);
+    Sheet sheet = wb.getSheetAt(0);
+    
+    System.out.println("First row: " + sheet.getFirstRowNum());
+    System.out.println("Last row: " + sheet.getLastRowNum());
+    
+    System.out.println(sheet.getTopRow());
+    
+    // from the first row, determine the schema
+    int firstRowNum = sheet.getFirstRowNum();
+    int lastRowNum = sheet.getLastRowNum();
+    Row firstRow = sheet.getRow(firstRowNum);
+    int firstCellNum = firstRow.getFirstCellNum();
+    int lastCellNum = firstRow.getLastCellNum() - 1;
+    
+    System.out.println("First column: " + firstCellNum);
+    System.out.println("Last column: " + lastCellNum);
+    
+    int columnNum = lastCellNum - firstCellNum + 1;
+    String[] headers = new String[columnNum];
+    List<String[]> result = null;
+    for (int i = firstCellNum; i <= lastCellNum; i++) {
+      Cell headerCell = firstRow.getCell(i);
+      System.out.println("header at column " + i + " " + headerCell.toString());
+      headers[i - firstCellNum] = getCellStringValue(headerCell);
+    }
+    
+    result = new ArrayList<String[]>();
+    result.add(headers);
+    
+    // now the data range is from [firstRow+1, firstCell] -> [lastRow, lastCell]
+    System.out.format("Data range is from [%d, %d] to [%d, %d]%n", firstRowNum + 1, firstCellNum, lastRowNum, lastCellNum);
+    
+    for (int i = firstRowNum + 1; i <= lastRowNum; i++) {
+      String[] rowValues = new String[columnNum];
+      Row row = sheet.getRow(i);
+      for (int j = firstCellNum; j <= lastCellNum; j++) {
+        Cell cell = row.getCell(j);
+        if (cell != null) {
+          String value = getCellStringValue(cell);
+          rowValues[j - firstCellNum] = value;
+        } else rowValues[j - firstCellNum] = null;
+      }
+      result.add(rowValues);
+    }    
+    return result;
+  }
+  
+  /**
+   * Get string value from excel cell
+   * @param cell the <code>Cell</code> object to read
+   * @return the <code>String</code> value of <i>cell</i>
+   */
+  public static String getCellStringValue(Cell cell) {
+    try {
+      if (cell == null) return null;
+      return cell.getStringCellValue();
+    } catch (IllegalStateException e) {
+      int type = cell.getCellType();
+      switch(type) {
+      case Cell.CELL_TYPE_BLANK:
+        return null;
+      case Cell.CELL_TYPE_BOOLEAN:
+        return String.valueOf(cell.getBooleanCellValue());
+      case Cell.CELL_TYPE_ERROR:
+        return null;
+      case Cell.CELL_TYPE_FORMULA:
+        return cell.getCellFormula();
+      case Cell.CELL_TYPE_NUMERIC:
+        return String.valueOf(cell.getNumericCellValue());
+      default:
+        return cell.toString();
+      }
+    }
+  }
     
   public static void main(String args[]) {
-    System.out.println("MySQL Connect Example.");
+    try {
+      InputStream is = new FileInputStream("/home/khiem/workbook.xls");
+      List<String[]> result = parseExcel(is);
+      System.out.println(result.size());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    /*System.out.println("MySQL Connect Example.");
     Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";
     String dbName = "plfdemo";
@@ -183,6 +284,8 @@ public class Utils {
       System.out.println("Disconnected from database");
     } catch (Exception e) {
       e.printStackTrace();
-    }
+    }*/
+    
+    
   }
 }

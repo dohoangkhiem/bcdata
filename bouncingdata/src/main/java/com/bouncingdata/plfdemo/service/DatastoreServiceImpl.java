@@ -1,12 +1,10 @@
 package com.bouncingdata.plfdemo.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +18,12 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Action;
@@ -49,28 +48,17 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public String createAnalysis(String name, String description, String language, int userId, String authorName, int lineCount, boolean isPublished, Set<Tag> tags) throws Exception {
-    Analysis Analysis = new Analysis();
-    Analysis.setName(name);
-    Analysis.setDescription(description);
-    Analysis.setLanguage(language);
-    Analysis.setLineCount(lineCount);
-    Analysis.setPublished(isPublished);
-    Analysis.setTags(tags);
+  public String createBcDataScript(BcDataScript script, String type) throws Exception {
     // generate guid
     String guid = Utils.generateGuid();
-    Analysis.setGuid(guid);
-    Date date = Utils.getCurrentDate();
-    Analysis.setCreateAt(date);
-    Analysis.setLastUpdate(date);
-    try {
-      User user = dataStorage.getUser(userId);
-      Analysis.setUser(user);
-      dataStorage.createAnalysis(Analysis);
+    script.setGuid(guid);
+     
+    try {      
+      dataStorage.createBcDataScript(script);
       return guid;
     } catch (DataAccessException e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Failed to create Analysis {}. UserId", name, userId);
+        logger.debug("Failed to create Analysis {}. Username {}", script.getName(), script.getUser().getUsername());
         logger.debug("Root cause: ", e);
       }
       return null;
@@ -273,9 +261,9 @@ public class DatastoreServiceImpl implements DatastoreService {
 
   @Override
   public List<Activity> getRecentFeed(int userId) throws Exception {
-    Calendar calendar = Calendar.getInstance();
-    calendar.add(Calendar.DATE, -5);
-    return dataStorage.getFeed(userId, calendar.getTime(), 20);
+    //Calendar calendar = Calendar.getInstance();
+    //calendar.add(Calendar.DATE, -5);
+    return dataStorage.getFeed(userId, 20);
   }
   
   @Override
@@ -370,4 +358,30 @@ public class DatastoreServiceImpl implements DatastoreService {
     dataStorage.removeFollowing(followerId, targetId);
     
   }
+
+  @Override
+  public void createDataset(Dataset dataset) throws Exception {
+    dataStorage.createDataset(dataset);
+  }
+
+  @Override
+  public void createDatasets(List<Dataset> datasets) throws Exception {
+    dataStorage.createDatasets(datasets);
+  }
+
+  @Override
+  public void invalidateDataset(Analysis anls) throws Exception {
+    dataStorage.invalidateDataset(anls);
+  }
+  
+  @Override
+  public Scraper getScraperByGuid(String guid) throws Exception {
+    return dataStorage.getScraperByGuid(guid);
+  }
+
+  @Override
+  public List<Scraper> getPublicScrapers(int userId) throws Exception {
+    return dataStorage.getPublicScrapers(userId);
+  }
+
 }

@@ -1,13 +1,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:context="http://www.springframework.org/schema/context"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
   xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <context:property-placeholder location="classpath:datanucleus.properties"/>
   <context:annotation-config />
   
   <!-- PMF Bean -->
@@ -32,9 +32,6 @@
 
   <!-- Typical Business Service --> 
   <bean id="datastoreService" class="com.bouncingdata.plfdemo.service.DatastoreServiceImpl">
-    <!-- property name="dataStorage">
-      <ref local="dataStorage" />
-    </property-->
   </bean>
   
   <bean id="customUserDetailsService" class="com.bouncingdata.plfdemo.service.CustomUserDetailsService">

@@ -22,15 +22,17 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.AnalysisDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ScraperDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
+import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.service.UserDataService;
 import com.bouncingdata.plfdemo.utils.Utils;
 
 @Controller
@@ -42,7 +44,7 @@ public class AppController {
   @Autowired private DatastoreService datastoreService;
   @Autowired private ApplicationExecutor appExecutor;
   @Autowired private ApplicationStoreService appStoreService;
-  @Autowired private UserDataService userDataService;
+  @Autowired private BcDatastoreService bcDatastoreService;
   
   @RequestMapping(value="/a/{guid}", method = RequestMethod.GET)
   public @ResponseBody AnalysisDetail getApplication(@PathVariable String guid) {
@@ -68,8 +70,8 @@ public class AppController {
         }
       }
       
-      String code = appStoreService.getApplicationCode(guid, null);
-      Map<String, String> datasets = userDataService.getApplicationDataset(anls.getId());
+      String code = appStoreService.getScriptCode(guid, null);
+      Map<String, String> datasets = bcDatastoreService.getApplicationDataset(anls.getId());
       
       Map<String, DashboardPosition> dashboard = Utils.parseDashboard(anls);
       
@@ -274,6 +276,28 @@ public class AppController {
       datastoreService.publishAnalysis(user, analysis, value);
     } catch (Exception e) {
       logger.error("", e);
+    }
+  }
+  
+  /**
+   * 
+   */
+  @RequestMapping(value="/scr/{guid}", method=RequestMethod.GET)
+  public @ResponseBody ScraperDetail getScraper(@PathVariable String guid) {
+    try {
+      Scraper scr = datastoreService.getScraperByGuid(guid);
+      if (scr == null) return null;
+      
+      // get scraper's code
+      String code = appStoreService.getScriptCode(guid, null);
+      
+      // get scraper datasets 
+      
+      return new ScraperDetail(code, scr, null);
+      
+    } catch (Exception e) {
+      logger.error("", e);
+      return null;
     }
   }
   

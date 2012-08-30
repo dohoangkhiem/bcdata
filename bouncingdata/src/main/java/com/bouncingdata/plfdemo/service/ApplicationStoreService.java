@@ -44,7 +44,7 @@ public class ApplicationStoreService {
     logger.debug("Successfully write " + guid + "/" + filename);
   }
   
-  public String getApplicationCode(String guid, String language) throws IOException {
+  public String getScriptCode(String guid, String language) throws IOException {
     String storeAbsPath = storePath; //servletContext.getRealPath(Utils.FILE_SEPARATOR + storePath);
     String filename = Utils.getApplicationFilename(language);
     String code = FileUtils.readFileToString(new File(storeAbsPath + Utils.FILE_SEPARATOR + guid 

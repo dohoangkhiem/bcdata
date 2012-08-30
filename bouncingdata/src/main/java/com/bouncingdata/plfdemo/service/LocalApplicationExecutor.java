@@ -4,17 +4,21 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
@@ -36,10 +41,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   
   @Autowired
   private DatastoreService datastoreService;
-  
-  /*@Autowired
-  private ApplicationStoreService appStoreService;*/
-  
+    
   public void setLogDir(String ld) {
     this.logDir = ld;
   }
@@ -49,7 +51,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executePython(Analysis app, String code, User user) {
+  public ExecutionResult executePython(Analysis app, String code, User user) throws Exception {
     // get execution ticket
     final String ticket = Utils.getExecutionId();
     
@@ -57,7 +59,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     if (app == null) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), app==null?"":app.getGuid(), String.valueOf(user.getId()), user.getUsername(), mode);
+    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), String.valueOf(user.getId()), user.getUsername(), mode);
     pb.redirectErrorStream(true);
     
     String output = null;
@@ -104,7 +106,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    Map<String, String> datasets = getDatasets(ticket);
+    
+    Map<String, String> datasets = dataPostProcess(ticket, app, user);
     if (app == null) {
       Map<String, VisualizationDetail> visuals = getVisualizations(ticket);
       return new ExecutionResult(output, visuals, datasets, 0, "OK");
@@ -114,7 +117,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executeR(Analysis app, String code, User user) {
+  public ExecutionResult executeR(Analysis app, String code, User user) throws Exception {
     String ticket = Utils.getExecutionId();
     String tempFile = logDir + Utils.FILE_SEPARATOR + ticket + Utils.FILE_SEPARATOR + ticket + ".R";
     File temp = new File(tempFile);
@@ -160,7 +163,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       e.printStackTrace();
     }
     
-    Map<String, String> datasets = getDatasets(ticket);
+    Map<String, String> datasets = dataPostProcess(ticket, app, user);
     
     //
     if (mode.equals("persistent")) {
@@ -180,11 +183,10 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     }
   }
   
-  private Map<String, String> getDatasets(String executionId) {
+  private Map<String, String> dataPostProcess(String executionId, Analysis anls, User user) throws Exception {
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
     File[] datasetFiles = execLogDir.listFiles(new FileFilter() {
-      
       @Override
       public boolean accept(File pathname) {
         if (pathname.isFile() && pathname.getName().endsWith(".dat")) {
@@ -194,36 +196,52 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     });
     
     Map<String, String> datasets = null;
+    List<Dataset> dsList = new ArrayList<Dataset>();
+    ObjectMapper mapper = new ObjectMapper();
     if (datasetFiles != null) {
       datasets = new HashMap<String, String>();
       for (File f : datasetFiles) {
         String filename = f.getName();
         String name = filename.substring(0, filename.lastIndexOf("."));
-        byte[] b = new byte[1024];
         try {
-          InputStream is = new BufferedInputStream(new FileInputStream(f));
-          int c;
-          StringBuilder sb = new StringBuilder();
-          while ((c = is.read(b)) != -1) {
-            String s = new String(b, 0, c);
-            sb.append(s);
-          }
-          datasets.put(name, sb.toString());
+          String s = FileUtils.readFileToString(f);
+          JsonNode dataObj = mapper.readTree(s);
+          JsonNode data = dataObj.get("data");
+          datasets.put(name, data.getValueAsText());
+          Dataset ds = new Dataset();
+          ds.setName(dataObj.get("name").getTextValue());
+          ds.setDescription(dataObj.get("description").getTextValue());
+          ds.setGuid(Utils.generateGuid());
+          ds.setSchema(dataObj.get("schema").getTextValue());
+          ds.setUser(user);
+          ds.setCreateAt(new Date());
+          ds.setLastUpdate(new Date());
+          ds.setAnalysis(anls);
+          ds.setRowCount(data.size());
+          ds.setActive(true);
+          dsList.add(ds);
         } catch (IOException e) {
           logger.debug("Can't read dataset file {}", f.getAbsolutePath());
-        }
-        
+        }        
       }
+      
+      // invalidate old datasets?
+      datastoreService.invalidateDataset(anls);
+      
+      datastoreService.createDatasets(dsList);
+      
     }
     return datasets;
   }
   
-  private void processVisualizations(String executionId, Analysis app) throws Exception {
-    try {
-      datastoreService.invalidateViz(app);
-    } catch (Exception e) {
-      logger.error("", e);
-    }
+  /**
+   * 
+   * @param executionId
+   * @param anls
+   * @throws Exception
+   */
+  private void processVisualizations(String executionId, Analysis anls) throws Exception {
+    datastoreService.invalidateViz(anls);
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
     File[] vsFiles = execLogDir.listFiles(new FileFilter() {
@@ -235,7 +253,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
         } else return false;
       }
     });
-    File vDir = new File(storePath + Utils.FILE_SEPARATOR + app.getGuid() + Utils.FILE_SEPARATOR + "v");
+    File vDir = new File(storePath + Utils.FILE_SEPARATOR + anls.getGuid() + Utils.FILE_SEPARATOR + "v");
     if (!vDir.isDirectory()) {
       vDir.mkdirs(); 
     }
@@ -250,8 +268,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
         if ("png".equals(extension)) type = VisualizationType.PNG;
         else if ("html".equals(extension)) type = VisualizationType.HTML;
         
-        v.setAppId(app.getId());
-        v.setAuthor(app.getUser().getId());
+        v.setAnalysis(anls);
+        v.setUser(anls.getUser());
         v.setName(filename.substring(0, filename.lastIndexOf(".")));
         v.setType(type.getType());
         String guid = Utils.generateGuid();

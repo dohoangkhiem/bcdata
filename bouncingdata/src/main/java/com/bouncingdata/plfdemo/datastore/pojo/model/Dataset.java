@@ -3,9 +3,13 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @PersistenceCapable
 public class Dataset {
@@ -15,14 +19,19 @@ public class Dataset {
   private String name;
   private String description;
   private String schema;
+  @Unique
   private String guid;
-  @Persistent(defaultFetchGroup="true")
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
   private User user;
   private String tags;
   private Date createAt;
   private Date lastUpdate;
   private int rowCount;
-  private int appId;
+  @Persistent(defaultFetchGroup="true")
+  private Analysis analysis;
+  private boolean isActive;
+  @Persistent(defaultFetchGroup="true")
+  private Scraper scraper;
   
   public int getId() {
     return id;
@@ -84,17 +93,31 @@ public class Dataset {
   public void setRowCount(int rowCount) {
     this.rowCount = rowCount;
   }
-  public int getAppId() {
-    return appId;
-  }
-  public void setAppId(int appId) {
-    this.appId = appId;
-  }
+  @JsonIgnore
   public User getUser() {
     return user;
   }
   public void setUser(User user) {
     this.user = user;
+  }
+  public Analysis getAnalysis() {
+    return analysis;
+  }
+  public void setAnalysis(Analysis analysis) {
+    this.analysis = analysis;
+  }
+  public boolean isActive() {
+    return isActive;
+  }
+  public void setActive(boolean isActive) {
+    this.isActive = isActive;
+  }
+  @JsonIgnore
+  public Scraper getScraper() {
+    return scraper;
+  }
+  public void setScraper(Scraper scraper) {
+    this.scraper = scraper;
   }
     
 }

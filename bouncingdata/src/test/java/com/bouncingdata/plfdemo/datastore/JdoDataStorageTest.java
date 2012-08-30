@@ -75,7 +75,7 @@ public class JdoDataStorageTest extends AbstractJUnit38SpringContextTests {
     assertNotNull(demo);
     Calendar calendar = Calendar.getInstance();
     calendar.add(Calendar.DATE, -1);
-    List<Activity> activities = jdoDataStorage.getFeed(demo.getId(), calendar.getTime(), 20);
+    List<Activity> activities = jdoDataStorage.getFeed(demo.getId(), 20);
     assertNotNull(activities);
     //assertTrue(activities.size() > 0);
   }

@@ -26,12 +26,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
+import com.bouncingdata.plfdemo.utils.ScriptType;
 import com.bouncingdata.plfdemo.utils.Utils;
 
 @Controller
@@ -96,7 +99,8 @@ public class MainController {
       @RequestParam(value = "description", required = true) String description,
       @RequestParam(value = "code", required = true) String code, 
       @RequestParam(value = "isPublic", required = true) int isPublic,
-      @RequestParam(value = "tags", required = false) String tags, ModelMap model, Principal principal) {
+      @RequestParam(value = "tags", required = false) String tags, 
+      @RequestParam(value = "type", required = false) String type, ModelMap model, Principal principal) {
     User user = (User) ((Authentication) principal).getPrincipal();
     if (user == null) {
       logger.debug("Can't get the user. Skip application creation.");
@@ -136,8 +140,25 @@ public class MainController {
     }
       
     String guid = null;
-    try {
-      guid = datastoreService.createAnalysis(appname, description, language, userId, user.getUsername(), Utils.countLines(code), (isPublic>0), tagSet);
+    BcDataScript script;
+    if (ScriptType.SCRAPER.getType().equals(type)) {
+      script = new Scraper();
+    } else {
+      script = new Analysis();
+    }
+    script.setName(appname);
+    script.setDescription(description);
+    script.setLanguage(language);
+    script.setLineCount(Utils.countLines(code));
+    script.setPublished((isPublic>0));
+    script.setTags(tagSet);
+    Date date = Utils.getCurrentDate();
+    script.setCreateAt(date);
+    script.setLastUpdate(date);
+    script.setUser(user);
+    
+    try { 
+      guid = datastoreService.createBcDataScript(script, type);
     } catch (Exception e) {
       logger.error("Failed to create application " + appname + " for user " + user.getUsername(), e);
     }
@@ -162,12 +183,17 @@ public class MainController {
     // invoke executor to execute code, pass the id as parameter
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
-    if ("python".equals(language)) {
-      return appExecutor.executePython(null, code, user);
-    } else if ("r".equals(language)) {
-      return appExecutor.executeR(null, code, user);
-    } else {
-      return new ExecutionResult("Not support", null, null, -1, "Not support"); 
+    try {
+      if ("python".equals(language)) {
+        return appExecutor.executePython(null, code, user);
+      } else if ("r".equals(language)) {
+        return appExecutor.executeR(null, code, user);
+      } else {
+        return new ExecutionResult("Not support", null, null, -1, "Not support"); 
+      }
+    } catch (Exception e) {
+      logger.error("Error occurs when executing analysis code");
+      return new ExecutionResult("Error", null, null, -1, "Error occurs");
     }
   }
   

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.QueryResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.service.UserDataService;
+import com.bouncingdata.plfdemo.service.BcDatastoreService;
 
 @Controller
 @RequestMapping("/dataset")
@@ -28,7 +28,7 @@ public class DatasetController {
   private DatastoreService datastoreService;
   
   @Autowired
-  private UserDataService userDataService;
+  private BcDatastoreService userDataService;
     
   @RequestMapping(value="/{guid}", method = RequestMethod.GET)
   public @ResponseBody List<Map> getDataset(@PathVariable String guid) {

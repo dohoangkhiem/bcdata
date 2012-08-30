@@ -6,7 +6,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 public interface ApplicationExecutor {
   
-  public ExecutionResult executePython(Analysis analysis, String code, User user);
+  public ExecutionResult executePython(Analysis analysis, String code, User user) throws Exception;
   
-  public ExecutionResult executeR(Analysis analysis, String code, User user);
+  public ExecutionResult executeR(Analysis analysis, String code, User user) throws Exception;
 }

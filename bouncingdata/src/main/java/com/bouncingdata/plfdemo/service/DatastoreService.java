@@ -2,7 +2,6 @@ package com.bouncingdata.plfdemo.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.dao.DataAccessException;
 
@@ -11,10 +10,11 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
-import com.bouncingdata.plfdemo.datastore.pojo.model.Tag;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 
@@ -75,7 +75,7 @@ public interface DatastoreService {
    * @return the id of newly created Analysis
    * @throws Exception
    */
-  public String createAnalysis(String name, String description, String language, int author, String authorName, int lineCount, boolean isPublished, Set<Tag> tags) throws Exception;
+  public String createBcDataScript(BcDataScript script, String type) throws Exception;
   
   /**
    * @param Analysis
@@ -236,4 +236,13 @@ public interface DatastoreService {
   
   public void removeFollowing(int followerId, int targetId) throws Exception;
   
+  public void createDataset(Dataset dataset) throws Exception;
+  
+  public void createDatasets(List<Dataset> datasets) throws Exception;
+  
+  public void invalidateDataset(Analysis anls) throws Exception;
+    
+  public Scraper getScraperByGuid(String guid) throws Exception;
+  
+  public List<Scraper> getPublicScrapers(int userId) throws Exception;
 }

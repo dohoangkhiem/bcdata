@@ -48,7 +48,7 @@
                     <strong class="event-score">0</strong>    
                   </c:if>
                   <c:if test="${activity.object.score < 0}">
-                    <strong class="event-score event-score-negative">-${activity.object.score }</strong>    
+                    <strong class="event-score event-score-negative">${activity.object.score }</strong>    
                   </c:if>
                   &nbsp;<a class="comments-link" target="_blank" href="<c:url value="/anls/${activity.object.guid}#comments" />"><strong>${activity.object.commentCount }</strong>&nbsp;comments</a>
                 </div>

@@ -83,7 +83,7 @@ public class AnalysisController {
       ObjectMapper mapper = new ObjectMapper();
       model.addAttribute("dashboardDetail", mapper.writeValueAsString(dbDetail));
       
-      String code = appStoreService.getApplicationCode(guid, null);
+      String code = appStoreService.getScriptCode(guid, null);
       model.addAttribute("anlsCode", StringEscapeUtils.escapeJavaScript(code));
 
       return "analysis";

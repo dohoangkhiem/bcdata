@@ -1,5 +1,9 @@
 .workbench-container#main-content {
-  position: relative;
+  position: fixed;
+  top: 60px;
+  right: 0;
+  left: 100px;
+  bottom: 10px;
 }
 
 .workbench-container#main-content .workbench-browser {
@@ -16,17 +20,27 @@
 .workbench-container#main-content .workbench-ide {
   margin-right: 270px;
   background-color: #FFFFFF;
+  height: 100%;
 }
 
 .workbench-ide .workbench-main-tabs {
-  height: 100%;
   padding: 2px;
   border: 0 none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 10px;
 }
 
-.workbench-ide .app-actions {
-  margin: 10px 10px 0 0;
-  float: right;
+.workbench-ide .workbench-toolbar {
+  height: 30px;
+  padding: 5px;
+}
+
+.workbench-toolbar .app-actions {
+  display: inline-block;
+  padding: 2px;
 }
 
 .workbench-ide-content .app-status {
@@ -60,6 +74,12 @@
 
 .workbench-main-tabs > div.ui-tabs-panel {
   padding: 10px;
+  position: absolute;
+  top: 35px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
 }
 
 .workbench-main-tabs .workbench-content-container, .workbench-main-tabs .workbench-content-container .workbench-content-layout {
@@ -71,11 +91,11 @@
 }
 
 .workbench-ide-content .app-code-container, .workbench-ide-content .app-code-container .app-code-layout {
-  height: 400px;
+  height: 350px;
 }
 
 .workbench-ide-content .app-code-container .app-code-layout-center>div {
-  height: 378px;
+  height: 328px;
   position: relative;
   padding: 0;
   margin: 0;
@@ -94,7 +114,7 @@
   border: 0;
   padding: 0;
   margin: 0;
-  height: 378px;
+  height: 328px;
 }
 
 .workbench-ide .app-execution-logs-tabs {
@@ -294,7 +314,7 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
 /* The console container element */
 .app-execution-logs .console {
   position: relative;
-  height: 348px;
+  height: 302px;
   background-color: #FFFFFF;
   font-size: .9em;
   border: 1px solid #D3D3D3;

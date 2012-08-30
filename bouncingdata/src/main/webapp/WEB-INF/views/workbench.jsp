@@ -18,7 +18,6 @@
   } else {
     com.bouncingdata.Browser.init();
   }
-  
 </script>
 
 <div id="main-content" class="workbench-container">
@@ -56,15 +55,19 @@
   <div class="workbench-ide center-content">  
     <div class="center-content-wrapper">
       <div class="top-rule"></div>
+      <div class="workbench-toolbar">
+        <span id="app-actions-toolbar" class="app-actions ui-widget-header ui-corner-all">
+          <button class="app-action" id="new-app">New</button>
+          <button class="app-action" id="copy-app">Clone</button>
+          <button class="app-action" id="save-app">Save</button>
+          <button class="app-action" id="run-app">Run</button>
+          <button class="app-action" id="upload-data">Upload</button>
+        </span>
+      </div>
       <!-- workbench main tabs layout -->
       <div class="workbench-main-tabs" id="workbench-main-tabs">
         <ul class="workbench-main-tabs-bar">
         </ul>
-        <div class="app-actions">
-          <input type="button" value="Clone" class="app-action" id="copy-app" />
-          <input type="button" value="Save" class="app-action" id="save-app" />
-          <input type="button" value="Run" class="app-action" id="run-app"  />
-        </div>
       </div> 
       
       <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
@@ -97,6 +100,11 @@
             <label for="publish-msg">Message</label>
             <textarea id="publish-msg" rows="3"></textarea>
           </fieldset>
+        </form>
+      </div>
+      <div class="popup upload-data-dialog" id="upload-data-dialog" title="Upload data">
+        <form>
+          <fieldset></fieldset>
         </form>
       </div>
     </div> 

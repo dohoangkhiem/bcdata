@@ -46,6 +46,8 @@ Workbench.prototype.init = function() {
     $('#main-content input:button').button();
     $('#main-content input:submit').button();
     
+    $('#app-actions-toolbar .app-action').button();
+    
     //Init popup dialog
     me.$newAnlsDialog = $('.workbench-container #new-app-dialog').dialog({
       autoOpen: false,
@@ -79,6 +81,22 @@ Workbench.prototype.init = function() {
       width: 400,
       modal: true,
       resizable: false
+    });
+    
+    me.$uploadDataDialog = $('.workbench-container #upload-data-dialog').dialog({
+      autoOpen: false,
+      height: 250,
+      width: 400,
+      modal: true,
+      resizable: false,
+      buttons: {
+        "Upload": function() {
+          console.debug("Upload dataset file");
+        },
+        "Cancel": function() {
+          $(this).dialog('close');
+        }
+      }
     });
     
     // get the tab template
@@ -136,14 +154,13 @@ Workbench.prototype.init = function() {
       me.removeTab(index);
       return false;
     });
-        
-    // create empty tab
+    
     me.createTab(null);
     
     // 
     $('.workbench-ide .app-actions').click(function(e) {     
       var $target = $(e.target);
-      if (($target[0].nodeName == "input" || $target[0].nodeName == "INPUT") && $target.hasClass("app-action")) {       
+      if (($target[0].nodeName == "button" || $target[0].nodeName == "BUTTON" || $target[0].nodeName == "a") && $target.hasClass("app-action")) {       
         // determine tab
         //var $tab = me.getSelectedTabId(); 
           //$target.parents('.workbench-tab-panel');
@@ -155,8 +172,13 @@ Workbench.prototype.init = function() {
           me.execute(index);
         } else if (actionId == "save-app") {
           me.saveCode(index);
-        } else if (actionId = 'copy-app') {
+        } else if (actionId == 'copy-app') {
           me.cloneApp(index);
+        } else if (actionId == 'new-app') {
+          // create empty tab
+          me.createTab(null);
+        } else if (actionId == 'upload-data') {
+          me.$uploadDataDialog.dialog('open');
         }
       }
     });
@@ -420,7 +442,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   // Retrieve app. details
   if (app) {
     $(function() {
-      me.setStatus($tab.parent(), "loading");
+      me.setStatus($tab, "loading");
       console.info('Retrieving application details...');
       $.ajax({
         url: ctx + "/app/a/" + guid,
@@ -711,7 +733,8 @@ Workbench.prototype.createApp = function(appname, language, description, code, i
     description: description,
     code: code,
     isPublic: isPublic,
-    tags: tags
+    tags: tags,
+    type: "analysis"
   };
   var me = this;
   $(function() {

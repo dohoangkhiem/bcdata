@@ -24,11 +24,13 @@
   <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
   
-  <util:properties id="appStoreConfiguration" location="classpath:appstore.properties"/>
+  <!-- util:properties id="appStoreConfiguration" location="classpath:appstore.properties"/>
   
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="properties"><ref bean="appStoreConfiguration"></ref></property>        
-  </bean>
+  </bean-->
+  
+  <context:property-placeholder location="classpath:appstore.properties" />
    
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
     <property name="storePath" value="${com.bouncingdata.appstore.storePath}"></property>

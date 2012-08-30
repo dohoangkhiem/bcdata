@@ -8,13 +8,13 @@
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   
-  <context:property-placeholder location="classpath:jdbc.properties"/>
+  <context:property-placeholder location="classpath:bcdatastore.jdbc.properties"/>
   
   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-    p:driverClassName="${jdbc.driverClassName}"
-    p:url="${jdbc.url}"
-    p:username="${jdbc.username}"
-    p:password="${jdbc.password}" />
+    p:driverClassName="${bcdatastore.jdbc.driverClassName}"
+    p:url="${bcdatastore.jdbc.url}"
+    p:username="${bcdatastore.jdbc.username}"
+    p:password="${bcdatastore.jdbc.password}" />
   
   <!-- PMF Bean -->
   <bean id="pmf" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean"

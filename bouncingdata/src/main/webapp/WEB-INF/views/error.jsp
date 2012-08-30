@@ -1,3 +1,4 @@
 <div id="main-content">
-  <strong style="color: red;">Error occurs! The page you are looking for may not available or deleted.</strong>
+  <h1>Page not found</h1>
+  <p><strong style="color: red;">The page you're looking for does not exist.</strong></p>
 </div>

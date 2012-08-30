@@ -1,9 +1,12 @@
 package com.bouncingdata.plfdemo.datastore.pojo.model;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @PersistenceCapable
 public class Visualization {
@@ -14,8 +17,10 @@ public class Visualization {
   private String name;
   private String description;
   private String guid;
-  private int appId;
-  private int author;
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
+  private Analysis analysis;
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
+  private User user;
   private String type;
   private boolean isActive;
   
@@ -42,19 +47,7 @@ public class Visualization {
   }
   public void setGuid(String guid) {
     this.guid = guid;
-  }
-  public int getAppId() {
-    return appId;
-  }
-  public void setAppId(int appId) {
-    this.appId = appId;
-  }
-  public int getAuthor() {
-    return author;
-  }
-  public void setAuthor(int author) {
-    this.author = author;
-  }
+  }  
   public String getType() {
     return type;
   }
@@ -66,6 +59,19 @@ public class Visualization {
   }
   public void setActive(boolean isActive) {
     this.isActive = isActive;
+  }
+  @JsonIgnore
+  public Analysis getAnalysis() {
+    return analysis;
+  }
+  public void setAnalysis(Analysis analysis) {
+    this.analysis = analysis;
+  }
+  public User getUser() {
+    return user;
+  }
+  public void setUser(User user) {
+    this.user = user;
   }
   
 }

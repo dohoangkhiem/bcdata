@@ -36,8 +36,11 @@
       <field name="rowCount">
         <column name="row_count" jdbc-type="INTEGER" />
       </field>
-      <field name="appId">
-        <column name="app_id" jdbc-type="INTEGER" />
+      <field name="analysis">
+        <column name="analysis" jdbc-type="INTEGER" />
+      </field>
+      <field name="isActive">
+        <column name="is_active" jdbc-type="BIT" />
       </field>
     </class>
         
@@ -92,15 +95,18 @@
       <field name="type">
         <column name="type" jdbc-type="VARCHAR" length="20" />
       </field>
-      <field name="appId">
-        <column name="app_id" jdbc-type="INTEGER" />
+      <field name="analysis">
+        <column name="analysis" jdbc-type="INTEGER" />
       </field>
-      <field name="author">
-        <column name="author" jdbc-type="INTEGER" />
+      <field name="user">
+        <column name="user" jdbc-type="INTEGER" />
       </field>
       <field name="isActive">
         <column name="is_active" jdbc-type="BIT" />
       </field>
+      <!--field name="status">
+        <column name="status" jdbc-type="VARCHAR" length="40" />
+      </field-->
     </class>
     
     <class name="ExecutionLog" identity-type="datastore" table="execution_logs">
@@ -173,13 +179,10 @@
       </field>
     </class>
     
-    <class name="Analysis" identity-type="datastore" table="analyses">
-      <inheritance strategy="new-table" />
+    <class name="BcDataScript" identity-type="datastore">
+      <inheritance strategy="subclass-table" />
       <field name="id" primary-key="true">
         <column name="id" jdbc-type="INTEGER" />
-      </field>
-      <field name="status">
-        <column name="status" jdbc-type="LONGVARCHAR" />
       </field>
       <field name="published">
         <column name="published" jdbc-type="BIT" />
@@ -199,9 +202,6 @@
       <field name="user">
         <column name="user" jdbc-type="INTEGER" />
       </field>
-      <!--field name="tags">
-        <column name="tags" jdbc-type="VARCHAR" length="1000" />
-      </field-->
       <field name="createAt">
         <column name="create_at" jdbc-type="TIMESTAMP" />
       </field>
@@ -211,9 +211,20 @@
       <field name="lineCount">
         <column name="line_count" jdbc-type="INTEGER" />
       </field>
+    </class>
+    
+    <class name="Analysis" identity-type="datastore" table="analyses">
+      <inheritance strategy="new-table" />
+      <field name="status">
+        <column name="status" jdbc-type="LONGVARCHAR" />
+      </field>
       <field name="score">
         <column name="score" jdbc-type="INTEGER" />
       </field>
+    </class>
+    
+    <class name="Scraper" identity-type="datastore" table="scrapers">
+      <inheritance strategy="new-table" />
     </class>
     
     <class name="Comment" identity-type="datastore" table="comments">

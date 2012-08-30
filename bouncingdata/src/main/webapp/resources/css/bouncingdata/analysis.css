@@ -288,7 +288,7 @@ li.comment-item .comment-score.comment-score-positive, .anls-score.anls-score-po
   color: green;
 }
 
-li.comment-item .comment-score.comment-score-negative, .anls-score.anls-score.negative {
+li.comment-item .comment-score.comment-score-negative, .anls-score.anls-score-negative {
   color: red;
 }
 

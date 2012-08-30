@@ -19,8 +19,8 @@
 }
 
 #stream .event img.avatar {
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   border: 1px solid #DDDDDD;
   border-radius: 3px;
 }
@@ -31,7 +31,7 @@
   border-radius: 2px;
   margin-left: 10px;
   padding: 5px 10px;
-  width: 500px;
+  width: 480px;
 }
 
 #stream .event-content:hover {
@@ -54,8 +54,8 @@
 }
 
 #stream .event .event-content .thumbnail a {
-  width: 150px;
-  height: 200px;
+  width: 90px;
+  height: 110px;
   display: block;
 }
 

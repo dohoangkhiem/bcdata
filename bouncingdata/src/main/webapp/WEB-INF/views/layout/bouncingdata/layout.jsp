@@ -29,6 +29,8 @@
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/main.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/dashboard.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/activitystream.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workbench.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
   
   <script type="text/javascript" src="<c:url value="/resources/dojo/dojo.js" />"> </script>
   <script type="text/javascript" src="<c:url value="/resources/spring/Spring.js" />"> </script>

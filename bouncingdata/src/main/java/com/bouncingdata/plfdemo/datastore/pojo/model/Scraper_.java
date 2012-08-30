@@ -1,39 +1,33 @@
 package com.bouncingdata.plfdemo.datastore.pojo.model;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Index;
-import javax.jdo.annotations.Join;
-import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
-@Deprecated
-public class Application {
+public class Scraper_ {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
   private String name;
   private String description;
   private String language;
-  @Index(name="app_guid_idx", unique="true")
-  @Unique
-  private String guid;
+  @Index(name="scraper_guid_idx", unique="true")
+  private @Unique String guid;
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
+  private User user;
   private int lineCount;
-  private boolean isPublished;
+  private boolean published;
   private Date createAt;
   private Date lastUpdate;
-  private String tags;
-  @NotPersistent
-  @Join
-  private Set<Tag> _tags;
-  
-  @Persistent(defaultFetchGroup="true")
-  private User user;
+  @Persistent(mappedBy="scraper")
+  List<Dataset> datasets;
   
   public int getId() {
     return id;
@@ -65,17 +59,23 @@ public class Application {
   public void setGuid(String guid) {
     this.guid = guid;
   }
-  /*public int getAuthor() {
-    return author;
+  public User getUser() {
+    return user;
   }
-  public void setAuthor(int author) {
-    this.author = author;
-  }*/
+  public void setUser(User user) {
+    this.user = user;
+  }
   public int getLineCount() {
     return lineCount;
   }
   public void setLineCount(int lineCount) {
     this.lineCount = lineCount;
+  }
+  public boolean isPublished() {
+    return published;
+  }
+  public void setPublished(boolean published) {
+    this.published = published;
   }
   public Date getCreateAt() {
     return createAt;
@@ -89,37 +89,12 @@ public class Application {
   public void setLastUpdate(Date lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
-  public boolean isPublished() {
-    return isPublished;
+  public List<Dataset> getDatasets() {
+    return datasets;
   }
-  public void setPublished(boolean isPublished) {
-    this.isPublished = isPublished;
-  }
-  /*public String getAuthorName() {
-    return authorName;
-  }
-  public void setAuthorName(String authorName) {
-    this.authorName = authorName;
-  }*/
-  public User getUser() {
-    return user;
-  }
-  public void setUser(User user) {
-    this.user = user;
-  }
-  public String getTags() {
-    return tags;
-  }
-  public void setTags(String tags) {
-    this.tags = tags;
-  }
-  public Set<Tag> get_tags() {
-    return _tags;
-  }
-  public void set_tags(Set<Tag> _tags) {
-    this._tags = _tags;
+  public void setDatasets(List<Dataset> datasets) {
+    this.datasets = datasets;
   }
   
-  
-  
+    
 }

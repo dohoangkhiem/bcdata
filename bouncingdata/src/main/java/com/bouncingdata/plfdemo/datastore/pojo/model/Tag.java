@@ -3,7 +3,6 @@ package com.bouncingdata.plfdemo.datastore.pojo.model;
 import java.util.Date;
 
 import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 
 @PersistenceCapable
 public class Tag {
