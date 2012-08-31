@@ -244,5 +244,7 @@ public interface DatastoreService {
     
   public Scraper getScraperByGuid(String guid) throws Exception;
   
+  public List<Scraper> getScraperList(int userId);
+  
   public List<Scraper> getPublicScrapers(int userId) throws Exception;
 }

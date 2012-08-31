@@ -41,14 +41,18 @@
             </div>
           </div>
           <div class="browser-separator"></div>
-          <div class="application-list-panel">
+          <div class="analysis-list-panel">
             <h4 style="cursor: pointer;">Analyses</h4>
-            <div id="application-list"></div>
+            <div id="analysis-list"></div>
+          </div>
+          <div class="browser-separator"></div>
+          <div class="scraper-list-panel">
+            <h4 style="cursor: pointer;">Scrapers</h4>
+            <div id="scraper-list"></div>
           </div>
           <div class="show-all"><a id="show-all-button" href="javascript:void(0)">Back</a></div>
           <div class="clear"></div>
-        </div>
-        
+        </div>        
       </div>
     </div>
   </div>
@@ -104,8 +108,22 @@
       </div>
       <div class="popup upload-data-dialog" id="upload-data-dialog" title="Upload data">
         <form>
-          <fieldset></fieldset>
+          <fieldset>
+            <label>Select your file</label> &nbsp;
+            <input type="file" /> &nbsp;
+          </fieldset>
         </form>
+      </div>
+      
+      <div class="popup new-dialog" id="new-dialog" title="Create new script">
+        <ul class="select-type">
+          <li class="script-type" script-type="analysis"><a href="#">Analysis</a></li>
+          <li class="script-type" script-type="scraper"><a href="#">Scraper</a></li>
+        </ul>
+        <ul class="select-language">
+          <li class="script-language" lang="python"><a href="#">Python</a></li>
+          <li class="script-language" lang="r"><a href="#">R</a></li>
+        </ul>
       </div>
     </div> 
   </div>

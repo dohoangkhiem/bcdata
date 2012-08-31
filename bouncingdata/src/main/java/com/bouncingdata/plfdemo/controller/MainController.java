@@ -3,9 +3,11 @@ package com.bouncingdata.plfdemo.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
@@ -57,6 +59,22 @@ public class MainController {
     String username = principal.getName();
     model.addAttribute("username", username);
     return "create";
+  }
+  
+  @RequestMapping(value="/mystuff", method=RequestMethod.GET)
+  public @ResponseBody Map<String,List> getMyStuff(ModelMap model, Principal principal) {
+    User user = (User) ((Authentication) principal).getPrincipal();
+    if (user == null) return null;
+    int userId = user.getId();
+    Map<String,List> stuffs = new HashMap<String, List>();
+    try {
+      stuffs.put("analyses", datastoreService.getAnalysisList(userId));
+      stuffs.put("scrapers", datastoreService.getScraperList(userId));
+    } catch (Exception e) {
+      logger.error("Failed  to retrieve user stuff, user {} ", user.getUsername());
+      logger.error("Exception detail: ", e);
+    }
+    return stuffs;
   }
   
   @RequestMapping(value = "/dataset", method = RequestMethod.GET)

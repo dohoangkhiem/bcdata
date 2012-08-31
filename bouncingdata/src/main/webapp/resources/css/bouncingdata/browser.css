@@ -52,7 +52,7 @@
   z-index: -99;
 }
 
-.browser-container .dataset-list-panel h4, .browser-container .application-list-panel h4 {
+.browser-container .dataset-list-panel h4, .browser-container .analysis-list-panel h4, .browser-container .scraper-list-panel h4 {
   margin: 5px 0;
   padding: 5px 0 5px 5px;
   background-color: #DDDDDD;

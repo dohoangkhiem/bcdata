@@ -384,4 +384,9 @@ public class DatastoreServiceImpl implements DatastoreService {
     return dataStorage.getPublicScrapers(userId);
   }
 
+  @Override
+  public List<Scraper> getScraperList(int userId) {
+    return dataStorage.getScraperList(userId);
+  }
+
 }

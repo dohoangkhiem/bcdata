@@ -2,6 +2,7 @@ function Browser() {
   this.mode = "all";
   this.myDatasets = {};
   this.myApplications = {};
+  this.myStuff = {};
 }
 
 Browser.prototype.init = function() {
@@ -11,8 +12,9 @@ Browser.prototype.init = function() {
     $("#browser-tabs" ).tabs();
     
     // load datasets, applications in "My stuff" tab
-    me.getDatasetList();
-    me.getApplicationList();
+    //me.getDatasetList();
+    //me.getApplicationList();
+    me.getMyStuff();
     me.setMode("all");
     
     $('#browser-tabs .dataset-list-panel h4').click(function() {
@@ -22,12 +24,19 @@ Browser.prototype.init = function() {
       return false;
     });
     
-    $('#browser-tabs .application-list-panel h4').click(function() {
+    $('#browser-tabs .analysis-list-panel h4').click(function() {
       if (!$(this).next().is(':empty')) {
         $(this).next().toggle('fast');
       }
       return false;
     })
+    
+    $('#browser-tabs .scraper-list-panel h4').click(function() {
+      if (!$(this).next().is(':empty')) {
+        $(this).next().toggle('fast');
+      }
+      return false;
+    });
     
     // initializes search
     var searchFunc = function() {
@@ -64,6 +73,9 @@ Browser.prototype.setMode = function(mode) {
   }
 }
 
+/**
+ * @deprecated
+ */
 Browser.prototype.setMyDatasets = function(datasetList) {
   //this.myDatasets = datasetList;
   for (index in datasetList) {
@@ -71,7 +83,9 @@ Browser.prototype.setMyDatasets = function(datasetList) {
     this.myDatasets[item.guid] = item;
   }
 }
-
+/**
+ * @deprecated
+ */
 Browser.prototype.setMyApplications = function(applicationList) {
   //this.myApplications = applicationList;
   for (index in applicationList) {
@@ -80,7 +94,9 @@ Browser.prototype.setMyApplications = function(applicationList) {
   }
 }
 
-
+/**
+ * @deprecated
+ */
 Browser.prototype.getDatasetList = function() {
   var me = this;
   $(function() {
@@ -89,7 +105,7 @@ Browser.prototype.getDatasetList = function() {
       dataType : "json",
       success : function(json) {
         me.setMyDatasets(json);
-        me.loadItems(me.myDatasets, "dataset");
+        me.loadMyStuff(me.myDatasets, "dataset");
       },
       error : function() {
         console.debug('Failed to load list of dataset');
@@ -98,6 +114,9 @@ Browser.prototype.getDatasetList = function() {
   });
 }
 
+/**
+ * @deprecated
+ */
 Browser.prototype.getApplicationList = function() {
   var me = this;
   $(function() {
@@ -106,7 +125,7 @@ Browser.prototype.getApplicationList = function() {
       dataType: "json", 
       success: function(json) {
         me.setMyApplications(json);
-        me.loadItems(me.myApplications, "application");
+        me.loadMyStuff(me.myApplications, "application");
       }, 
       error: function() {
         console.debug('Failed to load list of application');
@@ -115,15 +134,50 @@ Browser.prototype.getApplicationList = function() {
   });
 }
 
-Browser.prototype.loadItems = function(itemMap, type) {
+
+
+Browser.prototype.getMyStuff = function() {
+  var me = this;
+  $.ajax({
+    url: ctx + '/main/mystuff',
+    dataType: 'json',
+    success: function(result) {
+      var analyses = result['analyses'];
+      var scrapers = result['scrapers'];
+      me.setMyStuff(analyses, scrapers);
+      me.loadMyStuff(analyses, 'analysis');
+      me.loadMyStuff(scrapers, 'scraper');
+    },
+    error: function() {
+      console.debug('Failed to load my stuff.');
+    }
+  });
+}
+
+Browser.prototype.setMyStuff = function(analyses, scrapers) {
+  this.myStuff['analyses'] = {};
+  this.myStuff['scrapers'] = {};
+  for (index in analyses) {
+    var item = analyses[index];
+    this.myStuff.analyses[item.guid] = item;
+  }
+  
+  for (index in scrapers) {
+    var item = scrapers[index];
+    this.myStuff.scrapers[item.guid] = item;
+  }
+}
+
+Browser.prototype.loadMyStuff = function(stuffs, type) {
   var $container;
-  if (type == "application") $container = $('#browser-tabs #application-list');
+  if (type == "analysis") $container = $('#browser-tabs #analysis-list');
+  else if (type == "scraper") $container = $('#browser-tabs #scraper-list');
   else if (type == 'dataset') $container = $('#browser-tabs #dataset-list');
   else return;
   
   $container.empty();
-  for (key in itemMap) {
-    var itemObj = itemMap[key];
+  for (key in stuffs) {
+    var itemObj = stuffs[key];
     var $item = $('<div class="browser-item"></div>');
     $item.addClass(type + "-item");
     
@@ -145,7 +199,7 @@ Browser.prototype.loadItems = function(itemMap, type) {
     $description.append('<span>' + itemObj['description'] + '</span>');
     $itemDetail.append($description);
     
-    if (type == "application") {
+    if (type == "analysis" || type == "scraper") {
       $itemDetail.append('<div class="browser-item-info application-language"><strong>Language: </strong>' + itemObj['language'] + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Author: </strong>' + itemObj.user.username + '</div>');
       $itemDetail.append('<div class="browser-item-info"><strong>Line count: </strong>' + itemObj['lineCount'] + '</div>');
@@ -179,6 +233,7 @@ Browser.prototype.loadItems = function(itemMap, type) {
     $expandLink.click(expandFunc($itemDetail, $expandLink));
     $itemDetail.hide();
     
+    // open new tab when clicking on 'open' link
     $openLink.click(function(itemObj, type) {
       return function() {
         var workbench = com.bouncingdata.Workbench;
@@ -187,8 +242,8 @@ Browser.prototype.loadItems = function(itemMap, type) {
           workbench.$tabs.tabs('select', '#' + workbench.tabsInfo[itemObj.guid].tabId);
           return false;
         }
-        if (type == "application") {
-          workbench.createTab(itemObj);          
+        if (type == "analysis" || type == "scraper") {
+          workbench.createTab(itemObj, itemObj.name, type);          
         } else if (type == "dataset") {
           workbench.createTab(itemObj, null, 'dataset');
         }
@@ -200,13 +255,16 @@ Browser.prototype.loadItems = function(itemMap, type) {
 
 Browser.prototype.showAll = function() {
   this.setMode("all");
-  this.loadItems(this.myDatasets, 'dataset');
-  this.loadItems(this.myApplications, 'application');
+  //this.loadMyStuff(this.myDatasets, 'dataset');
+  //this.loadMyStuff(this.myApplications, 'application');
+  this.loadMyStuff(this.myStuff['analyses'], 'analysis');
+  this.loadMyStuff(this.myStuff['scrapers'], 'scraper');
 }
 
 Browser.prototype.refreshMyStuff = function() {
-  this.getApplicationList();
-  this.getDatasetList();
+  //this.getApplicationList();
+  //this.getDatasetList();
+  this.getMyStuff();
 }
 
 /**
@@ -224,8 +282,8 @@ Browser.prototype.search = function(query) {
         var apps = json['applications'];
         var datasets = json['datasets'];
         me.setMode("search");
-        me.loadItems(datasets, "dataset");
-        me.loadItems(apps, "application");
+        me.loadMyStuff(datasets, "dataset");
+        me.loadMyStuff(apps, "application");
       }, 
       error: function() {
         console.debug("Failed to execute search request.");

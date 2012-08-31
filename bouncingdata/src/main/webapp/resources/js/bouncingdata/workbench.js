@@ -85,7 +85,7 @@ Workbench.prototype.init = function() {
     
     me.$uploadDataDialog = $('.workbench-container #upload-data-dialog').dialog({
       autoOpen: false,
-      height: 250,
+      height: 200,
       width: 400,
       modal: true,
       resizable: false,
@@ -97,6 +97,31 @@ Workbench.prototype.init = function() {
           $(this).dialog('close');
         }
       }
+    });
+    
+    me.$newDialog = $('.workbench-container #new-dialog').dialog({
+      autoOpen: false,
+      height: 200,
+      width: 300,
+      modal: true,
+      resizable: false,
+      buttons: {},
+      open: function(event, ui) {
+        $('ul.select-language', me.$newDialog).hide();
+        $('ul.select-type', me.$newDialog).show();
+      }
+    });
+    
+    $('li.script-type', me.$newDialog).click(function() {
+      $('ul.select-type', me.$newDialog).hide();
+      $('.select-language', me.$newDialog).show();
+      me.$newDialog.attr('script-type', $(this).attr('script-type')); 
+    });
+    
+    $('li.script-language', me.$newDialog).click(function() {
+      me.$newDialog.attr('lang', $(this).attr('lang'));
+      me.$newDialog.dialog('close');
+      me.createTab(null, null, me.$newDialog.attr('script-type'), me.$newDialog.attr('lang'));
     });
     
     // get the tab template
@@ -114,15 +139,16 @@ Workbench.prototype.init = function() {
         me.$tabs.tabs('select', index);
             
         var guid = me.tabsIndex[index].guid;
-        if (me.tabsIndex[index].type == 'app') {
+        var type = me.tabsIndex[index].type;
+        if (type == 'analysis' || type == 'scraper') {
           var app = null;
           if (guid) app = me.tabsInfo[guid].app;
-          var $tabContent = me.makeTabContent(ui.panel.id, app, 'app');
+          var $tabContent = me.makeTabContent(ui.panel.id, app, type);
           $(ui.panel).append($tabContent).addClass('workbench-tab-panel');
           
           // complete UI & functionalities for this tab
           me.processTab(index, $tabContent);
-        } else if (me.tabsIndex[index].type == 'dataset') {
+        } else if (type == 'dataset') {
           var dataset = me.tabsInfo[guid].dataset;
           var $tabContent = me.makeTabContent(ui.panel.id, dataset, 'dataset');
           $(ui.panel).append($tabContent).addClass('dataset-tab-panel');
@@ -155,7 +181,7 @@ Workbench.prototype.init = function() {
       return false;
     });
     
-    me.createTab(null);
+    me.createTab(null, null, 'analysis');
     
     // 
     $('.workbench-ide .app-actions').click(function(e) {     
@@ -176,7 +202,8 @@ Workbench.prototype.init = function() {
           me.cloneApp(index);
         } else if (actionId == 'new-app') {
           // create empty tab
-          me.createTab(null);
+          //me.createTab(null, null, 'analysis');
+          me.$newDialog.dialog('open');
         } else if (actionId == 'upload-data') {
           me.$uploadDataDialog.dialog('open');
         }
@@ -189,20 +216,21 @@ Workbench.prototype.init = function() {
 /**
  * Create a new tab to view application workbench or dataset
  */
-Workbench.prototype.createTab = function(obj, tabName, type) {
+Workbench.prototype.createTab = function(obj, tabName, type, lang) {
   if (type == 'dataset') return this.openDataset(obj, tabName);
-  else return this.openApp(obj, tabName);
+  else return this.openApp(obj, tabName, type, lang);
 } 
 
-Workbench.prototype.openApp = function(app, tabName) {
+Workbench.prototype.openApp = function(app, tabName, type, lang) {
   var index = this.getNumberOfTabs();
-  this.tabsIndex[index] = {type: 'app'};
+  this.tabsIndex[index] = {type: type};
   if (!app) {
     this.tabsCounter++;
     this.untitledCounter++;
     this.currentApp = null;
     if (!tabName) tabName = 'Untitled' + this.untitledCounter;
     this.tabsIndex[index].guid = null;
+    this.tabsIndex[index].lang = lang;
     //this.tabsIndex[index].name = tabName;
     this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, tabName);
   } else {
@@ -282,8 +310,7 @@ Workbench.prototype.resizeEditor = function($tab) {
  * Builds tab content from the template for particular application or dataset 
  */
 Workbench.prototype.makeTabContent = function(tabId, obj, type) {
-  type = type || 'app';
-  if (type == 'app') {
+  if (type == 'analysis' || type == 'scraper') {
     var tabObj = {
         tabId: tabId,
         appName: obj?obj.name:'',
@@ -315,6 +342,7 @@ Workbench.prototype.makeTabContent = function(tabId, obj, type) {
 Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   
   var type = this.tabsIndex[tabIndex].type;
+  var lang = this.tabsIndex[tabIndex].lang;
   var $tab = $tabContent.parent();
   var tabId = $tab.attr('id');
   var guid = this.tabsIndex[tabIndex].guid;
@@ -439,13 +467,14 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   var editor = ace.edit(editorDom);
   editor.getSession().setMode('ace/mode/python');
   
+  var url = type=="analysis"?(ctx + "/app/a/" + guid):type=="scraper"?(ctx + "/app/scr/" + guid):null;
   // Retrieve app. details
   if (app) {
     $(function() {
       me.setStatus($tab, "loading");
       console.info('Retrieving application details...');
       $.ajax({
-        url: ctx + "/app/a/" + guid,
+        url: url,
         success: function(result) {
           console.debug(result);
           me.setCode(result.code, $tab);
@@ -460,6 +489,8 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
         }
       });
     });
+  } else {
+    me.setLanguage(lang, $tab);
   }
   
 
@@ -789,6 +820,14 @@ Workbench.prototype.getCode = function($tab) {
   var editorDom = $('.app-code-editor .code-editor', $tab)[0];
   var editor = ace.edit(editorDom);
   return editor.getSession().getDocument().getValue();
+}
+
+Workbench.prototype.setLanguage = function(lang, $tab) {
+  $('.new-app-info .language-select', $tab).val(lang);
+}
+
+Workbench.prototype.getLanguage = function($tab) {
+  
 }
 
 Workbench.prototype.renderOutput = function(datasets, visuals, $tab, app) {
