@@ -127,13 +127,24 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   $container.append($vizContainer);
   
   if (editMode) {
+    
+    // add info tooltip
+    var $info = $('<div class="viz-dimension-info"></div>');
+    $info.css('position', 'absolute').css('top', 0).css('left', 0)
+      .css('border', '1px solid #555555').css('background-color', 'yellow').css('z-index', 9999);
+    $info.css('padding', '2px').css('opacity', 0.8).css('font-size', '10px');
+    
+    $vizContainer.append($info);
+    $info.hide();
+    
     var _x = $container.offset().left;
     var _y = $container.offset().top;
     var _w = $container.width(); // should be fixed
     var _h = $container.height();
     
     $vizContainer.draggable({ 
-      containment: [_x, _y, _x + _w - w, 140000], 
+      //containment: [_x, _y, _x + _w - w, 140000],
+      containment: '#dashboard-wrapper-' + $container.attr('tabid'), 
       handle: '.viz-handle', 
       iframeFix: true, 
       grid: [10, 10] 
@@ -142,7 +153,8 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $vizContainer.resizable({
       containment: '#' + $container.attr('id'),
       grid: 10,
-      aspectRatio: type=="png"
+      //aspectRatio: type=="png"
+      aspectRatio: false
     });
       
     $vizContainer.bind('click', function(event, ui) {
@@ -150,10 +162,12 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     })
     .bind('dragstart', function(event, ui) {
       $(this).css('z-index', me.zCounter[$container.attr('tabid')]++);
+      $info.show();
     })
     .bind('resizestart', function(event, ui) {
       $(this).css('z-index', me.zCounter[$container.attr('tabid')]++);
       var $currentViz = this;
+      $info.show();
       
       // iframe fix for resizing
       $("iframe", $container).each(function() {
@@ -179,10 +193,13 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
         $container.css('height', ($container.height() + 15) + "px");
         me.updateRuler($container);
       }
+      $info.text('left: ' + Math.round(ui.position.left) + ', top: ' + Math.round(ui.position.top));
+      
     })
     
     .bind('dragstop', function(event, ui) {  
       me.hideSnapLines($container);
+      $info.hide();
       
       if (ui.position.top + $(this).height() >= $container.height()) {
         $container.css('heigth', (ui.position.top + $(this).height() + 10) + "px");
@@ -202,7 +219,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
       
       var cw = $(this).width(), ch = $(this).height(); 
       $inner.css('height', (ch - 15) + "px").css('width', (cw - 10) + "px");
-      $vizContainer.draggable("option", "containment", [_x, _y, _x + _w - cw, 140000]);
+      //$vizContainer.draggable("option", "containment", [_x, _y, _x + _w - cw, 140000]);
       
       // update inner iframe-fix position
       if ($inner[0].tagName.toLowerCase() == "iframe") {
@@ -213,10 +230,12 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
           .css('height', $inner.height());
       }
       
+      $info.text('width: ' + Math.round($(this).width()) + ', height: ' + Math.round($(this).height()));
     })
     
     .bind('resizestop', function(event, ui) {
       me.hideSnapLines($container);
+      $info.hide();
       
       if (ui.position.top + $(this).height() >= $container.height()) {
         $container.css('heigth', (ui.position.top + $(this).height() + 10) + "px");
@@ -315,7 +334,7 @@ Dashboard.prototype.lock = function($container, lock) {
       $(this).hover(null, null);
       $('viz-handle', this).hide();
       $(this).css('border-style', 'none');
-      var $ruler = $container.prev();
+      var $ruler = $('.dashboard-ruler', $container.parent());
       if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
         console.debug("Can't find ruler for the dashboard " + $container);
         return; 
@@ -335,7 +354,7 @@ Dashboard.prototype.lock = function($container, lock) {
         $(this).removeClass('viz-container-hover');
       });
       $(this).css('border-style', 'solid');
-      var $ruler = $container.prev();
+      var $ruler = $('.dashboard-ruler', $container.parent());
       if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
         console.debug("Can't find ruler for the dashboard " + $container);
         return; 
@@ -349,8 +368,8 @@ Dashboard.prototype.lock = function($container, lock) {
  * Update dashboard ruler to match the height
  */
 Dashboard.prototype.updateRuler = function($container) {
-  var $ruler = $container.prev();
-  if (!$ruler || !$ruler.hasClass("dashboard-ruler")) {
+  var $ruler = $('.dashboard-ruler', $container.parent());
+  if (!$ruler) {
     console.debug("Can't find ruler for the dashboard " + $container);
     return; 
   }
@@ -362,7 +381,7 @@ Dashboard.prototype.updateRuler = function($container) {
  * Display the snap lines for resizing/dragging alignment
  */
 Dashboard.prototype.showSnapLines = function($viz, $container, isResized) {
-  var $ruler = $container.prev();
+  var $ruler = $('.dashboard-ruler', $container.parent());
   var $topLine = $('.snap-line-top', $ruler), $leftLine = $('.snap-line-left', $ruler),
     $rightLine = $('.snap-line-right', $ruler), $bottomLine = $('.snap-line-bottom', $ruler);
   
@@ -376,7 +395,7 @@ Dashboard.prototype.showSnapLines = function($viz, $container, isResized) {
 }
 
 Dashboard.prototype.hideSnapLines = function($container) {
-  var $ruler = $container.prev();
+  var $ruler = $('.dashboard-ruler', $container.parent());
   $('.snap-line', $ruler).css('opacity', 0);
 }
 

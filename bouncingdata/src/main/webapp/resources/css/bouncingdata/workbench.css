@@ -142,6 +142,7 @@
 
 .workbench-ide-content .app-output-viz .app-output-viz-dashboard {
   position: relative;
+  overflow: hidden;
 }
 
 .workbench-ide-content .app-output-viz .dashboard-ruler {

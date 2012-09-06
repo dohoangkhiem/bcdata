@@ -172,6 +172,7 @@
               <div class="snap-line-right snap-line"></div>
               <div class="snap-line-bottom snap-line"></div>
             </div>
+            <div id="dashboard-wrapper-\${tabId}" class="dashboard-wrapper" style="width: 800px;position: absolute; visibility: hidden; height: 14000px;"></div>
             <div class="viz-dashboard" id="viz-dashboard-\${tabId}"></div>
           </div>
         </div>
