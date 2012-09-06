@@ -6,11 +6,11 @@ import java.util.Map;
 public class ExecutionResult {
   private String output;
   private Map<String, VisualizationDetail> visualizations;
-  private Map<String, String> datasets;
+  private Map<String, DatasetDetail> datasets;
   private int statusCode;
   private String message;
   
-  public ExecutionResult(String output, Map<String, VisualizationDetail> visualizations, Map<String, String> datasets, int statusCode, String msg) {
+  public ExecutionResult(String output, Map<String, VisualizationDetail> visualizations, Map<String, DatasetDetail> datasets, int statusCode, String msg) {
     this.output = output;
     this.visualizations = visualizations;
     this.statusCode = statusCode;
@@ -42,11 +42,11 @@ public class ExecutionResult {
     this.visualizations = visualizations;
   }
 
-  public Map<String, String> getDatasets() {
+  public Map<String, DatasetDetail> getDatasets() {
     return datasets;
   }
 
-  public void setDatasets(Map<String, String> datasets) {
+  public void setDatasets(Map<String, DatasetDetail> datasets) {
     this.datasets = datasets;
   }
   

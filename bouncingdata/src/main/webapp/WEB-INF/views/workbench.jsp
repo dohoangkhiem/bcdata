@@ -107,11 +107,13 @@
         </form>
       </div>
       <div class="popup upload-data-dialog" id="upload-data-dialog" title="Upload data">
-        <form>
+        <form id="file-upload-form" method="POST" enctype="multipart/form-data">
           <fieldset>
             <label>Select your file</label> &nbsp;
-            <input type="file" /> &nbsp;
+            <input id="file" name="file" type="file" /> &nbsp;
           </fieldset>
+          <img alt="Uploading" src="<c:url value="/resources/images/loader32.gif" />" class="upload-in-progress">
+          <span class="upload-status"></span>
         </form>
       </div>
       

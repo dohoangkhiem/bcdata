@@ -2,6 +2,7 @@ package com.bouncingdata.plfdemo.controller;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +27,16 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.ScraperDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
-import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
+import com.bouncingdata.plfdemo.utils.ScriptType;
 import com.bouncingdata.plfdemo.utils.Utils;
 
 @Controller
@@ -44,7 +48,7 @@ public class AppController {
   @Autowired private DatastoreService datastoreService;
   @Autowired private ApplicationExecutor appExecutor;
   @Autowired private ApplicationStoreService appStoreService;
-  @Autowired private BcDatastoreService bcDatastoreService;
+  //@Autowired private BcDatastoreService bcDatastoreService;
   
   @RequestMapping(value="/a/{guid}", method = RequestMethod.GET)
   public @ResponseBody AnalysisDetail getApplication(@PathVariable String guid) {
@@ -52,7 +56,7 @@ public class AppController {
       Analysis anls = datastoreService.getAnalysisByGuid(guid);
       if (anls == null) return null;
       
-      List<Visualization> visuals = datastoreService.getAnalysisVisualization(anls.getId());
+      List<Visualization> visuals = datastoreService.getAnalysisVisualizations(anls.getId());
       Map<String, VisualizationDetail> visualsMap = null;
       if (visuals != null) {
         visualsMap = new HashMap<String, VisualizationDetail>();
@@ -70,10 +74,17 @@ public class AppController {
         }
       }
       
-      String code = appStoreService.getScriptCode(guid, null);
-      Map<String, String> datasets = bcDatastoreService.getApplicationDataset(anls.getId());
-      
       Map<String, DashboardPosition> dashboard = Utils.parseDashboard(anls);
+      
+      String code = appStoreService.getScriptCode(guid, null);
+      List<AnalysisDataset> relations = datastoreService.getAnalysisDatasets(anls.getId());
+      List<Dataset> datasets = null;
+      if (relations != null && relations.size() > 0) {
+        datasets = new ArrayList<Dataset>();
+        for (AnalysisDataset anlsDts : relations) {
+          datasets.add(anlsDts.getDataset());
+        }
+      }
       
       AnalysisDetail detail = new AnalysisDetail(code, datasets, visualsMap, dashboard);
       return detail;
@@ -89,7 +100,7 @@ public class AppController {
       Analysis anls = datastoreService.getAnalysisByGuid(guid);
       if (anls == null) return null;
     
-      List<Visualization> visuals = datastoreService.getAnalysisVisualization(anls.getId());
+      List<Visualization> visuals = datastoreService.getAnalysisVisualizations(anls.getId());
       Map<String, VisualizationDetail> visualsMap = null;
       if (visuals != null) {
         visualsMap = new HashMap<String, VisualizationDetail>();
@@ -122,7 +133,7 @@ public class AppController {
       Analysis anls = datastoreService.getAnalysisByGuid(guid);
       if (anls == null) return null;
     
-      List<Visualization> visuals = datastoreService.getAnalysisVisualization(anls.getId());
+      List<Visualization> visuals = datastoreService.getAnalysisVisualizations(anls.getId());
       Map<String, VisualizationDetail> visualsMap = null;
       Map<String, String> visualNames = null;
       if (visuals != null) {
@@ -158,29 +169,36 @@ public class AppController {
   }
     
   @RequestMapping(value="/e/{appGuid}", method = RequestMethod.POST)
-  public @ResponseBody ExecutionResult executeApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, ModelMap model, Principal principal) {
+  public @ResponseBody ExecutionResult executeApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code,
+      @RequestParam(value="type", required=true) String type, ModelMap model, Principal principal) {
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");
+    BcDataScript script = null;
     try {
-      Analysis anls = datastoreService.getAnalysisByGuid(appGuid);
-      if (anls == null) return new ExecutionResult(null, null, null, -1, "Application not found.");
+      if (ScriptType.SCRAPER.getType().equals(type)) {
+        script = datastoreService.getScraperByGuid(appGuid);
+      } else if (ScriptType.ANALYSIS.getType().equals(type)) {
+        script = datastoreService.getAnalysisByGuid(appGuid);
+      }
       
-      if (anls.getUser().getId() != user.getId()) {
+      if (script == null) return new ExecutionResult(null, null, null, -1, "Application not found.");
+      
+      if (script.getUser().getId() != user.getId()) {
         return new ExecutionResult(null, null, null, -1, "No permission to run this app.");
       }
       
       try {
-        appStoreService.saveApplicationCode(appGuid, anls.getLanguage(), code);
+        appStoreService.saveApplicationCode(appGuid, script.getLanguage(), code);
       } catch (IOException e) {
         logger.error("", e);
       }
       
-      datastoreService.executeAnalysis(user, anls);
+      datastoreService.doExecuteAction(user, script);
       
-      if ("python".equals(anls.getLanguage())) {
-        return appExecutor.executePython(anls, code, user);
-      } else if ("r".equals(anls.getLanguage())) {
-        return appExecutor.executeR(anls, code, user);
+      if ("python".equals(script.getLanguage())) {
+        return appExecutor.executePython(script, code, user);
+      } else if ("r".equals(script.getLanguage())) {
+        return appExecutor.executeR(script, code, user);
       } else {
         return new ExecutionResult(null, null, null, -1, "Not supported language.");
       }
@@ -292,8 +310,8 @@ public class AppController {
       String code = appStoreService.getScriptCode(guid, null);
       
       // get scraper datasets 
-      
-      return new ScraperDetail(code, scr, null);
+      List<Dataset> dsList = datastoreService.getScraperDataset(scr.getId());
+      return new ScraperDetail(code, scr, dsList);
       
     } catch (Exception e) {
       logger.error("", e);

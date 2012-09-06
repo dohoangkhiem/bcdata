@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 
 
 public class SearchResult {
   private List<Dataset>     datasets;
   private List<Analysis> analyses;
+  private List<Scraper> scrapers;
   
   public SearchResult() {
     datasets = new ArrayList<Dataset>();
@@ -27,6 +29,14 @@ public class SearchResult {
   }
   public void setAnalyses(List<Analysis> applications) {
     this.analyses = applications;
+  }
+
+  public List<Scraper> getScrapers() {
+    return scrapers;
+  }
+
+  public void setScrapers(List<Scraper> scrapers) {
+    this.scrapers = scrapers;
   }
   
   

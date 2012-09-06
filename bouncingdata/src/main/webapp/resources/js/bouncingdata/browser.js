@@ -135,18 +135,14 @@ Browser.prototype.getApplicationList = function() {
 }
 
 
-
 Browser.prototype.getMyStuff = function() {
   var me = this;
   $.ajax({
     url: ctx + '/main/mystuff',
     dataType: 'json',
     success: function(result) {
-      var analyses = result['analyses'];
-      var scrapers = result['scrapers'];
-      me.setMyStuff(analyses, scrapers);
-      me.loadMyStuff(analyses, 'analysis');
-      me.loadMyStuff(scrapers, 'scraper');
+      me.setMyStuff(result);
+      me.loadMyStuff(result);
     },
     error: function() {
       console.debug('Failed to load my stuff.');
@@ -154,21 +150,24 @@ Browser.prototype.getMyStuff = function() {
   });
 }
 
-Browser.prototype.setMyStuff = function(analyses, scrapers) {
-  this.myStuff['analyses'] = {};
-  this.myStuff['scrapers'] = {};
-  for (index in analyses) {
-    var item = analyses[index];
-    this.myStuff.analyses[item.guid] = item;
-  }
-  
-  for (index in scrapers) {
-    var item = scrapers[index];
-    this.myStuff.scrapers[item.guid] = item;
+Browser.prototype.setMyStuff = function(stuffs) {  
+  for (stuffName in stuffs) {
+    this.myStuff[stuffName] = {};
+    
+    for (index in stuffs[stuffName]) {
+      var item = stuffs[stuffName][index];
+      this.myStuff[stuffName][item.guid] = item;
+    }
   }
 }
 
-Browser.prototype.loadMyStuff = function(stuffs, type) {
+Browser.prototype.loadMyStuff = function(stuffs) {
+  this.loadStuff(stuffs['analyses'], 'analysis');
+  this.loadStuff(stuffs['datasets'], 'dataset');
+  this.loadStuff(stuffs['scrapers'], 'scraper');
+}
+
+Browser.prototype.loadStuff = function(stuffs, type) {
   var $container;
   if (type == "analysis") $container = $('#browser-tabs #analysis-list');
   else if (type == "scraper") $container = $('#browser-tabs #scraper-list');
@@ -189,6 +188,10 @@ Browser.prototype.loadMyStuff = function(stuffs, type) {
     $itemFooter.append($expandLink);
     var $openLink = $('<a class="browser-item-footer-link browser-item-action" href="javascript:void(0)">Open</a>');
     $itemFooter.append($openLink);
+    if (type == "dataset") {
+      var $viewLink = $('<a class="browser-item-footer-link browser-item-action" target="_blank" alt="View data page in new tab" href="' + ctx + '/dataset/view/' + itemObj['guid'] + '">View</a>');
+      $itemFooter.append($viewLink);
+    }
     $itemHeader.append($itemFooter);
     $item.append($itemHeader);
     
@@ -243,7 +246,7 @@ Browser.prototype.loadMyStuff = function(stuffs, type) {
           return false;
         }
         if (type == "analysis" || type == "scraper") {
-          workbench.createTab(itemObj, itemObj.name, type);          
+          workbench.createTab(itemObj, null, type);          
         } else if (type == "dataset") {
           workbench.createTab(itemObj, null, 'dataset');
         }
@@ -253,17 +256,25 @@ Browser.prototype.loadMyStuff = function(stuffs, type) {
   }
 }
 
+Browser.prototype.getStuff = function(guid, type) {
+  switch (type) {
+  case "analysis":
+    return this.myStuff['analyses'][guid];
+  case "scraper":
+    return this.myStuff['scrapers'][guid];
+  case 'dataset':
+    return this.myStuff['datasets'][guid];
+  default:
+    return null;
+  }
+}
+
 Browser.prototype.showAll = function() {
   this.setMode("all");
-  //this.loadMyStuff(this.myDatasets, 'dataset');
-  //this.loadMyStuff(this.myApplications, 'application');
-  this.loadMyStuff(this.myStuff['analyses'], 'analysis');
-  this.loadMyStuff(this.myStuff['scrapers'], 'scraper');
+  this.loadMyStuff(this.myStuff);
 }
 
 Browser.prototype.refreshMyStuff = function() {
-  //this.getApplicationList();
-  //this.getDatasetList();
   this.getMyStuff();
 }
 
@@ -279,11 +290,14 @@ Browser.prototype.search = function(query) {
         query: query
       },
       success: function(json) {
-        var apps = json['applications'];
-        var datasets = json['datasets'];
+        //var apps = json['applications'];
+        //var datasets = json['datasets'];
         me.setMode("search");
-        me.loadMyStuff(datasets, "dataset");
-        me.loadMyStuff(apps, "application");
+        //me.loadMyStuff(datasets, "dataset");
+        //me.loadMyStuff(apps, "application");
+        me.loadStuff(json['analyses'], 'analysis');
+        me.loadStuff(json['dataset'], 'dataset');
+        me.loadStuff(json['scrapers'], 'scraper');
       }, 
       error: function() {
         console.debug("Failed to execute search request.");

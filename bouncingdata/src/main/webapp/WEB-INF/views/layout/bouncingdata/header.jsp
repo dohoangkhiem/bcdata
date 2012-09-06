@@ -152,8 +152,8 @@
       <div class="app-output-tabs">
         <ul>
           <li><a href="#app-output-viz-\${tabId}">Visualization</a></li>
-          <li><a href="#app-output-code-\${tabId}">Code</a></li>
           <li><a href="#app-output-data-\${tabId}">Data</a></li>
+          <li><a href="#app-output-code-\${tabId}">Code</a></li>
         </ul>
         <div id="app-output-viz-\${tabId}" class="app-output-viz">
           <div><strong>Visualization Dashboard.</strong></div><br />

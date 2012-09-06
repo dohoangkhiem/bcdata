@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 public class AbstractBouncingDataTest extends TestCase {
@@ -45,7 +46,7 @@ public class AbstractBouncingDataTest extends TestCase {
     assertTrue(analyses.size() > 0);
     pm.close();
   }
-  
+    
   public void _testAnalysisComment() throws Exception {
     PersistenceManager pm = pmf.getPersistenceManager();
     

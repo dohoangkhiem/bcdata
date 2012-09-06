@@ -25,22 +25,13 @@ public class BcDatastoreService {
   
   @Autowired
   private JdbcBcDatastore jdbcBcDatastore;
-      
-  public Map<String, String> getApplicationDataset(int appId) throws Exception {
-    
-    List<Dataset> datasets = dataStorage.getAnalysisDataset(appId);
-    if (datasets == null) return null;
-    
-    Map<String, String> dsMap = new HashMap<String, String>();
-    for (Dataset ds : datasets) {
-      String json = jdbcBcDatastore.getDataset(ds.getName());
-      dsMap.put(ds.getName(), json);
-    }
-    return dsMap;
-  }
-  
+        
   public List<Map> getDatasetToList(String dataset) throws Exception {
     return jdbcBcDatastore.getDatasetToList(dataset);
+  }
+  
+  public String getDatasetToString(String dataset) throws Exception {
+    return jdbcBcDatastore.getDataset(dataset);
   }
   
   public List<Map> query(String query) throws Exception {

@@ -43,7 +43,7 @@
   
   <!-- Some external scripts like this need to be loaded in defer way -->
   <script type="text/javascript" src="<c:url value="/resources/js/ace-min/ace.js" />" charset="utf-8"></script>
-  
+  <script type="text/javascript" src="<c:url value="/resources/js/jquery.form.js" />"></script>
   <script>
     var ctx = '${pageContext.request.contextPath}';
     com.bouncingdata.Main.setContext(ctx);

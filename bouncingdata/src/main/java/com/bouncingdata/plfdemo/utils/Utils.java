@@ -1,13 +1,10 @@
 package com.bouncingdata.plfdemo.utils;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,14 +18,11 @@ import java.util.UUID;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.codehaus.jackson.JsonNode;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;

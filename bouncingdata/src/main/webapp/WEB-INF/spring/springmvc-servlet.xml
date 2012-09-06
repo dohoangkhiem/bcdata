@@ -23,15 +23,13 @@
   <!-- Resources mapping -->
   <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
-  
-  <!-- util:properties id="appStoreConfiguration" location="classpath:appstore.properties"/>
-  
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="properties"><ref bean="appStoreConfiguration"></ref></property>        
-  </bean-->
-  
+    
   <context:property-placeholder location="classpath:appstore.properties" />
-   
+  
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize" value="300000"/><!-- Max size in bytes. -->
+  </bean>
+  
   <bean id="localAppExecutor" class="com.bouncingdata.plfdemo.service.LocalApplicationExecutor">
     <property name="storePath" value="${com.bouncingdata.appstore.storePath}"></property>
     <property name="logDir" value="${com.bouncingdata.appstore.logDir}"></property>

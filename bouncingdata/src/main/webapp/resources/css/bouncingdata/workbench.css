@@ -403,3 +403,7 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
   float: left;
   margin-bottom: 8px;
 }
+
+#file-upload-form .upload-in-progress, #file-upload-form .upload-status {
+  display: none;
+}

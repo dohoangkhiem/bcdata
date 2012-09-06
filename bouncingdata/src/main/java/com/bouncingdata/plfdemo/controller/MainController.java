@@ -70,8 +70,9 @@ public class MainController {
     try {
       stuffs.put("analyses", datastoreService.getAnalysisList(userId));
       stuffs.put("scrapers", datastoreService.getScraperList(userId));
+      stuffs.put("datasets", datastoreService.getDatasetList(userId));
     } catch (Exception e) {
-      logger.error("Failed  to retrieve user stuff, user {} ", user.getUsername());
+      logger.error("Failed  to retrieve stuffs, user {} ", user.getUsername());
       logger.error("Exception detail: ", e);
     }
     return stuffs;
@@ -112,13 +113,13 @@ public class MainController {
   
   @RequestMapping(value = "/createapp", method = RequestMethod.POST)
   @ResponseBody
-  public String createApplication(@RequestParam(value = "appname", required = true) String appname,
+  public BcDataScript createApplication(@RequestParam(value = "appname", required = true) String appname,
       @RequestParam(value = "language", required = true) String language,
       @RequestParam(value = "description", required = true) String description,
       @RequestParam(value = "code", required = true) String code, 
       @RequestParam(value = "isPublic", required = true) int isPublic,
       @RequestParam(value = "tags", required = false) String tags, 
-      @RequestParam(value = "type", required = false) String type, ModelMap model, Principal principal) {
+      @RequestParam(value = "type", required = true) String type, ModelMap model, Principal principal) throws Exception {
     User user = (User) ((Authentication) principal).getPrincipal();
     if (user == null) {
       logger.debug("Can't get the user. Skip application creation.");
@@ -161,9 +162,10 @@ public class MainController {
     BcDataScript script;
     if (ScriptType.SCRAPER.getType().equals(type)) {
       script = new Scraper();
-    } else {
+    } else if (ScriptType.ANALYSIS.getType().equals(type)) {
       script = new Analysis();
-    }
+    } else return null;
+    
     script.setName(appname);
     script.setDescription(description);
     script.setLanguage(language);
@@ -192,12 +194,19 @@ public class MainController {
     } catch (Exception e) {
       logger.error("Error occurs when save application code, guid {}", guid);
     }
-   
-    return guid;
+    
+    if (ScriptType.ANALYSIS.getType().equals(type)) {
+      script = datastoreService.getAnalysis(script.getId());
+    } else if (ScriptType.SCRAPER.getType().equals(type)) {
+      script = datastoreService.getScraperByGuid(guid);
+    }
+    return script;
   }
   
   @RequestMapping(value="/execute", method = RequestMethod.POST)
-  public @ResponseBody ExecutionResult executeApp(@RequestParam(value="code", required=true) String code, @RequestParam(value="language", required=true) String language, ModelMap model, Principal principal) {
+  public @ResponseBody ExecutionResult executeApp(@RequestParam(value="code", required=true) String code, 
+      @RequestParam(value="language", required=true) String language, 
+      @RequestParam(value="type", required=true) String type, ModelMap model, Principal principal) {
     // invoke executor to execute code, pass the id as parameter
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return new ExecutionResult(null, null, null, -1, "User not found.");

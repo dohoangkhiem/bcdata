@@ -66,7 +66,26 @@
               </script>
             </div>
           </div>
-          <div class="anls-data" id="anls-data">Sorry, no data at the moment.</div>
+          <div class="anls-data" id="anls-data">
+            <c:choose>
+              <c:when test="${not empty datasetDetailMap }">
+                <script>
+                	$(function() {
+                	  var datasetDetailMap = ${datasetDetailMap};
+                  	var $dsContainer = $('#anls-data');
+                  	com.bouncingdata.Workbench.renderDatasets(datasetDetailMap, $dsContainer);  
+                	});
+                </script>
+              </c:when>
+              <c:otherwise>
+                <script>
+                	var $dsContainer = $('#anls-data');
+                	$dsContainer.append('<p>No data for this analysis.</p>');
+                </script>
+              </c:otherwise>
+            </c:choose>
+            
+          </div>
         </div>
         
         <ul class="anls-tabs">
@@ -77,7 +96,7 @@
       </div>
         
       <div class="comments-container">
-        <h3 class="comments-title"><a href="javascript:void(0);" onclick="$('#comment-form').toggle('slow');">Comments</a></h3>
+        <h3 class="comments-title"><a href="javascript:void(0);" onclick="$('#comment-form').toggle('slow');">Comment</a></h3>
         <div class="comment-form" id="comment-form">
           <form>
             <fieldset>

@@ -15,6 +15,10 @@
     <put-attribute name="main-content" value="/WEB-INF/views/analysis.jsp"></put-attribute>
   </definition>
   
+  <definition name="datapage" extends="based-layout">
+    <put-attribute name="main-content" value="/WEB-INF/views/datapage.jsp"></put-attribute>
+  </definition>
+  
   <definition name="error" extends="based-layout">
     <put-attribute name="main-content" value="/WEB-INF/views/error.jsp"></put-attribute>
   </definition>
@@ -29,5 +33,5 @@
   <definition name="connect" extends="based-layout">
     <put-attribute name="main-content" value="/WEB-INF/views/connect.jsp"></put-attribute>
   </definition>
-  
+    
 </tiles-definitions>

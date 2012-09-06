@@ -17,6 +17,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
@@ -120,13 +121,18 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public List<Dataset> getAnalysisDataset(int appId) throws Exception {
-    return dataStorage.getAnalysisDataset(appId);
+  public List<AnalysisDataset> getAnalysisDatasets(int appId) throws Exception {
+    return dataStorage.getAnalysisDatasets(appId);
+  }
+  
+  @Override
+  public List<Dataset> getScraperDataset(int scraperId) throws Exception {
+    return dataStorage.getScraperDatasets(scraperId);
   }
 
   @Override
-  public List<Visualization> getAnalysisVisualization(int appId) throws Exception {
-    return dataStorage.getAnalysisVisualization(appId);
+  public List<Visualization> getAnalysisVisualizations(int appId) throws Exception {
+    return dataStorage.getAnalysisVisualizations(appId);
   }
 
   @Override
@@ -138,7 +144,7 @@ public class DatastoreServiceImpl implements DatastoreService {
 
   @Override
   public Map<String, String> getDataSetMap(int appId) throws Exception {
-    List<Dataset> datasets = getAnalysisDataset(appId);
+    /*List<Dataset> datasets = getAnalysisDatasets(appId);
     if (datasets != null) {
       Map<String, String> result = new HashMap<String, String>();
       for (Dataset ds : datasets) {
@@ -146,7 +152,7 @@ public class DatastoreServiceImpl implements DatastoreService {
         result.put(ds.getName(), s);
       }
       return result;
-    }
+    }*/
     return null;
   }
 
@@ -296,14 +302,14 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public void executeAnalysis(User user, Analysis analysis) throws Exception {
+  public void doExecuteAction(User user, BcDataScript script) throws Exception {
     // add activity 
     Activity activity = new Activity();
     activity.setAction(Action.UPDATE.getAction());
     activity.setUser(user);
-    activity.setObjectId(analysis.getId());
+    activity.setObjectId(script.getId());
     activity.setTime(new Date());
-    activity.setPublic(analysis.isPublished());
+    activity.setPublic(script.isPublished());
     try {
       dataStorage.createActivity(activity);
     } catch (DataAccessException e) {
@@ -370,8 +376,8 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public void invalidateDataset(Analysis anls) throws Exception {
-    dataStorage.invalidateDataset(anls);
+  public void invalidateDataset(Scraper scraper) throws Exception {
+    dataStorage.invalidateDataset(scraper);
   }
   
   @Override
@@ -387,6 +393,21 @@ public class DatastoreServiceImpl implements DatastoreService {
   @Override
   public List<Scraper> getScraperList(int userId) {
     return dataStorage.getScraperList(userId);
+  }
+
+  @Override
+  public Dataset getDatasetByName(String fullname) throws Exception {
+    return dataStorage.getDatasetByName(fullname);
+  }
+
+  @Override
+  public void invalidateDatasets(Analysis analysis) {
+    dataStorage.invalidateDatasets(analysis);
+  }
+
+  @Override
+  public void createAnalysisDatasets(List<AnalysisDataset> anlsDts) {
+    dataStorage.createAnalysisDatasets(anlsDts);  
   }
 
 }

@@ -36,11 +36,17 @@
       <field name="rowCount">
         <column name="row_count" jdbc-type="INTEGER" />
       </field>
-      <field name="analysis">
+      <!--field name="analysis">
         <column name="analysis" jdbc-type="INTEGER" />
+      </field-->
+      <field name="scraper">
+        <column name="scraper" jdbc-type="INTEGER" />
       </field>
       <field name="isActive">
         <column name="is_active" jdbc-type="BIT" />
+      </field>
+      <field name="isPublic">
+        <column name="is_public" jdbc-type="BIT" />
       </field>
     </class>
         
@@ -187,6 +193,9 @@
       <field name="published">
         <column name="published" jdbc-type="BIT" />
       </field>
+      <field name="publicCode">
+        <column name="public_code" jdbc-type="BIT" />
+      </field>
       <field name="name">
         <column name="name" jdbc-type="VARCHAR" length="100" />
       </field>
@@ -237,6 +246,9 @@
       </field>
       <field name="analysis">
         <column name="analysis" jdbc-type="INTEGER" />
+      </field>
+      <field name="dataset">
+        <column name="dataset" jdbc-type="INTEGER" />
       </field>
       <field name="order">
         <column name="order" jdbc-type="INTEGER" />
@@ -369,6 +381,21 @@
       </field>    
       <field name="followFrom">
         <column name="follow_from" jdbc-type="TIMESTAMP" />
+      </field>
+    </class>
+    <class name="AnalysisDataset" identity-type="datastore" table="analysis_dataset">
+      <inheritance strategy="new-table" />
+      <field name="id" primary-key="true">
+        <column name="id" jdbc-type="INTEGER" />
+      </field>
+      <field name="analysis">
+        <column name="analysis" jdbc-type="INTEGER" />
+      </field>
+      <field name="dataset">
+        <column name="dataset" jdbc-type="INTEGER" />
+      </field>    
+      <field name="isActive">
+        <column name="is_active" jdbc-type="BIT" />
       </field>
     </class>
   </package>

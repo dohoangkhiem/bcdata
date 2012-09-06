@@ -15,6 +15,7 @@ public class Analysis extends BcDataScript {
   private int score;
   @Persistent(mappedBy="analysis") List<Comment> comments;
   private @Join Set<Tag> tags;
+  
   @NotPersistent
   private int commentCount;
   

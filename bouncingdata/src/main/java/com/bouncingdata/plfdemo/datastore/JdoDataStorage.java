@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.springframework.orm.jdo.support.JdoDaoSupport;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
@@ -131,23 +133,23 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public List<Dataset> getAnalysisDataset(int anlsId) {
-    PersistenceManager pm = getPersistenceManager();
-    Query q = pm.newQuery(Dataset.class);
-    q.setFilter("analysis.id == " + anlsId + " && isActive == true");
-    List<Dataset> results = null;
-    try {
-      results = (List<Dataset>) q.execute();
-      results = (List<Dataset>) pm.detachCopyAll(results);
-      return results;
-    } finally {
-      q.closeAll();
-      pm.close();
-    }
+  public List<AnalysisDataset> getAnalysisDatasets(int anlsId) {
+   PersistenceManager pm = getPersistenceManager();
+   Query q = pm.newQuery(AnalysisDataset.class);
+   q.setFilter("analysis.id == " + anlsId + " && isActive == true");
+   List<AnalysisDataset> results = null;
+   try {
+     results = (List<AnalysisDataset>) q.execute();
+     results = (List<AnalysisDataset>) pm.detachCopyAll(results);
+     return results;
+   } finally {
+     q.closeAll();
+     pm.close();
+   }
   }
-
+  
   @Override
-  public List<Visualization> getAnalysisVisualization(int anlsId) {
+  public List<Visualization> getAnalysisVisualizations(int anlsId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Visualization.class);
     q.setFilter("analysis.id == " + anlsId + " && isActive==true");
@@ -172,10 +174,16 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       List<Analysis> apps = (List<Analysis>) pm.detachCopyAll((List<Analysis>) q.execute());
       sr.setAnalyses(apps);
       
-      q = getPersistenceManager().newQuery(Dataset.class);
+      q = pm.newQuery(Dataset.class);
       q.setFilter("this.name.matches(\".*" + query + ".*\") || this.description.matches(\".*" + query + ".*\")");
       List<Dataset> datasets = (List<Dataset>) pm.detachCopyAll((List<Dataset>) q.execute());
       sr.setDatasets(datasets);
+      
+      q = pm.newQuery(Dataset.class);
+      q.setFilter("this.name.matches(\".*" + query + ".*\") || this.description.matches(\".*" + query + ".*\")");
+      List<Scraper> scrapers = (List<Scraper>) pm.detachCopyAll((List<Scraper>)q.execute());
+      sr.setScrapers(scrapers);
+      
       return sr;
     } finally {
       q.closeAll();
@@ -829,10 +837,15 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       
       // set the target object
       for (Activity ac : activities) {
-        Analysis anls = pm.getObjectById(Analysis.class, ac.getObjectId());
-        List<Comment> comments = getComments(ac.getObjectId());
-        anls.setCommentCount(comments!=null?comments.size():0);
-        ac.setObject(anls);
+        try {
+          Analysis anls = pm.getObjectById(Analysis.class, ac.getObjectId());
+          List<Comment> comments = getComments(ac.getObjectId());
+          anls.setCommentCount(comments!=null?comments.size():0);
+          ac.setObject(anls);
+        } catch (Exception e) {
+          logger.debug("", e);
+          continue;
+        }
       }
       return activities;
       
@@ -961,10 +974,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Transaction tx = pm.currentTransaction();
     User user = pm.getObjectById(User.class, dataset.getUser().getId());
     dataset.setUser(user);
-    if (dataset.getAnalysis() != null) {
-      Analysis anls = pm.getObjectById(Analysis.class, dataset.getAnalysis().getId());
-      dataset.setAnalysis(anls);
-    } else dataset.setAnalysis(null);
+    if (dataset.getScraper() != null) {
+      Scraper scraper = pm.getObjectById(Scraper.class, dataset.getScraper().getId());
+      dataset.setScraper(scraper);
+    } else dataset.setScraper(null);
     try {
       tx.begin();
       pm.makePersistent(dataset);
@@ -982,10 +995,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     for (Dataset ds : datasets) {
       User user = pm.getObjectById(User.class, ds.getUser().getId());
       ds.setUser(user);
-      if (ds.getAnalysis() != null) {
-        Analysis anls = pm.getObjectById(Analysis.class, ds.getAnalysis().getId());
-        ds.setAnalysis(anls);
-      } else ds.setAnalysis(null);
+      if (ds.getScraper() != null) {
+        Scraper scraper = pm.getObjectById(Scraper.class, ds.getScraper().getId());
+        ds.setScraper(scraper);
+      } else ds.setScraper(null);
     }
     try {
       tx.begin();
@@ -998,10 +1011,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
 
   @Override
-  public void invalidateDataset(Analysis anls) {
+  public void invalidateDataset(Scraper scraper) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Dataset.class);
-    q.setFilter("analysis.id == " + anls.getId() + " && isActive == true");
+    q.setFilter("scraper.id == " + scraper.getId() + " && isActive == true");
     List<Dataset> datasets = (List<Dataset>) q.execute();
     Transaction tx = pm.currentTransaction();
     try {
@@ -1121,9 +1134,16 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   @Override
   public List<Dataset> getScraperDatasets(int scraperId) {
     PersistenceManager pm = getPersistenceManager();
-    Scraper scr = pm.getObjectById(Scraper.class, scraperId);
-    List<Dataset> datasets = scr.getDatasets();
-    return (List<Dataset>) pm.detachCopyAll(datasets);
+    Query q = pm.newQuery(Dataset.class);
+    q.setFilter("scraper.id == " + scraperId + " && isActive == true");
+    try {
+      List<Dataset> datasets = (List<Dataset>) q.execute();
+      datasets = (List<Dataset>) pm.detachCopyAll(datasets);
+      return datasets;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
   }
   
   @Override
@@ -1150,6 +1170,64 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       return (List<Scraper>) pm.detachCopyAll(scrapers);
     } finally {
       q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public Dataset getDatasetByName(String identifier) {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(Dataset.class);
+    q.setFilter("name == \"" + identifier + "\" && isActive == true");
+    Dataset dataset = null;
+    try {
+      List<Dataset> datasets = (List<Dataset>) q.execute();
+      if (datasets.size() > 0) {
+        dataset = datasets.get(0);
+        dataset = pm.detachCopy(dataset);
+      }
+      return dataset;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void invalidateDatasets(Analysis analysis) {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(AnalysisDataset.class);
+    q.setFilter("analysis.id == " + analysis.getId() + " && isActive == true");
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      List<AnalysisDataset> anlsDts = (List<AnalysisDataset>) q.execute();
+      for (AnalysisDataset item : anlsDts) {
+        item.setActive(false);
+      }
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void createAnalysisDatasets(List<AnalysisDataset> anlsDts) {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      for (AnalysisDataset item : anlsDts) {
+        Analysis anls = pm.getObjectById(Analysis.class, item.getAnalysis().getId());
+        Dataset dts = pm.getObjectById(Dataset.class, item.getDataset().getId());
+        item.setAnalysis(anls);
+        item.setDataset(dts);
+      }
+      pm.makePersistentAll(anlsDts);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
       pm.close();
     }
   }

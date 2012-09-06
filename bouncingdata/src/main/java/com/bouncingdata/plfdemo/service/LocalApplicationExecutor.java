@@ -23,11 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
@@ -51,15 +55,16 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executePython(Analysis app, String code, User user) throws Exception {
+  public ExecutionResult executePython(BcDataScript app, String code, User user) throws Exception {
     // get execution ticket
     final String ticket = Utils.getExecutionId();
     
     String mode = "persistent";
-    if (app == null) {
+    if (app == null || app instanceof Analysis) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, ticket, app==null?"-1":String.valueOf(app.getId()), String.valueOf(user.getId()), user.getUsername(), mode);
+    String[] args = new String[] {ticket, user.getUsername(), mode};
+    ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, args[0], args[1], args[2]);
     pb.redirectErrorStream(true);
     
     String output = null;
@@ -107,7 +112,17 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       e.printStackTrace();
     }
     
-    Map<String, String> datasets = dataPostProcess(ticket, app, user);
+    Map<String, DatasetDetail> datasets = dataPostProcess(ticket, app, user);
+    
+    if (app instanceof Analysis) {
+      // copy visuals from log dir to visualizations dir
+      try {
+        processVisualizations(ticket, (Analysis) app);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    
     if (app == null) {
       Map<String, VisualizationDetail> visuals = getVisualizations(ticket);
       return new ExecutionResult(output, visuals, datasets, 0, "OK");
@@ -117,7 +132,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   }
     
   @Override
-  public ExecutionResult executeR(Analysis app, String code, User user) throws Exception {
+  public ExecutionResult executeR(BcDataScript app, String code, User user) throws Exception {
     String ticket = Utils.getExecutionId();
     String tempFile = logDir + Utils.FILE_SEPARATOR + ticket + Utils.FILE_SEPARATOR + ticket + ".R";
     File temp = new File(tempFile);
@@ -136,10 +151,12 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     }
     
     String mode = "persistent";
-    if (app == null) {
+    if (app == null || app instanceof Analysis) {
       mode = "not-persistent";
     }
-    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, ticket, app==null?"-1":String.valueOf(app.getId()), app==null?"":app.getGuid(), String.valueOf(user.getId()), user.getUsername(), mode);
+    
+    String[] args = new String[] {ticket, user.getUsername(), mode};
+    ProcessBuilder pb = new ProcessBuilder("Rscript", tempFile, args[0], args[1], args[2]);
     if (!pb.environment().containsKey("R_DEFAULT_DEVICE")) {
       pb.environment().put("R_DEFAULT_DEVICE", "png");
     }
@@ -163,13 +180,13 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       e.printStackTrace();
     }
     
-    Map<String, String> datasets = dataPostProcess(ticket, app, user);
+    Map<String, DatasetDetail> datasets = dataPostProcess(ticket, app, user);
     
     //
-    if (mode.equals("persistent")) {
+    if (app instanceof Analysis) {
       // copy visuals from log dir to visualizations dir
       try {
-        processVisualizations(ticket, app);
+        processVisualizations(ticket, (Analysis) app);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -183,54 +200,103 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     }
   }
   
-  private Map<String, String> dataPostProcess(String executionId, Analysis anls, User user) throws Exception {
+  private Map<String, DatasetDetail> dataPostProcess(String executionId, BcDataScript script, User user) throws Exception {
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
-    File[] datasetFiles = execLogDir.listFiles(new FileFilter() {
-      @Override
-      public boolean accept(File pathname) {
-        if (pathname.isFile() && pathname.getName().endsWith(".dat")) {
-          return true;
-        } else return false;
-      }
-    });
-    
-    Map<String, String> datasets = null;
-    List<Dataset> dsList = new ArrayList<Dataset>();
+    File[] datasetFiles;
+    Map<String, DatasetDetail> datasets = null;
     ObjectMapper mapper = new ObjectMapper();
-    if (datasetFiles != null) {
-      datasets = new HashMap<String, String>();
+    if (script instanceof Analysis) {
+      Analysis analysis = (Analysis) script;
+      datasetFiles = execLogDir.listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+          if (pathname.isFile() && pathname.getName().endsWith(".out")) {
+            return true;
+          } else return false;
+        }
+      });
+      if (datasetFiles == null || datasetFiles.length == 0) return null;
+      
+      datasets = new HashMap<String, DatasetDetail>();
+      List<AnalysisDataset> relations = new ArrayList<AnalysisDataset>();
       for (File f : datasetFiles) {
-        String filename = f.getName();
-        String name = filename.substring(0, filename.lastIndexOf("."));
+        //String filename = f.getName();
+        //String identifier = filename.substring(0, filename.lastIndexOf("."));
         try {
           String s = FileUtils.readFileToString(f);
           JsonNode dataObj = mapper.readTree(s);
           JsonNode data = dataObj.get("data");
-          datasets.put(name, data.getValueAsText());
-          Dataset ds = new Dataset();
-          ds.setName(dataObj.get("name").getTextValue());
-          ds.setDescription(dataObj.get("description").getTextValue());
-          ds.setGuid(Utils.generateGuid());
-          ds.setSchema(dataObj.get("schema").getTextValue());
-          ds.setUser(user);
-          ds.setCreateAt(new Date());
-          ds.setLastUpdate(new Date());
-          ds.setAnalysis(anls);
-          ds.setRowCount(data.size());
-          ds.setActive(true);
-          dsList.add(ds);
+          String identifier = dataObj.get("name").getTextValue();
+          //String dsName = identifier.substring(identifier.indexOf(user.getUsername()) + user.getUsername().length() + 1);
+          Dataset dataset = datastoreService.getDatasetByName(identifier);
+          if (dataset != null) {
+            String guid = dataset.getGuid(); 
+            // create & persist new AnalysisDataset
+            AnalysisDataset anlsDts = new AnalysisDataset(analysis, dataset, true);
+            relations.add(anlsDts);
+            datasets.put(guid, new DatasetDetail(guid, identifier, data.toString()));
+          }
         } catch (IOException e) {
           logger.debug("Can't read dataset file {}", f.getAbsolutePath());
-        }        
+        }
       }
       
-      // invalidate old datasets?
-      datastoreService.invalidateDataset(anls);
+      datastoreService.invalidateDatasets(analysis);
+      datastoreService.createAnalysisDatasets(relations);
       
-      datastoreService.createDatasets(dsList);
+    } else if (script instanceof Scraper) {
+      Scraper scraper = (Scraper) script;
+      datasetFiles = execLogDir.listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+          if (pathname.isFile() && pathname.getName().endsWith(".inp")) {
+            return true;
+          } else return false;
+        }
+      });
+      List<Dataset> dsList = new ArrayList<Dataset>();
       
+      if (datasetFiles != null) {
+        datasets = new HashMap<String, DatasetDetail>();
+        for (File f : datasetFiles) {
+          //String filename = f.getName();
+          //String name = filename.substring(0, filename.lastIndexOf("."));
+          try {
+            String s = FileUtils.readFileToString(f);
+            JsonNode dataObj = mapper.readTree(s);
+            JsonNode data = dataObj.get("data");
+            Dataset ds = new Dataset();
+            ds.setName(dataObj.get("name").getTextValue());
+            ds.setDescription(dataObj.get("description").getTextValue());
+            String guid = Utils.generateGuid();
+            ds.setGuid(guid);
+            ds.setSchema(dataObj.get("schema").getTextValue());
+            ds.setUser(user);
+            ds.setCreateAt(new Date());
+            ds.setLastUpdate(new Date());
+            ds.setScraper(scraper);
+            ds.setRowCount(data.size());
+            ds.setActive(true);
+            dsList.add(ds);
+            
+            datasets.put(guid, new DatasetDetail(guid, ds.getName(), data.toString()));
+            
+          } catch (IOException e) {
+            logger.debug("Can't read dataset file {}", f.getAbsolutePath());
+          }        
+        }
+        
+        // invalidate old datasets?
+        datastoreService.invalidateDataset(scraper);
+        
+        datastoreService.createDatasets(dsList);
+      }
+    } else if (script == null) {
+      // temporarily ignore the anonymous script
+      return null;
     }
+   
     return datasets;
   }
   

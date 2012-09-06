@@ -1,16 +1,19 @@
 package com.bouncingdata.plfdemo.datastore.pojo.dto;
 
+import java.util.List;
 import java.util.Map;
+
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 
 
 public class AnalysisDetail {
   
   String code;
-  Map<String, String> datasets;
+  List<Dataset> datasets;
   Map<String, VisualizationDetail> visualizations;
   Map<String, DashboardPosition> dashboard;
   
-  public AnalysisDetail(String code, Map<String, String> datasets,
+  public AnalysisDetail(String code, List<Dataset> datasets,
       Map<String, VisualizationDetail> visualizations, Map<String, DashboardPosition> dashboard) {
     super();
     this.code = code;
@@ -27,11 +30,11 @@ public class AnalysisDetail {
     this.code = code;
   }
 
-  public Map<String, String> getDatasets() {
+  public List<Dataset> getDatasets() {
     return datasets;
   }
 
-  public void setDatasets(Map<String, String> datasets) {
+  public void setDatasets(List<Dataset> datasets) {
     this.datasets = datasets;
   }
 

@@ -15,8 +15,10 @@ public class Comment {
   private int id;
   @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
   private User user;
-  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
+  @Persistent(defaultFetchGroup="true")
   private Analysis analysis;
+  @Persistent(defaultFetchGroup="true")
+  private Dataset dataset;
   private int order;
   private String title;
   private String message;
@@ -113,6 +115,12 @@ public class Comment {
   }
   public void setAccepted(boolean accepted) {
     this.accepted = accepted;
+  }
+  public Dataset getDataset() {
+    return dataset;
+  }
+  public void setDataset(Dataset dataset) {
+    this.dataset = dataset;
   }
 
 }

@@ -22,15 +22,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
+import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.utils.Utils;
 
@@ -46,6 +50,9 @@ public class AnalysisController {
   @Autowired
   private ApplicationStoreService appStoreService;
   
+  @Autowired
+  private BcDatastoreService userDataService;
+  
   @RequestMapping(value="/{guid}", method=RequestMethod.GET)
   public String viewAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
     logger.debug("Received request for analysis {}", guid);
@@ -55,7 +62,7 @@ public class AnalysisController {
       
       model.addAttribute("anls", anls);
       
-      List<Visualization> visuals = datastoreService.getAnalysisVisualization(anls.getId());
+      List<Visualization> visuals = datastoreService.getAnalysisVisualizations(anls.getId());
       Map<String, VisualizationDetail> visualsMap = null;
       if (visuals != null) {
         visualsMap = new HashMap<String, VisualizationDetail>();
@@ -85,7 +92,19 @@ public class AnalysisController {
       
       String code = appStoreService.getScriptCode(guid, null);
       model.addAttribute("anlsCode", StringEscapeUtils.escapeJavaScript(code));
-
+      
+      List<AnalysisDataset> relations = datastoreService.getAnalysisDatasets(anls.getId());
+      if (relations != null) {
+        Map<String, DatasetDetail> datasetDetailMap = new HashMap<String, DatasetDetail>();
+        for (AnalysisDataset relation : relations) {
+          Dataset ds = relation.getDataset();
+          String data = userDataService.getDatasetToString(ds.getName());
+          DatasetDetail detail = new DatasetDetail(ds.getGuid(), ds.getName(), data);
+          datasetDetailMap.put(ds.getGuid(), detail);
+        }
+        model.addAttribute("datasetDetailMap", mapper.writeValueAsString(datasetDetailMap));
+      }
+      
       return "analysis";
     } catch (Exception e) {
       logger.debug("Failed to load analysis {}", guid);

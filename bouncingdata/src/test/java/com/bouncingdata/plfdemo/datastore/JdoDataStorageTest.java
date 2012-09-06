@@ -9,6 +9,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 
 @ContextConfiguration
@@ -78,6 +79,12 @@ public class JdoDataStorageTest extends AbstractJUnit38SpringContextTests {
     List<Activity> activities = jdoDataStorage.getFeed(demo.getId(), 20);
     assertNotNull(activities);
     //assertTrue(activities.size() > 0);
+  }
+  
+  public void _testGetScraperDatasets() {
+    int scraperId = 4;
+    List<Dataset> datasetList = jdoDataStorage.getScraperDatasets(scraperId);
+    System.out.println("Number of dataset for scraper 4: " + datasetList.size());
   }
   
   /*public void testGetComment() {

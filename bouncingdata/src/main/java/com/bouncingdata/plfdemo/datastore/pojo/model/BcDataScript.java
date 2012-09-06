@@ -25,6 +25,7 @@ public abstract class BcDataScript {
   private User user;
   private int lineCount;
   private boolean published;
+  private boolean publicCode;
   private Date createAt;
   private Date lastUpdate;
   
@@ -92,5 +93,12 @@ public abstract class BcDataScript {
   public abstract Set<Tag> getTags();
   
   public abstract void setTags(Set<Tag> tags);
+  
+  public boolean isPublicCode() {
+    return publicCode;
+  }
+  public void setPublicCode(boolean publicCode) {
+    this.publicCode = publicCode;
+  }
   
 }

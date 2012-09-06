@@ -9,6 +9,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.SearchResult;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.UserInfo;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Activity;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
@@ -31,6 +32,8 @@ public interface DatastoreService {
    * @throws DataAccessException
    */
   public List<Dataset> getDatasetList(int userId) throws Exception;
+  
+  public Dataset getDatasetByName(String fullname) throws Exception;
   
   /**
    * Retrieves list of analysis by this user
@@ -90,14 +93,14 @@ public interface DatastoreService {
    * @return
    * @throws Exception
    */
-  public List<Dataset> getAnalysisDataset(int appId) throws Exception;
+  public List<AnalysisDataset> getAnalysisDatasets(int appId) throws Exception;
   
   /**
    * @param appId
    * @return
    * @throws Exception
    */
-  public List<Visualization> getAnalysisVisualization(int appId) throws Exception;
+  public List<Visualization> getAnalysisVisualizations(int appId) throws Exception;
     
   /**
    * @param query
@@ -203,7 +206,7 @@ public interface DatastoreService {
    * @param analysis
    * @throws Exception
    */
-  public void executeAnalysis(User user, Analysis analysis) throws Exception;
+  public void doExecuteAction(User user, BcDataScript script) throws Exception;
   
   public void addAnalysisVote(int usreId, int analysisId, AnalysisVote analysisVote) throws Exception;
   
@@ -240,11 +243,17 @@ public interface DatastoreService {
   
   public void createDatasets(List<Dataset> datasets) throws Exception;
   
-  public void invalidateDataset(Analysis anls) throws Exception;
+  public void invalidateDataset(Scraper scraper) throws Exception;
     
   public Scraper getScraperByGuid(String guid) throws Exception;
   
   public List<Scraper> getScraperList(int userId);
   
   public List<Scraper> getPublicScrapers(int userId) throws Exception;
+
+  public List<Dataset> getScraperDataset(int scraperId) throws Exception;
+  
+  public void invalidateDatasets(Analysis analysis);
+  
+  public void createAnalysisDatasets(List<AnalysisDataset> anlsDts);
 }
