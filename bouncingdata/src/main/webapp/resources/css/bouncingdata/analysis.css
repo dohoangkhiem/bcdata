@@ -2,38 +2,46 @@
   position: relative;
 }
 
-.analysis-container#main-content .analysis-info {
+.analysis-container#main-content .right-content.analysis-info, .datapage-container#main-content .right-content.data-info {
   position: fixed;
   top: 60px;
   bottom: 20px;
   width: 280px;
   right: 10px;
-  border: 1px solid #CCCCCC;
-  border-radius: 4px;
-  background-color: #FFF;;
+  overflow-x: auto;
+  background: transparent;
 }
 
-.analysis-container#main-content .analysis-main {
+.analysis-container#main-content .analysis-main, .datapage-container#main-content .center-content {
   margin-right: 300px;
   background-color: #FFFFFF;
   min-height: 600px;
   padding: 0;
 }
 
-.analysis-container#main-content .center-content .center-content-wrapper .top-rule {
+.analysis-container#main-content .center-content .center-content-wrapper .top-rule, .datapage-container#main-content .center-content .center-content-wrapper .top-rule {
   right: 300px;
 }
 
-.analysis-container#main-content .analysis-info .anls-main-info {
-  /*background-color: #FFFFFF;
-  border: 1px solid #CCCCCC; */
+.analysis-container#main-content .analysis-info .anls-summary, .datapage-container#main-content .right-content .summary {
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC; 
   padding: 10px;
+  border-radius: 4px;
 }
 
-.analysis-container#main-content .analysis-info .anls-related-info {
-  /*background-color: #FFFFFF;
-  border: 1px solid #CCCCCC;*/
+.analysis-container#main-content .analysis-info .related-info, .datapage-container#main-content .right-content .related-info  {
+  background-color: #FFFFFF;
+  border: 1px solid #CCCCCC;
   padding: 10px;
+  border-radius: 4px;
+  margin-top: 12px;
+  min-height: 40px;
+}
+
+#main-content .right-content .related-info a {
+  text-decoration: none;
+  color: blue;
 }
 
 .analysis-container#main-content .analysis-main .anls-dashboard {
@@ -91,12 +99,12 @@
   padding: 15px;
 }
 
-.analysis-info .anls-info-header {
+.analysis-info .anls-info-header, .right-content .info-header {
   margin-bottom: 15px;
   border-bottom: 1px solid #CCCCCC;
 }
 
-.anls-info-header .anls-info-title {
+.right-content .anls-info-header .anls-info-title, .info-header .info-title {
   background-color: #FFF;
   bottom: -5px;
   display: inline-block;
@@ -303,4 +311,9 @@ li.comment-item .comment-score, .anls-score {
 .anls-header .anls-vote .anls-score {
   margin: 0;
   display: inline;
+}
+
+.dataset-item-title a {
+  text-decoration: none;
+  color: #000;
 }

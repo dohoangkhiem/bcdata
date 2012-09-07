@@ -149,6 +149,22 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   }
   
   @Override
+  public List<AnalysisDataset> getRelatedAnalysis(int datasetId) {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(AnalysisDataset.class);
+    q.setFilter("dataset.id == " + datasetId + " && isActive == true");
+    List<AnalysisDataset> results = null;
+    try {
+      results = (List<AnalysisDataset>) q.execute();
+      results = (List<AnalysisDataset>) pm.detachCopyAll(results);
+      return results;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+  
+  @Override
   public List<Visualization> getAnalysisVisualizations(int anlsId) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Visualization.class);
@@ -319,7 +335,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       pm.close();
     }
   }
-
+  
   @Override
   public void updateAnalysis(Analysis analysis) {
     if (analysis.getUser() == null) return;
@@ -1083,6 +1099,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       scr.setGuid(script.getGuid());
       scr.setLastUpdate(new Date());
       //scr.setTags(script.getTags());
+      scr.setExecuted(script.isExecuted());
       tx.commit();
     } finally {
       if (tx.isActive()) tx.rollback();
@@ -1231,4 +1248,5 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       pm.close();
     }
   }
+
 }

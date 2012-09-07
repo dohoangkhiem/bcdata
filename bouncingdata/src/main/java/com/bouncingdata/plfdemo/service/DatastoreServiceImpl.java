@@ -126,6 +126,11 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
   
   @Override
+  public List<AnalysisDataset> getRelatedAnalysis(int datasetId) throws Exception {
+    return dataStorage.getRelatedAnalysis(datasetId);
+  }
+  
+  @Override
   public List<Dataset> getScraperDataset(int scraperId) throws Exception {
     return dataStorage.getScraperDatasets(scraperId);
   }
@@ -253,7 +258,7 @@ public class DatastoreServiceImpl implements DatastoreService {
       
       // add activity 
       Activity activity = new Activity();
-      activity.setAction(Action.PUBLISH.getAction());
+      activity.setAction(value?Action.PUBLISH.getAction():Action.UNPUBLISH.getAction());
       activity.setUser(user);
       activity.setObjectId(analysis.getId());
       activity.setTime(new Date());
@@ -302,7 +307,23 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public void doExecuteAction(User user, BcDataScript script) throws Exception {
+  public void doPublishAction(User user, BcDataScript script) throws Exception {
+    // add activity 
+    Activity activity = new Activity();
+    activity.setAction(Action.PUBLISH.getAction());
+    activity.setUser(user);
+    activity.setObjectId(script.getId());
+    activity.setTime(new Date());
+    activity.setPublic(script.isPublished());
+    try {
+      dataStorage.createActivity(activity);
+    } catch (DataAccessException e) {
+      logger.debug("", e);
+    }
+  }
+  
+  @Override
+  public void doUpdateAction(User user, BcDataScript script) throws Exception {
     // add activity 
     Activity activity = new Activity();
     activity.setAction(Action.UPDATE.getAction());
@@ -408,6 +429,11 @@ public class DatastoreServiceImpl implements DatastoreService {
   @Override
   public void createAnalysisDatasets(List<AnalysisDataset> anlsDts) {
     dataStorage.createAnalysisDatasets(anlsDts);  
+  }
+  
+  @Override
+  public void updateBcDataScript(BcDataScript script) {
+    dataStorage.updateBcDataScript(script);
   }
 
 }

@@ -434,6 +434,8 @@ public interface DataStorage {
   public void invalidateDatasets(Analysis analysis);
   
   public void createAnalysisDatasets(List<AnalysisDataset> anlsDts);
+
+  List<AnalysisDataset> getRelatedAnalysis(int datasetId);
   
 }
 

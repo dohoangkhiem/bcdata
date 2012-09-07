@@ -408,3 +408,32 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
 #file-upload-form .upload-in-progress, #file-upload-form .upload-status {
   display: none;
 }
+
+.popup#new-dialog {
+  min-height: 0 !important;
+}
+
+.popup#new-dialog ul {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #CCC;
+  border-radius: 3px;
+  background-color: #EEE;
+}
+
+.popup#new-dialog li {
+  padding: 10px;
+  border-top: 1px solid #CCC;
+}
+
+.popup#new-dialog li:hover {
+  cursor: pointer;  
+}
+
+.popup#new-dialog li:first-child {
+  border-top: none;
+}
+
+.popup#new-dialog ul a {
+  text-decoration: none;
+}

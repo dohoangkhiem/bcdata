@@ -48,7 +48,9 @@ Workbench.prototype.init = function() {
     
     $('#app-actions-toolbar .app-action').button();
     
-    //Init popup dialog
+    /**
+     * Initilizes popup dialogs
+     */
     me.$newAnlsDialog = $('.workbench-container #new-app-dialog').dialog({
       autoOpen: false,
       height: 345,
@@ -73,6 +75,10 @@ Workbench.prototype.init = function() {
           $(this).dialog("close");
         }
       },
+      open: function() {
+        $('.new-app-public', me.$newAnlsDialog).val(0);
+        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); });
+      },
       close: function() {     
       }
     });
@@ -82,7 +88,10 @@ Workbench.prototype.init = function() {
       height: 250,
       width: 400,
       modal: true,
-      resizable: false
+      resizable: false,
+      open: function(event, ui) {
+        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); });
+      }
     });
     
     me.$uploadDataDialog = $('.workbench-container #upload-data-dialog').dialog({
@@ -112,12 +121,14 @@ Workbench.prototype.init = function() {
         "Cancel": function() {
           $(this).dialog('close');
         }
+      },
+      open: function(event, ui) {
+        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); })
       }
     });
     
     me.$newDialog = $('.workbench-container #new-dialog').dialog({
       autoOpen: false,
-      height: 200,
       width: 300,
       modal: true,
       resizable: false,
@@ -125,26 +136,32 @@ Workbench.prototype.init = function() {
       open: function(event, ui) {
         $('ul.select-language', me.$newDialog).hide();
         $('ul.select-type', me.$newDialog).show();
+        
+        var $ui = $(ui);
+        $('li.script-type', $ui).click(function() {
+          $('ul.select-type', $ui).hide();
+          $('.select-language', $ui).show();
+          $(this).attr('script-type', $(this).attr('script-type')); 
+        });
+        
+        $('li.script-language', $ui).click(function() {
+          me.$newDialog.attr('lang', $(this).attr('lang'));
+          me.$newDialog.dialog('close');
+          me.createTab(null, null, me.$newDialog.attr('script-type'), me.$newDialog.attr('lang'));
+        });
+        
+        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); });
       }
     });
     
-    $('li.script-type', me.$newDialog).click(function() {
-      $('ul.select-type', me.$newDialog).hide();
-      $('.select-language', me.$newDialog).show();
-      me.$newDialog.attr('script-type', $(this).attr('script-type')); 
-    });
-    
-    $('li.script-language', me.$newDialog).click(function() {
-      me.$newDialog.attr('lang', $(this).attr('lang'));
-      me.$newDialog.dialog('close');
-      me.createTab(null, null, me.$newDialog.attr('script-type'), me.$newDialog.attr('lang'));
-    });
     
     // get the tab template
     me.$tabTemplate = $('#workbench-content-template').template();
     me.$dsTemplate = $('#data-view-template').template();
     
-    // initialize tabs
+    /**
+     * Initializes workbench tabs
+     */
     me.$tabs = $('.workbench-container #workbench-main-tabs').tabs({
       tabTemplate: "<li class='tab-header workbench-tab-header'><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close' title='Close this tab'>Remove Tab</span></li>",
       
@@ -176,7 +193,9 @@ Workbench.prototype.init = function() {
       // each time show the tab
       show: function(event, ui) {       
         var guid = me.tabsIndex[ui.index].guid;
-        me.updateActionStatus(guid, !guid?null:(me.tabsInfo[guid].app.user.username == com.bouncingdata.Main.username));
+        var app = guid?me.tabsInfo[guid].app:null;
+        //me.updateActionStatus(guid, !guid?null:(me.tabsInfo[guid].app.user.username == com.bouncingdata.Main.username));
+        me.updateActionStatus(app);
       }
 
     });
@@ -197,11 +216,18 @@ Workbench.prototype.init = function() {
       return false;
     });
     
+    // create an empty tab
     me.createTab(null, null, 'analysis', 'python');
     
-    // 
-    $('.workbench-ide .app-actions').click(function(e) {     
+    /**
+     * Toolbar actions
+     */
+    $('.workbench-ide .app-actions').click(function(e) {
       var $target = $(e.target);
+      // for Chrome
+      if ($target[0].nodeName == "span" || $target[0].nodeName == "SPAN") {
+        $target = $target.parents('button.app-action');
+      }
       if (($target[0].nodeName == "button" || $target[0].nodeName == "BUTTON" || $target[0].nodeName == "a") && $target.hasClass("app-action")) {       
         // determine tab
         //var $tab = me.getSelectedTabId(); 
@@ -222,6 +248,52 @@ Workbench.prototype.init = function() {
           me.$newDialog.dialog('open');
         } else if (actionId == 'upload-data') {
           me.$uploadDataDialog.dialog('open');
+        } else if (actionId == 'publish-app') {
+          // WHY IT'S SO COMPLICATED???
+          var guid = me.tabsIndex[index].guid;
+          if (guid) {
+            var app = me.tabsInfo[guid].app;
+            if (app.published && !app.executed) {
+              window.alert("Your application has not been executed yet!");
+              return;
+            }
+            
+            var value = !app.published;
+            var publishFunc = function() {
+              me.publish(guid, value, function() {
+                console.debug("Successfully" + value?"publish":"un-publish" + " analysis.");
+                app.published = value;
+                if (value) {
+                  if (window.confirm("Your analysis has published! View your analysis now?")) {
+                    window.open(ctx + "/anls/" + guid);
+                  }
+                } else {
+                  window.alert("Your analysis has become private");
+                }
+                $('span',$target).text(value?"Make private":"Publish");
+              });
+            };
+              
+            if (value) {
+              me.$publishDialog.dialog("option", "buttons", {
+                "Save": function() {
+                  publishFunc();
+                  $(this).dialog("close");          
+                }, 
+                "Cancel": function() {
+                  $(this).dialog("close");
+                } 
+              });
+              me.$publishDialog.dialog("open");
+              me.$publishDialog.css('z-index', 10000).css('position', 'relative');
+              $('#anls-name', me.$publishDialog).text(app.name);
+            } else {
+              publishFunc();
+            }
+            
+          } else {
+            return;
+          }
         }
       }
     });
@@ -676,6 +748,7 @@ Workbench.prototype.execute = function(tabIndex) {
             // reload datasets & viz.
             if (type == 'analysis') {
               me.reloadDashboard(app, $tab);
+              app.executed = true;
               var datasets = result['datasets'];
               var $dsContainer = $('#app-output-data-' + tabId, $tab);
               me.renderDatasets(datasets, $dsContainer);
@@ -863,7 +936,7 @@ Workbench.prototype.bindAppToTab = function(index, app) {
   $('div.app-title', $appInfo).append(app.name);
   $('div.app-language', $appInfo).append(app.language);
   $('div.app-author', $appInfo).append(app.authorName);
-  this.updateActionStatus(true, true);
+  this.updateActionStatus(app);
 }
 
 Workbench.prototype.setCode = function(code, $tab) {
@@ -922,7 +995,7 @@ Workbench.prototype.reloadDashboard = function(app, $tab) {
     success: function(result) {
       com.bouncingdata.Dashboard.load(result['visualizations'], null, $dashboard, true);
       console.debug("Finish reload dashboard after execution, now post it back again...");
-      com.bouncingdata.Dashboard.postback($dashboard);
+      com.bouncingdata.Dashboard.postback($dashboard, app.executed?"execute":"");
     },
     error: function(result) {
       console.debug(result);
@@ -1091,21 +1164,27 @@ Workbench.prototype.setStatus = function($tab, status) {
   }
 }
 
-Workbench.prototype.updateActionStatus = function(isSaved, isOwner) {
+Workbench.prototype.updateActionStatus = function(app) {
+  var isSaved = app!=null;
+  var isOwner = app && (app.user.username == com.bouncingdata.Main.username);
   if (isSaved) {
     if (isOwner) {
       $('.app-actions #save-app').show();
       $('.app-actions #run-app').show();
       $('.app-actions #copy-app').show();
+      $('.app-actions #publish-app').show().children().text(app.published?'Make private':'Publish');
     } else {
       $('.app-actions #save-app').hide();
       $('.app-actions #run-app').hide();
       $('.app-actions #copy-app').show();
+      $('.app-actions #publish-app').hide();
     }
+    
   } else {
     $('.app-actions #save-app').show();
     $('.app-actions #run-app').show();
     $('.app-actions #copy-app').hide();
+    $('.app-actions #publish-app').hide();
   }
 }
 

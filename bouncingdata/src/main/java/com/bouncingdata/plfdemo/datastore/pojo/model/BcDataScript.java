@@ -28,6 +28,7 @@ public abstract class BcDataScript {
   private boolean publicCode;
   private Date createAt;
   private Date lastUpdate;
+  private boolean isExecuted;
   
   public int getId() {
     return id;
@@ -99,6 +100,12 @@ public abstract class BcDataScript {
   }
   public void setPublicCode(boolean publicCode) {
     this.publicCode = publicCode;
+  }
+  public boolean isExecuted() {
+    return isExecuted;
+  }
+  public void setExecuted(boolean isExecuted) {
+    this.isExecuted = isExecuted;
   }
   
 }

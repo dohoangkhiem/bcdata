@@ -176,6 +176,7 @@ public class MainController {
     script.setCreateAt(date);
     script.setLastUpdate(date);
     script.setUser(user);
+    script.setExecuted(false);
     
     try { 
       guid = datastoreService.createBcDataScript(script, type);

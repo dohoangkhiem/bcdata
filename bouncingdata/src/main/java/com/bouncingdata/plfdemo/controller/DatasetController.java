@@ -1,6 +1,7 @@
 package com.bouncingdata.plfdemo.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.QueryResult;
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.BcDatastoreService;
@@ -136,6 +139,19 @@ public class DatasetController {
       ObjectMapper mapper = new ObjectMapper();
       model.addAttribute("dataset", ds);
       model.addAttribute("data", mapper.writeValueAsString(data));
+      
+      List<AnalysisDataset> relations = datastoreService.getRelatedAnalysis(ds.getId());
+      if (relations != null) {
+        List<Analysis> relatedAnls = new ArrayList<Analysis>();
+        for (AnalysisDataset ad : relations) {
+          if (ad.isActive()) {
+            Analysis anls = ad.getAnalysis();
+            relatedAnls.add(anls);
+          }
+        }
+        model.addAttribute("relatedAnls", relatedAnls);
+      }
+      
     } catch (Exception e) {
       logger.debug("", e);
       model.addAttribute("errorMsg", e.getMessage());

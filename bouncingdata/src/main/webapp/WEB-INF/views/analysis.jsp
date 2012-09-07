@@ -8,15 +8,15 @@
 	  
 	  var dbDetail = $.parseJSON('${dashboardDetail}');
 	  com.bouncingdata.Dashboard.view(dbDetail.visualizations, dbDetail.dashboard, $('#main-content #anls-dashboard'));
-	 
+	 	
 	});
 </script>
 <div id="main-content" class="analysis-container">
   <div class="analysis-info right-content">
-    <div class="anls-main-info">
-      <div class="anls-info-header">
-        <div class="anls-info-title">Analysis Info</div>
-        <div class="anls-info-title-line"></div>
+    <div class="anls-summary summary">
+      <div class="anls-info-header info-header">
+        <div class="anls-info-title info-title">Analysis Info</div>
+        <div class="anls-info-title-line info-title-line"></div>
       </div>
       <p class="line-item">
         <strong>Analysis: </strong><span>${anls.name }</span>
@@ -34,11 +34,26 @@
         <strong>Tags: </strong><span>${anls.tags }</span>
       </p>  
     </div>
-    <div class="anls-related-info">
-      <div class="anls-info-header">
+    <div class="anls-related-info related-info">
+      <div class="anls-info-header info-header">
         <div class="anls-info-title">Related Info</div>
         <div class="anls-info-title-line"></div>
       </div>
+      <c:if test="${not empty datasetDetailMap }">
+        <p class="relatedDatasets">
+          <strong>Related datasets: </strong>
+          <script>
+            $(function() {
+              var datasetDetailMap = ${datasetDetailMap};
+            	var $relatedDatasets = $('.related-info p.relatedDatasets');
+            	for (guid in datasetDetailMap) {
+            	  var dataset = datasetDetailMap[guid];
+            	  $relatedDatasets.append('<a target="_blank" href="' + ctx + '/dataset/view/' + guid + '">' + dataset.name + '</a>&nbsp;');  
+            	}
+            });
+          </script>
+        </p>
+      </c:if>
     </div>
   </div>
     
@@ -46,7 +61,7 @@
     <div class="center-content-wrapper">
       <div class="top-rule"></div>
       <div class="anls-header">
-        <div class="anls-title"><h2>${anls.name}</h2></div>
+        <div class="anls-title main-title"><h2>${anls.name}</h2></div>
         <div class="anls-vote">
           <h3 class="anls-score">${anls.score}</h3>&nbsp;
           <a href="#" class="anls-vote-up">Vote up</a>&nbsp;

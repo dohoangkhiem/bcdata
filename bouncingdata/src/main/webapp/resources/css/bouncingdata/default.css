@@ -185,6 +185,28 @@ div.clear {
   z-index: 9999;
 }
 
+#main-content .center-content .center-content-wrapper .header {
+  padding: 15px;
+}
+
+#main-content .center-content .center-content-wrapper .header .main-title h2 {
+  margin: 0;
+}
+
+#main-content .center-content .center-content-wrapper .header-rule {
+  border-bottom: 1px solid #CCCCCC;
+  border-top: 0 none;
+  height: 0;
+}
+
+#main-content .center-content .center-content-wrapper .content {
+  padding: 15px;
+}
+
+#main-content .center-content .center-content-wrapper .comments-container {
+  padding: 15px;
+}
+
 .ui-tabs .ui-state-disabled { 
     display: none; /* disabled tabs don't show up */ 
 } 

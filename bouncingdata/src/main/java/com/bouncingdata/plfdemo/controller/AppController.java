@@ -193,7 +193,14 @@ public class AppController {
         logger.error("", e);
       }
       
-      datastoreService.doExecuteAction(user, script);
+      // if analysis is public and this is the first execution
+      if (!script.isExecuted() && script.isPublished() && script instanceof Analysis) {
+        script.setExecuted(true);
+        datastoreService.updateBcDataScript(script);
+        datastoreService.doPublishAction(user, script);
+      }
+      
+      //datastoreService.doExecuteAction(user, script);
       
       if ("python".equals(script.getLanguage())) {
         return appExecutor.executePython(script, code, user);
@@ -246,7 +253,8 @@ public class AppController {
   }
   
   @RequestMapping(value="/v/d/update/{guid}", method = RequestMethod.POST)
-  public @ResponseBody String updateDashboard(@PathVariable String guid, @RequestParam(value="status", required = true) String status, Principal principal) {
+  public @ResponseBody String updateDashboard(@PathVariable String guid, @RequestParam(value="status", required = true) String status, 
+      @RequestParam(value="cause", required=false) String cause, Principal principal) {
     logger.debug("Receive update dashboard request {}, {}", guid, status);
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return "KO";
@@ -258,6 +266,10 @@ public class AppController {
         return "KO";
       }
       
+      if (cause != null && cause.equals("execute")) {
+        // create activity
+        datastoreService.doUpdateAction(user, app);
+      }
       datastoreService.updateDashboard(guid, status);
     } catch (Exception e) {
       logger.error("", e);

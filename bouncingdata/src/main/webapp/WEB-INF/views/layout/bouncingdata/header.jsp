@@ -180,7 +180,7 @@
           <div class="code-block"></div>
         </div>
         <div id="app-output-data-\${tabId}" class="app-output-data">
-          <div>App. Data</div>
+          <div>No data</div>
         </div>
       </div>
     </div>

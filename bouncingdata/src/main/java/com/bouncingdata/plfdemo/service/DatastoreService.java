@@ -206,7 +206,7 @@ public interface DatastoreService {
    * @param analysis
    * @throws Exception
    */
-  public void doExecuteAction(User user, BcDataScript script) throws Exception;
+  public void doPublishAction(User user, BcDataScript script) throws Exception;
   
   public void addAnalysisVote(int usreId, int analysisId, AnalysisVote analysisVote) throws Exception;
   
@@ -256,4 +256,10 @@ public interface DatastoreService {
   public void invalidateDatasets(Analysis analysis);
   
   public void createAnalysisDatasets(List<AnalysisDataset> anlsDts);
+
+  List<AnalysisDataset> getRelatedAnalysis(int datasetId) throws Exception;
+
+  void updateBcDataScript(BcDataScript script);
+
+  void doUpdateAction(User user, BcDataScript script) throws Exception;
 }

@@ -206,7 +206,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
         me.updateRuler($container);
       }
       // post back
-      me.postback($container);
+      me.postback($container, "rearrange");
     })
     
     .bind('resize', function(event, ui) {
@@ -246,7 +246,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
       $('.resizable-iframe-fix').remove();
       
       // post back
-      me.postback($container);
+      me.postback($container, "rearrange");
     });
     
     $vizContainer.hover(function() {
@@ -268,12 +268,13 @@ Dashboard.prototype.refresh = function() {
 /**
  * Post dashboard status to server
  */
-Dashboard.prototype.postback = function($container) {
+Dashboard.prototype.postback = function($container, cause) {
   //need: app guid, guid and position of all viz. in dashboard
   var status = ""; 
   var guid = $container.attr('guid');
   var me = this;
   if (!guid) return;
+  
   $('div.viz-container', $container).each(function() {
     var vGuid = $(this).attr('guid');
     var x = Math.round($(this).position().left);
@@ -294,7 +295,8 @@ Dashboard.prototype.postback = function($container) {
     url: ctx + "/app/v/d/update/" + guid,
     type: "post",
     data: {
-      status: status
+      status: status,
+      cause: cause
     },
     success: function(result) {
       console.debug("Successfully update dashboard " + guid);

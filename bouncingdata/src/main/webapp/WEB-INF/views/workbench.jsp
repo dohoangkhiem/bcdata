@@ -65,6 +65,8 @@
           <button class="app-action" id="copy-app">Clone</button>
           <button class="app-action" id="save-app">Save</button>
           <button class="app-action" id="run-app">Run</button>
+          <button class="app-action" id="publish-app">Publish</button>
+          <button class="app-action" id="view-app">View</button>
           <button class="app-action" id="upload-data">Upload</button>
         </span>
       </div>
@@ -86,10 +88,10 @@
             </select> <br>
             <label for="new-app-description">Description</label>
             <textarea rows="3" id="new-app-description" style="resize: none;"></textarea><br>
-            <label for="new-app-public">Publish this analysis?</label>
+            <label for="new-app-public">Auto publish?</label>
             <select id="new-app-public">
-              <option value="1">Public</option>
-              <option value="0">Private</option>
+              <option value="1">Yes</option>
+              <option value="0">No</option>
             </select><br>
             <label for="new-app-tags">Tags</label>
             <input type="text" id="new-app-tags" title="Separate tags by comma"></input><br>

@@ -60,6 +60,12 @@ public class AnalysisController {
       Analysis anls = datastoreService.getAnalysisByGuid(guid);
       if (anls == null) return null;
       
+      User user = (User) ((Authentication)principal).getPrincipal();
+      if (user == null || (!user.getUsername().equals(anls.getUser().getUsername()) && !anls.isPublished())) {
+        model.addAttribute("errorMsg", "This analysis is not public!");
+        return "error";
+      }
+      
       model.addAttribute("anls", anls);
       
       List<Visualization> visuals = datastoreService.getAnalysisVisualizations(anls.getId());
