@@ -137,14 +137,13 @@ Workbench.prototype.init = function() {
         $('ul.select-language', me.$newDialog).hide();
         $('ul.select-type', me.$newDialog).show();
         
-        var $ui = $(ui);
-        $('li.script-type', $ui).click(function() {
-          $('ul.select-type', $ui).hide();
-          $('.select-language', $ui).show();
-          $(this).attr('script-type', $(this).attr('script-type')); 
+        $('li.script-type', me.$newDialog).click(function() {
+          $('ul.select-type', me.$newDialog).hide();
+          $('.select-language', me.$newDialog).show();
+          me.$newDialog.attr('script-type', $(this).attr('script-type')); 
         });
         
-        $('li.script-language', $ui).click(function() {
+        $('li.script-language', me.$newDialog).click(function() {
           me.$newDialog.attr('lang', $(this).attr('lang'));
           me.$newDialog.dialog('close');
           me.createTab(null, null, me.$newDialog.attr('script-type'), me.$newDialog.attr('lang'));
