@@ -61,6 +61,14 @@ Analysis.prototype.init = function(guid) {
   });
   
   this.votingCache = {};
+  
+  // embedded
+  var $embedded = $('#embedded-link').hide();
+  $('.anls-action-links a#anls-embed-button').click(function() {
+    $embedded.toggle('slow');
+    var embedded = '<iframe src="http://' + host + '/' + ctx + '/anls/embed/' + guid + '" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>';
+    $('#embedded-link-text', $embedded).val(embedded).click(function() { $(this).select() });
+  });
 }
 
 Analysis.prototype.postComment = function(guid, message, parentId, callback) {

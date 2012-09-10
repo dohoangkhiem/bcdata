@@ -8,7 +8,7 @@
 	  
 	  var dbDetail = $.parseJSON('${dashboardDetail}');
 	  com.bouncingdata.Dashboard.view(dbDetail.visualizations, dbDetail.dashboard, $('#main-content #anls-dashboard'));
-	 	
+	
 	});
 </script>
 <div id="main-content" class="analysis-container">
@@ -62,11 +62,17 @@
       <div class="top-rule"></div>
       <div class="anls-header">
         <div class="anls-title main-title"><h2>${anls.name}</h2></div>
-        <div class="anls-vote">
+        <div class="anls-action-links">
           <h3 class="anls-score">${anls.score}</h3>&nbsp;
           <a href="#" class="anls-vote-up">Vote up</a>&nbsp;
-          <a href="#" class="anls-vote-down">Vote down</a>
+          <a href="#" class="anls-vote-down">Vote down</a>&nbsp;
+          <a href="#" class="anls-embed-button" id="anls-embed-button">Embed</a>
         </div>
+        <div class="embedded-link" id="embedded-link">
+          <textarea id="embedded-link-text" spellcheck='false'></textarea>
+          <a class="embedded-link-hidden" href="<c:url value="/anls/embed/" />${anls.guid}" style="display: none;">embedded</a>
+        </div>
+        <div class="clear"></div>
       </div>
       <div class="anls-header-rule"></div>
       <div class="anls-content anls-tab-container" id="anls-content">
@@ -116,7 +122,7 @@
           <form>
             <fieldset>
             <p>
-              <textarea rows="5" id="message"></textarea>
+              <textarea rows="5" id="message" spellcheck='false'></textarea>
             </p>  
             <p>
               <input type="button" class="comment-submit" id="comment-submit" value="Post comment">

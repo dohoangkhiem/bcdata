@@ -47,7 +47,7 @@
 	</script>
   <script id="comment-editor-template" type="text/x-jquery-tmpl">
     <div class="comment-editor inline-editor">
-      <textarea class="reply-text" rows="\${rows}"></textarea>
+      <textarea class="reply-text" rows="\${rows}" spellcheck='false'></textarea>
       <input class="reply-button" type="button" value="Reply" />
       <div class="clear"></div>
     </div>

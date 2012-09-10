@@ -47,6 +47,8 @@
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.form.js" />"></script>
   <script>
     var ctx = '${pageContext.request.contextPath}';
+    var host = '${pageContext.request.remoteHost}';
+    console.debug('Host name: ' + host);
     com.bouncingdata.Main.setContext(ctx);
     com.bouncingdata.Main.username = '${pageContext.request.userPrincipal.name}';
     console.debug('Username: ' + com.bouncingdata.Main.username);

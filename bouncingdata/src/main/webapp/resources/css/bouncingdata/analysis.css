@@ -282,12 +282,12 @@
   float: right;
 }
 
-li.comment-item .comment-footer a, .anls-header .anls-vote a {
+li.comment-item .comment-footer a, .anls-header .anls-action-links a {
   color: blue;  
   text-decoration: none;
 }
 
-li.comment-item .comment-footer a:hover, .anls-header .anls-vote a:hover {
+li.comment-item .comment-footer a:hover, .anls-header .anls-action-links a:hover {
   color: #333;  
   cursor: pointer;
 }
@@ -304,13 +304,30 @@ li.comment-item .comment-score, .anls-score {
   color: orange;
 }
 
-.anls-header .anls-vote {
+.anls-header .anls-action-links {
   margin-top: 4px;
 }
 
-.anls-header .anls-vote .anls-score {
+.anls-header .anls-action-links .anls-score {
   margin: 0;
   display: inline;
+}
+
+.anls-header .embedded-link {
+  clear: both;
+  margin-top: 2px;
+}
+
+.anls-header .embedded-link #embedded-link-text {
+  border: 1px solid #CCCCCC;
+  resize: vertical;
+  height: 60px;
+  min-height: 60px;
+  width: 600px;
+  padding: 4px;
+  font-family: monospace;
+  color: #333;
+  border-radius: 2px;
 }
 
 .dataset-item-title a {

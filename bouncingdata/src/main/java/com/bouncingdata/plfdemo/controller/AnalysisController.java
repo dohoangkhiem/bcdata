@@ -1,5 +1,6 @@
 package com.bouncingdata.plfdemo.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,5 +234,73 @@ public class AnalysisController {
     } catch (Exception e) {
       logger.debug("Failed to add new vote to comment id {}, user id {}", commentId, user.getId());
     }
+  }
+  
+  @RequestMapping(value="/embed/{guid}")
+  public String embedAnalysis(@PathVariable String guid, ModelMap model, Principal principal) throws JsonGenerationException, JsonMappingException, IOException {
+    User user = (User) ((Authentication)principal).getPrincipal();
+    if (user == null) {
+      model.addAttribute("errorMsg", "User not found!");
+      return "embed";
+    }
+    
+    Analysis anls = null;
+    try {
+      anls = datastoreService.getAnalysisByGuid(guid);
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Failed to get analysis {}", guid);
+      }
+      model.addAttribute("errorMsg", "Failed to get analysis!");
+    }
+    
+    if (anls == null) {
+      model.addAttribute("errorMsg", "Analysis " + guid + " not found!"); 
+      return "embed";
+    }
+    
+    if (!anls.isPublished() && !anls.getUser().getUsername().equals(user.getUsername())) {
+      model.addAttribute("errorMsg", "You have no permission to view this analysis.");
+      return "embed";
+    }
+    
+    List<Visualization> visuals = null;
+    try {
+      visuals = datastoreService.getAnalysisVisualizations(anls.getId());
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Failed to get visualization from analysis {}", guid);
+      }
+      model.addAttribute("errorMsg", "Failed to get analysis visualizations.");
+    }
+    
+    Map<String, VisualizationDetail> visualsMap = null;
+    if (visuals != null) {
+      visualsMap = new HashMap<String, VisualizationDetail>();
+      for (Visualization v : visuals) {
+        if ("html".equals(v.getType())) {
+          visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), "visualize/app/" + guid + "/" + v.getGuid() + "/html", VisualizationType.getVisualType(v.getType())));
+        } else if ("png".equals(v.getType())) {
+          try {
+            String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());
+            visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), source, VisualizationType.getVisualType(v.getType())));
+          } catch (Exception e) {
+            if (logger.isDebugEnabled()) {
+              logger.debug("Error occurs when retrieving visualizations {} from analysis {}", v.getGuid(), guid);
+              logger.debug("Exception detail", e);
+            }
+            continue;
+          }
+        }
+      }
+    }
+
+    Map<String, DashboardPosition> dashboard = Utils.parseDashboard(anls);
+
+    DashboardDetail dbDetail = new DashboardDetail(visualsMap, dashboard);
+    ObjectMapper mapper = new ObjectMapper();
+    model.addAttribute("dashboardDetail", mapper.writeValueAsString(dbDetail));
+    
+    return "embed";
   }
 }
