@@ -266,7 +266,7 @@ public class AppController {
         return "KO";
       }
       
-      if (cause != null && cause.equals("execute")) {
+      if (app.isPublished() && "execute".equals(cause)) {
         // create activity
         datastoreService.doUpdateAction(user, app);
       }

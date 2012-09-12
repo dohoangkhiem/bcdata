@@ -134,6 +134,10 @@
   margin-top: 10px;
 }
 
+.workbench-ide-content .app-output-tabs .app-output-data, .workbench-ide-content .app-output-tabs .app-output-code {
+  overflow-x: auto;
+} 
+
 /** Visualization styles **/
 
 .workbench-ide-content .app-output-viz {
@@ -364,39 +368,49 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
 }
 
 /* New application dialog styles */
-#new-app-dialog {
+#save-app-dialog {
   padding: 10px 10px 0 10px;
 }
 
-#new-app-dialog form {
+#save-app-dialog form {
 }
 
-#new-app-dialog form input, #new-app-dialog form textarea, #new-app-dialog form label, #new-app-dialog form select {
+#save-app-dialog form input, #save-app-dialog form textarea, #save-app-dialog form label, #save-app-dialog form select {
   display: block;
   float: left;
   margin-bottom: 8px;
 }
 
-#new-app-dialog form label {
+#save-app-dialog form label {
   text-align: right;
   padding-right: 10px;  
   width: 120px;
 }
 
-#new-app-dialog fieldset, #publish-dialog fieldset {
+#save-app-dialog fieldset, #publish-dialog fieldset {
   padding: 12px;
   border: 1px solid #DDDDDD;
   border-radius: 1px;
 }
 
-#new-app-dialog br, #publish-dialog br {
+#save-app-dialog br, #publish-dialog br {
   clear: left;
 }
 
-#new-app-dialog fieldset input, #new-app-dialog fieldset textarea {
+#save-app-dialog fieldset input, #save-app-dialog fieldset textarea {
   width: 250px;
   border: 1px solid #BBBBBB;
   padding: .2em;
+}
+
+#save-app-dialog form .app-privacy span {
+  float: left;
+  margin: 0;
+}
+
+#save-app-dialog form .app-privacy input {
+  float: left;
+  margin: 0 5px 0 0; 
 }
 
 #publish-dialog form textarea, #publish-dialog form label {
@@ -407,6 +421,10 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
 
 #file-upload-form .upload-in-progress, #file-upload-form .upload-status {
   display: none;
+}
+
+#file-upload-form fieldset {
+  border: 0 none;
 }
 
 .popup#new-dialog {

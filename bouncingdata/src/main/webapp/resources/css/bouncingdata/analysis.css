@@ -334,3 +334,7 @@ li.comment-item .comment-score, .anls-score {
   text-decoration: none;
   color: #000;
 }
+
+.anls-data {
+  overflow-x: auto;
+}

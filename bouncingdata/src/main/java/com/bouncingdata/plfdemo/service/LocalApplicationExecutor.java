@@ -97,6 +97,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       } catch (IOException e) {
         // the stream maybe closed due to timeout or unknown error
         logger.debug("Exception occurs when reading output stream from execution {}. Maybe the process has been terminated.", ticket);
+        return new ExecutionResult("Execution terminated.", null, null, -1, "error");
       }
       output = outputBuilder.toString();
       try {

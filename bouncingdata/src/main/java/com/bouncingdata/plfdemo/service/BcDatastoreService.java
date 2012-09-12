@@ -38,13 +38,13 @@ public class BcDatastoreService {
     return jdbcBcDatastore.query(query);
   }
   
-  public void storeData(String username, String datasetName, String[] headers, List<String[]> data) throws Exception {
-    jdbcBcDatastore.persistDataset(username + "." + datasetName , headers, data);
+  public void storeData(String dsFullName, String[] headers, List<String[]> data) throws Exception {
+    jdbcBcDatastore.persistDataset(dsFullName , headers, data);
   }
   
-  public void storeExcel(String username, String datasetName, InputStream excelIs) throws Exception {
+  public void storeExcel(String dsFullName, InputStream excelIs) throws Exception {
     List<String[]> excelData = Utils.parseExcel(excelIs);
-    jdbcBcDatastore.persistDataset(username + "." + datasetName , excelData.get(0), excelData.subList(1, excelData.size()));
+    jdbcBcDatastore.persistDataset(dsFullName , excelData.get(0), excelData.subList(1, excelData.size()));
   }
     
 }

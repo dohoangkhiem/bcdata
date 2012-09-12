@@ -76,25 +76,25 @@
         </ul>
       </div> 
       
-      <div class="popup new-app-dialog" id="new-app-dialog" title="Save your application">
+      <div class="popup save-app-dialog" id="save-app-dialog" title="Save your application">
         <form>
           <fieldset>
-            <label for="new-app-name">Analysis name</label>
-            <input type="text" id="new-app-name" maxlength="40"></input><br>
-            <label for="new-app-language">Language</label>
-            <select id="new-app-language">
+            <label>Analysis name</label>
+            <input type="text" class="app-name" maxlength="40"></input><br>
+            <label>Language</label>
+            <select class="app-language">
               <option value="python">Python</option>
               <option value="r">R</option>
             </select> <br>
-            <label for="new-app-description">Description</label>
-            <textarea rows="3" id="new-app-description" style="resize: none;"></textarea><br>
-            <label for="new-app-public">Auto publish?</label>
-            <select id="new-app-public">
-              <option value="1">Yes</option>
-              <option value="0">No</option>
-            </select><br>
-            <label for="new-app-tags">Tags</label>
-            <input type="text" id="new-app-tags" title="Separate tags by comma"></input><br>
+            <label>Description</label>
+            <textarea rows="3" class="app-description" style="resize: none;"></textarea><br>
+            <label>Privacy</label>
+            <span class="app-privacy">
+              <span>Public</span><input value="public" class="app-privacy-public" type="radio" name="app-privacy" /> &nbsp;&nbsp;
+              <span>Private</span><input value="private" class="app-privacy-private" type="radio" name="app-privacy" />  
+            </span><br>     
+            <label>Tags</label>
+            <input type="text" class="app-tags" title="Separate tags by comma"></input><br>
           </fieldset>
         </form>
       </div>
@@ -114,7 +114,7 @@
             <label>Select your file</label> &nbsp;
             <input id="file" name="file" type="file" /> &nbsp;
           </fieldset>
-          <img alt="Uploading" src="<c:url value="/resources/images/loader32.gif" />" class="upload-in-progress">
+          <img alt="Uploading" src="<c:url value="/resources/images/loader32.gif" />" class="upload-in-progress">&nbsp;
           <span class="upload-status"></span>
         </form>
       </div>
@@ -124,10 +124,10 @@
           <li class="script-type" script-type="analysis"><a href="#">Analysis</a></li>
           <li class="script-type" script-type="scraper"><a href="#">Scraper</a></li>
         </ul>
-        <ul class="select-language">
+        <!-- ul class="select-language">
           <li class="script-language" lang="python"><a href="#">Python</a></li>
           <li class="script-language" lang="r"><a href="#">R</a></li>
-        </ul>
+        </ul-->
       </div>
     </div> 
   </div>

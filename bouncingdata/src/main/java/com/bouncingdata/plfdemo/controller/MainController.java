@@ -117,7 +117,7 @@ public class MainController {
       @RequestParam(value = "language", required = true) String language,
       @RequestParam(value = "description", required = true) String description,
       @RequestParam(value = "code", required = true) String code, 
-      @RequestParam(value = "isPublic", required = true) int isPublic,
+      @RequestParam(value = "isPublic", required = true) boolean isPublic,
       @RequestParam(value = "tags", required = false) String tags, 
       @RequestParam(value = "type", required = true) String type, ModelMap model, Principal principal) throws Exception {
     User user = (User) ((Authentication) principal).getPrincipal();
@@ -170,7 +170,7 @@ public class MainController {
     script.setDescription(description);
     script.setLanguage(language);
     script.setLineCount(Utils.countLines(code));
-    script.setPublished((isPublic>0));
+    script.setPublished(isPublic);
     script.setTags(tagSet);
     Date date = Utils.getCurrentDate();
     script.setCreateAt(date);
@@ -229,7 +229,7 @@ public class MainController {
   public @ResponseBody SearchResult search(@RequestParam(value="query", required=true) String query, ModelMap model) {
     SearchResult result = null;
     try {
-      result = datastoreService.search(query);
+      result = datastoreService.search(query.toLowerCase());
     } catch (Exception e) {
       logger.error("Failed to execute search with query: " + query, e);
     }

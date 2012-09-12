@@ -151,7 +151,8 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     });
     
     $vizContainer.resizable({
-      containment: '#' + $container.attr('id'),
+      //containment: '#' + $container.attr('id'),
+      containment: '#dashboard-wrapper-' + $container.attr('tabid'),
       grid: 10,
       //aspectRatio: type=="png"
       aspectRatio: false

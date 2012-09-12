@@ -201,6 +201,7 @@ div.clear {
 
 #main-content .center-content .center-content-wrapper .content {
   padding: 15px;
+  overflow-x: auto;
 }
 
 #main-content .center-content .center-content-wrapper .comments-container {

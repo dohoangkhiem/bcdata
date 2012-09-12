@@ -51,7 +51,7 @@ Workbench.prototype.init = function() {
     /**
      * Initilizes popup dialogs
      */
-    me.$newAnlsDialog = $('.workbench-container #new-app-dialog').dialog({
+    me.$saveAnlsDialog = $('.workbench-container #save-app-dialog').dialog({
       autoOpen: false,
       height: 345,
       width: 460,
@@ -60,15 +60,16 @@ Workbench.prototype.init = function() {
       buttons: {
         "Save": function() {
           //
-          if (!$('#new-app-name', $(this)).val()) {
+          if (!$('.app-name', $(this)).val()) {
             return;
           }
           var index = me.getSelectedIndex();
           var type = me.tabsIndex[index].type;
-          console.info('Creating app.');
-          me.createApp($('#new-app-name', $(this)).val(), $('#new-app-language', $(this)).val(), 
-              $('#new-app-description', $(this)).val(), me.getCode(me.getSelectedTabContainer()), 
-              $('#new-app-public', $(this)).val(), $('#new-app-tags', $(this)).val(), type);
+          var isPublic = $('.app-privacy-public', $(this)).prop('checked');
+          
+          me.createApp($('.app-name', $(this)).val(), $('.app-language', $(this)).val(), 
+              $('.app-description', $(this)).val(), me.getCode(me.getSelectedTabContainer()), 
+              isPublic, $('.app-tags', $(this)).val(), type);
           $(this).dialog("close");
         }, 
         "Cancel": function() {
@@ -76,8 +77,8 @@ Workbench.prototype.init = function() {
         }
       },
       open: function() {
-        $('.new-app-public', me.$newAnlsDialog).val(0);
-        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); });
+        $('.app-privacy-public', me.$saveAnlsDialog).attr('checked', true);
+        $('.ui-widget-overlay').bind('click', function(){ me.$saveAnlsDialog.dialog('close'); });
       },
       close: function() {     
       }
@@ -90,13 +91,13 @@ Workbench.prototype.init = function() {
       modal: true,
       resizable: false,
       open: function(event, ui) {
-        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); });
+        $('.ui-widget-overlay').bind('click', function(){ $(this).dialog('close'); });
       }
     });
     
     me.$uploadDataDialog = $('.workbench-container #upload-data-dialog').dialog({
       autoOpen: false,
-      height: 200,
+      height: 160,
       width: 400,
       modal: true,
       resizable: false,
@@ -105,16 +106,20 @@ Workbench.prototype.init = function() {
           console.debug("Upload dataset file...");
           var $form = $('form#file-upload-form', $(this));
           $('.upload-in-progress', $form).show();
-          //$('.upload-status', $form).text('Uploading').show();
+          $('.upload-status', $form).text('Uploading in progress').show();
           $form.ajaxSubmit({
             url: ctx + '/dataset/up',
             type: 'post',
             clearForm: true,
             resetForm: true,
             success: function(res) {
-              console.debug("Uploaded successfully!");
               $('.upload-in-progress', $form).hide();
-              //$('.upload-status', $form).text('Uploaded successfully.');
+              if (res < 0) {
+                $('.upload-status', $form).text('Upload failed! Your file may not valid.');
+                return;
+              }
+              console.debug("Uploaded successfully!");
+              $('.upload-status', $form).text(res +  ' bytes uploaded successfully');
             }
           });
         },
@@ -123,7 +128,8 @@ Workbench.prototype.init = function() {
         }
       },
       open: function(event, ui) {
-        $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); })
+        $('.upload-status', me.$uploadDataDialog).text('Maximum file size is 10MB').show();
+        $('.ui-widget-overlay').bind('click', function(){ me.$uploadDataDialog.dialog('close'); })
       }
     });
     
@@ -133,26 +139,14 @@ Workbench.prototype.init = function() {
       modal: true,
       resizable: false,
       buttons: {},
-      open: function(event, ui) {
-        $('ul.select-language', me.$newDialog).hide();
-        $('ul.select-type', me.$newDialog).show();
-        
-        $('li.script-type', me.$newDialog).click(function() {
-          $('ul.select-type', me.$newDialog).hide();
-          $('.select-language', me.$newDialog).show();
-          me.$newDialog.attr('script-type', $(this).attr('script-type')); 
-        });
-        
-        $('li.script-language', me.$newDialog).click(function() {
-          me.$newDialog.attr('lang', $(this).attr('lang'));
-          me.$newDialog.dialog('close');
-          me.createTab(null, null, me.$newDialog.attr('script-type'), me.$newDialog.attr('lang'));
-        });
-        
+      open: function(event, ui) {        
         $('.ui-widget-overlay').bind('click', function(){ me.$newDialog.dialog('close'); });
       }
     });
-    
+    $('li.script-type', me.$newDialog).click(function() {
+      me.$newDialog.dialog('close');
+      me.createTab(null, null, $(this).attr('script-type'), null);
+    });
     
     // get the tab template
     me.$tabTemplate = $('#workbench-content-template').template();
@@ -252,7 +246,7 @@ Workbench.prototype.init = function() {
           var guid = me.tabsIndex[index].guid;
           if (guid) {
             var app = me.tabsInfo[guid].app;
-            if (app.published && !app.executed) {
+            if (!app.published && !app.executed) {
               window.alert("Your application has not been executed yet!");
               return;
             }
@@ -766,6 +760,8 @@ Workbench.prototype.execute = function(tabIndex) {
         } else {
           console.debug(result);
           me.setStatus($tab, "error");
+          var jqConsole = me.tabsIndex[tabIndex].jqConsole;
+          jqConsole.Write(result['output'], 'jqconsole-output');
         }
       },
       error: function(msg) {
@@ -822,7 +818,7 @@ Workbench.prototype.saveCode = function(tabIndex) {
     }
   } else {
     // create new app.
-    var $dialog = me.$newAnlsDialog;
+    var $dialog = me.$saveAnlsDialog;
     $dialog.dialog("option", "title", "Save " + type);
     $dialog.dialog("open");
     // reset form
@@ -830,8 +826,8 @@ Workbench.prototype.saveCode = function(tabIndex) {
       this.reset();
     });
     var language = $('.new-app-info .language-select', $tab).val();
-    $('#new-app-language', $dialog).val(language?language:'python');
-    $('#new-app-name', $dialog).focus();
+    $('.app-language', $dialog).val(language?language:'python');
+    $('.app-name', $dialog).focus();
     return;
   }
 }
@@ -934,7 +930,7 @@ Workbench.prototype.bindAppToTab = function(index, app) {
   var $appInfo = $('.app-info', $tab).show();
   $('div.app-title', $appInfo).append(app.name);
   $('div.app-language', $appInfo).append(app.language);
-  $('div.app-author', $appInfo).append(app.authorName);
+  $('div.app-author', $appInfo).append(app.user.username);
   this.updateActionStatus(app);
 }
 

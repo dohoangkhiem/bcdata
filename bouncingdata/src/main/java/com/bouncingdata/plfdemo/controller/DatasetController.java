@@ -99,31 +99,47 @@ public class DatasetController {
   }
   
   @RequestMapping(value="/up", method = RequestMethod.POST)
-  public @ResponseBody String processUploadDataset(@RequestParam(value="file", required=true) MultipartFile file, ModelMap model,
+  public @ResponseBody long processUploadDataset(@RequestParam(value="file", required=true) MultipartFile file, ModelMap model,
       Principal principal) {
     User user = (User) ((Authentication)principal).getPrincipal();
-    String filename = file.getOriginalFilename();
+    String filename = file.getOriginalFilename();    
     filename = filename.substring(0, filename.lastIndexOf("."));
     long size = file.getSize();
+    if (size <= 0) return -1;
     logger.debug("UPLOAD FILE: Received {} file. Size {}", filename, size);
     try {
       List<String[]> data = Utils.parseExcel(file.getInputStream());
-      userDataService.storeData(user.getUsername(), filename + "_uploaded", data.get(0), data.subList(1, data.size()));
       Dataset ds = new Dataset();
       ds.setUser(user);
       ds.setActive(true);
       ds.setCreateAt(new Date());
       ds.setLastUpdate(new Date());
       ds.setDescription("Uploaded from " + file.getOriginalFilename());
-      ds.setName(user.getUsername() + "." + filename + "_uploaded");
+      String dsName = user.getUsername() + "." + filename + "_uploaded"; 
+      //Dataset oldDs = datastoreService.getDatasetByName(user.getUsername() + "." + datasetName);
+      //if (oldDs != null) tableName = tableName + "_1";
+      //ds.setName(tableName);
+      ds.setName(dsName);
       ds.setScraper(null);
       ds.setRowCount(data.size() - 1);
       ds.setGuid(Utils.generateGuid());
+      
+      String[] headers = data.get(0);
+      StringBuilder schema = new StringBuilder("CREATE TABLE `");
+      schema.append(dsName).append("` (");
+      for (String h : headers) {
+        schema.append("`").append(h).append("` text,");
+      }
+      String schemaStr = schema.substring(0, schema.length() - 1) + ")";
+      ds.setSchema(schemaStr);
       datastoreService.createDataset(ds);
+      
+      userDataService.storeData(dsName, headers, data.subList(1, data.size()));
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.debug("Exception when trying to import data", e);
+      return -1;
     }
-    return "OK";
+    return size;
   }
   
   @SuppressWarnings("rawtypes")

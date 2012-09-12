@@ -44,6 +44,10 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
     }  
   }
   
+  public String getDataset(String dataset, int begin, int maxNumber) throws DataAccessException {
+    return "";
+  }
+  
   @Override
   public List<Map> getDatasetToList(String dataset) throws DataAccessException {
     String sql = "select * from `" + dataset + "`";
@@ -113,7 +117,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
       }
       
       sql = createSql.substring(0, createSql.length() -1) + ")";
-      System.out.println("Create table: " + sql);
+      logger.debug("Create table: {}.", sql);
       st.execute(sql);
       
       StringBuilder insertSql = new StringBuilder("insert into `" + tableName + "`(");
@@ -141,10 +145,9 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
           pst.setString(i*columnNum + j + 1, rowData[j]);
         }
       }
-      System.out.println("Insert data: " + pst.toString());
       //int result = st.executeUpdate(sql);
       int result = pst.executeUpdate();
-      System.out.println("Insert complete: " + result + " rows");
+      logger.debug("Insert complete: {} rows.", result);
     } catch (SQLException e) {
       throw new RuntimeException(e);
     } finally {
