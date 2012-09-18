@@ -226,10 +226,15 @@ public class MainController {
   }
   
   @RequestMapping(value="/search", method = RequestMethod.GET)
-  public @ResponseBody SearchResult search(@RequestParam(value="query", required=true) String query, ModelMap model) {
+  public @ResponseBody SearchResult search(@RequestParam(value="query", required=true) String query, @RequestParam(value="criteria", required=true) String criteria, ModelMap model, Principal principal) {
     SearchResult result = null;
+    User user = (User) ((Authentication)principal).getPrincipal();
     try {
-      result = datastoreService.search(query.toLowerCase());
+      if ("global".equals(criteria)) {
+        result = datastoreService.search(query.toLowerCase());
+      } else if ("mystuff".equals(criteria)) {
+        result = datastoreService.search(query, user.getId());
+      }
     } catch (Exception e) {
       logger.error("Failed to execute search with query: " + query, e);
     }

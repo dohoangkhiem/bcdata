@@ -56,13 +56,35 @@
         <table class="data-table" id="data-table">
           
         </table>
-        <script>
-        	var data = ${data}
-        	console.debug("Data: ");
-        	console.debug(data);
-        	var $table = $('#data-table');
-        	com.bouncingdata.Workbench.renderDatatable(data, $table);
-        </script>
+        <c:choose>
+          <c:when test="${not empty data }">
+            <script>
+          		var data = ${data};
+              var $table = $('#data-table');
+              com.bouncingdata.Workbench.renderDatatable(data, $table);
+            </script>
+          </c:when>
+          <c:otherwise>
+            <script>
+            $(function() {
+              console.debug("Load datatable by Ajax...");
+              var guid = '${guid}';
+              var columns = ${columns};
+              var aoColumns = [];
+              for (idx in columns) {
+                aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
+              }
+              var $table = $('#data-table');
+              $table.dataTable({
+                "bServerSide": true,
+                "bProcessing": true,
+                "sAjaxSource": ctx + "/dataset/ajax/" + guid,
+                "aoColumns": aoColumns
+              });
+            });
+            </script>  
+          </c:otherwise>
+        </c:choose>
       </div>
       <div class="clear"></div>
       <div class="comments-container">

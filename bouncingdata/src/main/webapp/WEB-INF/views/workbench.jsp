@@ -25,7 +25,10 @@
     <div class="search-container">
       <div id="search-form" class="search-form">
         <input type="text" class="search-input" id="query" name="query" placeholder="Search global stuff..." />
-        <!-- input type="submit" value="Search" id="search-submit" /-->
+        <select class="search-criteria">
+          <option value="global">All</option>
+          <option value="mystuff">My stuff</option>
+        </select>
       </div>
       <div class="clear"></div>
     </div>
@@ -34,25 +37,25 @@
         <ul>
           <li><a href="#browser-mystuff">My Stuff</a></li>
         </ul>
-        <div id="browser-mystuff">
+        <div id="browser-mystuff" class="browser-mystuff">
           <div class="dataset-list-panel">
-            <h4 style="cursor: pointer;">Datasets</h4>
-            <div id="dataset-list">
-            </div>
+            <h4>Datasets</h4>
+            <div id="dataset-list"></div>
           </div>
           <div class="browser-separator"></div>
           <div class="analysis-list-panel">
-            <h4 style="cursor: pointer;">Analyses</h4>
+            <h4>Analyses</h4>
             <div id="analysis-list"></div>
           </div>
           <div class="browser-separator"></div>
           <div class="scraper-list-panel">
-            <h4 style="cursor: pointer;">Scrapers</h4>
+            <h4>Scrapers</h4>
             <div id="scraper-list"></div>
           </div>
           <div class="show-all"><a id="show-all-button" href="javascript:void(0)">Back</a></div>
           <div class="clear"></div>
-        </div>        
+        </div>      
+          
       </div>
     </div>
   </div>
@@ -90,8 +93,8 @@
             <textarea rows="3" class="app-description" style="resize: none;"></textarea><br>
             <label>Privacy</label>
             <span class="app-privacy">
-              <span>Public</span><input value="public" class="app-privacy-public" type="radio" name="app-privacy" /> &nbsp;&nbsp;
-              <span>Private</span><input value="private" class="app-privacy-private" type="radio" name="app-privacy" />  
+              <span>Public&nbsp;</span><input value="public" class="app-privacy-public" type="radio" name="app-privacy" /> &nbsp;&nbsp;
+              <span>Private&nbsp;</span><input value="private" class="app-privacy-private" type="radio" name="app-privacy" />  
             </span><br>     
             <label>Tags</label>
             <input type="text" class="app-tags" title="Separate tags by comma"></input><br>

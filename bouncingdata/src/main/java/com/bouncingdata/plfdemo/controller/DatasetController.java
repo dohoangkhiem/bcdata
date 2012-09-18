@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
@@ -53,7 +54,26 @@ public class DatasetController {
         return null;
       }
       
-      return userDataService.getDatasetToList(ds.getName());
+      return userDataService.getDatasetToList(ds.getName(), 0, 100);
+    } catch (Exception e) {
+      logger.debug("Exception occurs when retrieving dataset " + guid, e);
+    }   
+    return null;
+  }
+  
+  @SuppressWarnings("rawtypes")
+  @RequestMapping(value="/{guid}?start={start}&count={count}", method = RequestMethod.GET)
+  public @ResponseBody List<Map> getData(@PathVariable String guid, @PathVariable int start, @PathVariable int count) {
+    try {
+      Dataset ds = datastoreService.getDatasetByGuid(guid);
+      if (ds == null) {
+        logger.debug("Can't find the dataset {}", guid);
+        return null;
+      }
+      
+      if (count <= 0) return null;
+      
+      return userDataService.getDatasetToList(ds.getName(), start, count);
     } catch (Exception e) {
       logger.debug("Exception occurs when retrieving dataset " + guid, e);
     }   
@@ -89,7 +109,7 @@ public class DatasetController {
           logger.debug("Can't find the dataset {}", guid);
           continue;
         }
-        DatasetDetail detail = new DatasetDetail(guid, ds.getName(), userDataService.getDatasetToString(ds.getName()));
+        DatasetDetail detail = new DatasetDetail(guid, ds.getName(), userDataService.getDatasetToString(ds.getName(), 0, 100));
         results.put(ds.getGuid(), detail);
       } catch (Exception e) {
         logger.debug("Exception occurs when retrieving dataset " + guid, e);
@@ -109,13 +129,17 @@ public class DatasetController {
     logger.debug("UPLOAD FILE: Received {} file. Size {}", filename, size);
     try {
       List<String[]> data = Utils.parseExcel(file.getInputStream());
+      String[] headers = data.get(0);
+      String dsName = user.getUsername() + "." + filename + "_uploaded";
+      userDataService.storeData(dsName, headers, data.subList(1, data.size()));
+      
       Dataset ds = new Dataset();
       ds.setUser(user);
       ds.setActive(true);
       ds.setCreateAt(new Date());
       ds.setLastUpdate(new Date());
       ds.setDescription("Uploaded from " + file.getOriginalFilename());
-      String dsName = user.getUsername() + "." + filename + "_uploaded"; 
+       
       //Dataset oldDs = datastoreService.getDatasetByName(user.getUsername() + "." + datasetName);
       //if (oldDs != null) tableName = tableName + "_1";
       //ds.setName(tableName);
@@ -124,7 +148,7 @@ public class DatasetController {
       ds.setRowCount(data.size() - 1);
       ds.setGuid(Utils.generateGuid());
       
-      String[] headers = data.get(0);
+      
       StringBuilder schema = new StringBuilder("CREATE TABLE `");
       schema.append(dsName).append("` (");
       for (String h : headers) {
@@ -133,8 +157,6 @@ public class DatasetController {
       String schemaStr = schema.substring(0, schema.length() - 1) + ")";
       ds.setSchema(schemaStr);
       datastoreService.createDataset(ds);
-      
-      userDataService.storeData(dsName, headers, data.subList(1, data.size()));
     } catch (Exception e) {
       logger.debug("Exception when trying to import data", e);
       return -1;
@@ -149,12 +171,27 @@ public class DatasetController {
       Dataset ds = datastoreService.getDatasetByGuid(guid);
       if (ds == null) {
         logger.debug("Can't find the dataset {}", guid);
-        return null;
+        model.addAttribute("errorMsg", "Dataset not found!");
+        return "error";
       }
-      List<Map> data = userDataService.getDatasetToList(ds.getName());
-      ObjectMapper mapper = new ObjectMapper();
+      
       model.addAttribute("dataset", ds);
-      model.addAttribute("data", mapper.writeValueAsString(data));
+      ObjectMapper mapper = new ObjectMapper();
+      if (ds.getRowCount() < 5000) {
+        List<Map> data = userDataService.getDatasetToList(ds.getName());
+          
+        model.addAttribute("data", mapper.writeValueAsString(data));
+      } else {
+        Map row = userDataService.getDatasetToList(ds.getName(), 0, 1).get(0);
+        String[] columns = new String[row.keySet().size()];
+        int i = 0;
+        for (Object s : row.keySet()) {
+          columns[i++] = (String) s;
+        }
+        model.addAttribute("columns", mapper.writeValueAsString(columns));
+        model.addAttribute("data", null);
+        model.addAttribute("guid", guid);
+      }
       
       List<AnalysisDataset> relations = datastoreService.getRelatedAnalysis(ds.getId());
       if (relations != null) {
@@ -171,10 +208,47 @@ public class DatasetController {
     } catch (Exception e) {
       logger.debug("", e);
       model.addAttribute("errorMsg", e.getMessage());
+      return "error";
     }
     return "datapage";
   }
   
-  
+  @RequestMapping(value="/ajax/{guid}", method = RequestMethod.GET)
+  public @ResponseBody Map<String, Object> loadDatatable(@PathVariable String guid, WebRequest request) {
+    try {
+      Dataset ds = datastoreService.getDatasetByGuid(guid);
+      if (ds == null) {
+        logger.debug("Can't find the dataset {}", guid);
+        return null;
+      }
+    
+      Map<String, String[]> params = request.getParameterMap();
+      int displayStart = Integer.valueOf(params.get("iDisplayStart")[0]);
+      int displayLength = Integer.valueOf(params.get("iDisplayLength")[0]);
+      int sEcho = Integer.valueOf(params.get("sEcho")[0]);
+      
+      Map<String, Object> result = new HashMap<String, Object>();
+      result.put("sEcho", sEcho);
+      
+      List<Map> data = userDataService.getDatasetToList(ds.getName(), displayStart, displayLength);
+      int totalDisplayRecords = data.size();
+      int totalRecords = ds.getRowCount();
+      result.put("iTotalRecords", totalRecords);
+      result.put("iTotalDisplayRecords", totalRecords);
+      result.put("aaData", data);
+      /*StringBuilder sColumns = new StringBuilder();
+      for (Object s : data.get(0)) {
+        String col = (String) s;
+        sColumns.append(col + ",");
+      }
+      sColumns.substring(0,  sColumns.length() - 1);
+      result.put("sColumns", sColumns.toString());*/
+      return result;
+    } catch (Exception e) {
+      logger.debug("", e);
+      return null;
+    }
+    
+  }
   
 }

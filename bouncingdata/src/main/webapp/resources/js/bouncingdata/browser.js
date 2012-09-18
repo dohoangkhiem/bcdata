@@ -9,7 +9,7 @@ Browser.prototype.init = function() {
   var me = this;
   $(function() {
     // init tabs
-    $("#browser-tabs" ).tabs();
+    me.$tabs = $("#browser-tabs" ).tabs();
     
     // load datasets, applications in "My stuff" tab
     //me.getDatasetList();
@@ -39,10 +39,20 @@ Browser.prototype.init = function() {
     });
     
     // initializes search
+    $('#workbench-browser #search-form .search-criteria').change(function() {
+      var value = $(this).val();
+      if (value == 'global') {
+        $(this).prev().prop('placeholder', 'Search global stuff...');
+      } else if (value == 'mystuff') {
+        $(this).prev().prop('placeholder', 'Search my stuff...');
+      }
+    });
+    
     var searchFunc = function() {
-      var query = $.trim($('#workbench-browser #search-form #query').val()); 
+      var query = $.trim($('#workbench-browser #search-form #query').val());
+      var criteria = $('#workbench-browser #search-form .search-criteria').val();
       if (query.length > 0) {
-        me.search(query); 
+        me.search(query, criteria); 
       }
     }
     $('#workbench-browser #search-form #query').keypress(function(e) {
@@ -162,17 +172,16 @@ Browser.prototype.setMyStuff = function(stuffs) {
 }
 
 Browser.prototype.loadMyStuff = function(stuffs) {
-  this.loadStuff(stuffs['analyses'], 'analysis');
-  this.loadStuff(stuffs['datasets'], 'dataset');
-  this.loadStuff(stuffs['scrapers'], 'scraper');
+  this.loadStuff(stuffs['analyses'], 'analysis', $('#browser-tabs #browser-mystuff #analysis-list'));
+  this.loadStuff(stuffs['datasets'], 'dataset', $('#browser-tabs #browser-mystuff #dataset-list'));
+  this.loadStuff(stuffs['scrapers'], 'scraper', $('#browser-tabs #browser-mystuff #scraper-list'));
 }
 
-Browser.prototype.loadStuff = function(stuffs, type) {
-  var $container;
-  if (type == "analysis") $container = $('#browser-tabs #analysis-list');
+Browser.prototype.loadStuff = function(stuffs, type, $container) {
+  /*if (type == "analysis") $container = $('#browser-tabs #analysis-list');
   else if (type == "scraper") $container = $('#browser-tabs #scraper-list');
   else if (type == 'dataset') $container = $('#browser-tabs #dataset-list');
-  else return;
+  else return;*/
   
   $container.empty();
   for (key in stuffs) {
@@ -256,6 +265,35 @@ Browser.prototype.loadStuff = function(stuffs, type) {
   }
 }
 
+Browser.prototype.renderSearchResult = function(results, query) {
+  var $resultTab = $('div#browser-search-result', this.$tabs);
+  if ($resultTab.length == 0) {
+    var size = this.$tabs.tabs("length");
+    if (size > 1) {
+      for (i = 1; i < size; i++) {
+        this.$tabs.tabs("remove", 1);
+      }
+    }
+    this.$tabs.tabs('add', '#browser-search-result', "Search result")
+    $resultTab = $('div#browser-search-result', this.$tabs);
+  }  
+  
+  this.$tabs.tabs('select', 1);
+  
+  // render search result
+  $resultTab.empty();
+  var $analyses = $('<div class="search-result-analyses-panel"><h4>Analyses</h4><div class="search-result-analyses"></div></div>');
+  var $datasets = $('<div class="search-result-datasets-panel"><h4>Datasets</h4><div class="search-result-datasets"></div></div>');
+  var $scrapers = $('<div class="search-result-scrapers-panel"><h4>Scrapers</h4><div class="search-result-scrapers"></div></div>');
+  $resultTab.append('<div style="margin: 5px 0;">All results for &ldquo;<b>' + query + '</b>&rdquo;</div>')
+    .append($datasets).append('<div class="browser-separator"></div>')
+    .append($analyses).append('<div class="browser-separator"></div>')
+    .append($scrapers);
+  this.loadStuff(results['analyses'], 'analysis', $('.search-result-analyses', $analyses));
+  this.loadStuff(results['datasets'], 'dataset', $('.search-result-datasets', $datasets));
+  this.loadStuff(results['scrapers'], 'scraper', $('.search-result-scrapers', $scrapers)); 
+}
+
 Browser.prototype.getStuff = function(guid, type) {
   switch (type) {
   case "analysis":
@@ -281,23 +319,25 @@ Browser.prototype.refreshMyStuff = function() {
 /**
  * 
  */
-Browser.prototype.search = function(query) {
+Browser.prototype.search = function(query, criteria) {
   var me = this;
   $(function() {
     $.ajax({
       url: ctx + '/main/search',
       data: {
-        query: query
+        query: query,
+        criteria: criteria
       },
       success: function(json) {
-        //var apps = json['applications'];
-        //var datasets = json['datasets'];
-        me.setMode("search");
-        //me.loadMyStuff(datasets, "dataset");
-        //me.loadMyStuff(apps, "application");
-        me.loadStuff(json['analyses'], 'analysis');
-        me.loadStuff(json['dataset'], 'dataset');
-        me.loadStuff(json['scrapers'], 'scraper');
+        if (criteria == "mystuff") {
+          me.setMode("search");
+          me.loadStuff(json['analyses'], 'analysis', $('#browser-mystuff #analysis-list', me.$tabs));
+          me.loadStuff(json['datasets'], 'dataset', $('#browser-mystuff #dataset-list', me.$tabs));
+          me.loadStuff(json['scrapers'], 'scraper', $('#browser-mystuff #scraper-list', me.$tabs));
+        } else if (criteria == "global") {
+          console.debug("Received global search results.");
+          me.renderSearchResult(json, query);
+        }
       }, 
       error: function() {
         console.debug("Failed to execute search request.");
@@ -307,4 +347,3 @@ Browser.prototype.search = function(query) {
 }
 
 com.bouncingdata.Browser = new Browser();
-//com.bouncingdata.Browser.init();

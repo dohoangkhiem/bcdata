@@ -29,6 +29,11 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 
 public class Utils {
   
+  // Suppress default constructor for noninstantiability
+  private Utils() {
+    throw new AssertionError();
+  }
+  
   public static final String FILE_SEPARATOR;
   
   static {
@@ -46,6 +51,24 @@ public class Utils {
         String column_name = rsmd.getColumnName(i);
         Object value = rs.getObject(column_name);
         row.put(column_name, value);
+      }
+      result.add(row);
+    }
+    return result;
+  }
+  
+  public static List<Object[]> resultSetToListOfArray(ResultSet rs) throws SQLException {
+    java.sql.ResultSetMetaData rsmd = rs.getMetaData();
+    List<Object[]> result = new ArrayList<Object[]>();
+    while (rs.next()) {
+      //Map<String, Object> row = new HashMap<String, Object>();
+      int numColumns = rsmd.getColumnCount();
+      Object[] row = new Object[numColumns];
+        
+      for (int i = 1; i < numColumns + 1; i++) {
+        String column_name = rsmd.getColumnName(i);
+        Object value = rs.getObject(column_name);
+        row[i-1] = value;
       }
       result.add(row);
     }
@@ -249,6 +272,11 @@ public class Utils {
       }
     }
   }
+  
+  
+  
+  
+  
     
   public static void main(String args[]) {
     try {

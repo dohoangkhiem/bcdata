@@ -45,7 +45,75 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   }
   
   public String getDataset(String dataset, int begin, int maxNumber) throws DataAccessException {
-    return "";
+    String sql = "select * from `" + dataset + "` limit " + begin + "," + maxNumber;
+    Connection conn = null;
+    Statement st = null;
+    ResultSet rs = null;
+    try {
+      conn = getDataSource().getConnection();
+      st = conn.createStatement();
+      rs = st.executeQuery(sql);
+      return Utils.resultSetToJson(rs);
+      
+    } catch (SQLException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Error when retrieved dataset {}", dataset);
+        logger.debug("Exception detail: ", e);
+      }
+      return null;
+    } finally {
+      if (rs != null) try { rs.close(); } catch (Exception e) {}
+      if (st != null) try { st.close(); } catch (Exception e) {}
+      if (conn != null) try { conn.close(); } catch (Exception e) {}
+    }
+  }
+  
+  public List<Map> getDatasetToList(String dataset, int begin, int maxNumber) throws DataAccessException {
+    String sql = "select * from `" + dataset + "` limit " + begin + "," + maxNumber;
+    Connection conn = null;
+    Statement st = null;
+    ResultSet rs = null;
+    try {
+      conn = getDataSource().getConnection();
+      st = conn.createStatement();
+      rs = st.executeQuery(sql);
+      return Utils.resultSetToList(rs);
+      
+    } catch (SQLException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Error when retrieved dataset {}", dataset);
+        logger.debug("Exception detail: ", e);
+      }
+      return null;
+    } finally {
+      if (rs != null) try { rs.close(); } catch (Exception e) {}
+      if (st != null) try { st.close(); } catch (Exception e) {}
+      if (conn != null) try { conn.close(); } catch (Exception e) {}
+    }  
+  }
+  
+  public List<Object[]> getDatasetToListOfArray(String dataset, int begin, int maxNumber) throws DataAccessException {
+    String sql = "select * from `" + dataset + "` limit " + begin + "," + maxNumber;
+    Connection conn = null;
+    Statement st = null;
+    ResultSet rs = null;
+    try {
+      conn = getDataSource().getConnection();
+      st = conn.createStatement();
+      rs = st.executeQuery(sql);
+      return Utils.resultSetToListOfArray(rs);
+      
+    } catch (SQLException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Error when retrieved dataset {}", dataset);
+        logger.debug("Exception detail: ", e);
+      }
+      return null;
+    } finally {
+      if (rs != null) try { rs.close(); } catch (Exception e) {}
+      if (st != null) try { st.close(); } catch (Exception e) {}
+      if (conn != null) try { conn.close(); } catch (Exception e) {}
+    }  
   }
   
   @Override
@@ -170,6 +238,34 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
       throw new RuntimeException(e);
     } finally {
       if (st != null) try { st.close(); } catch(Exception e) {}
+      if (conn != null) try { conn.close(); } catch (Exception e) {}
+    }
+  }
+  
+  public int getDatasetSize(String dataset) {
+    String sql = "select id from `" + dataset + "`";
+    Connection conn = null;
+    Statement st = null;
+    ResultSet rs = null;
+    try {
+      conn = getDataSource().getConnection();
+      st = conn.createStatement();
+      rs = st.executeQuery(sql);
+      
+      int rowCount = 0;
+      while (rs.next()) {
+        rowCount++;
+       }
+      return rowCount;
+    } catch (SQLException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Error when retrieved dataset {}", dataset);
+        logger.debug("Exception detail: ", e);
+      }
+      return -1;
+    } finally {
+      if (rs != null) try { rs.close(); } catch (Exception e) {}
+      if (st != null) try { st.close(); } catch (Exception e) {}
       if (conn != null) try { conn.close(); } catch (Exception e) {}
     }
   }

@@ -210,6 +210,18 @@ div.clear {
 
 .ui-tabs .ui-state-disabled { 
     display: none; /* disabled tabs don't show up */ 
-} 
+}
+
+body > #ajaxLoadingMessage {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 45%;
+  background-color: #F1F80F;
+  color: #000;
+  font-weight: bold;
+  padding: 5px 12px;
+  z-index: 10000;
+}
 
 

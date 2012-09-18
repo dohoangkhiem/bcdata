@@ -52,10 +52,11 @@
   z-index: -99;
 }
 
-.browser-container .dataset-list-panel h4, .browser-container .analysis-list-panel h4, .browser-container .scraper-list-panel h4 {
+.browser-container h4 {
   margin: 5px 0;
   padding: 5px 0 5px 5px;
   background-color: #DDDDDD;
+  cursor: pointer;
 }
 
 /* Browser item styles */
@@ -119,11 +120,26 @@
   word-wrap: break-word;
 }
 
+#workbench-browser .search-container #search-form {
+  position: relative;
+  border: 1px solid #CCC;
+  height: 25px;
+  margin: 6px;
+}
+
 #workbench-browser .search-container #search-form input.search-input {
-  border: 1px solid #D3D3D3;
   height: 22px;
   padding-left: 5px;
-  width: 225px;
-  margin: 8px 0 0 8px;
+  width: 150px;
   font-size: 12px;
+  margin: 0;
+  border: 0 none;
+}
+
+#workbench-browser .search-container #search-form .search-criteria {
+  font-size: 0.85em;
+  position: absolute;
+  right: 0;
+  top: 2px;
+  color: #333;
 }

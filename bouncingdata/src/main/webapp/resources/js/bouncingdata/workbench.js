@@ -97,7 +97,7 @@ Workbench.prototype.init = function() {
     
     me.$uploadDataDialog = $('.workbench-container #upload-data-dialog').dialog({
       autoOpen: false,
-      height: 160,
+      height: 180,
       width: 400,
       modal: true,
       resizable: false,
@@ -105,6 +105,9 @@ Workbench.prototype.init = function() {
         "Upload": function() {
           console.debug("Upload dataset file...");
           var $form = $('form#file-upload-form', $(this));
+          if (!$form.prop('value')) {
+            return;
+          }
           $('.upload-in-progress', $form).show();
           $('.upload-status', $form).text('Uploading in progress').show();
           $form.ajaxSubmit({
@@ -194,13 +197,13 @@ Workbench.prototype.init = function() {
     });
     
     // handles double click on tab bar
-    $('#workbench-main-tabs .workbench-main-tabs-bar').dblclick(function(e) {
+    /*$('#workbench-main-tabs .workbench-main-tabs-bar').dblclick(function(e) {
       var $target = $(e.target);
       var $p = $target.parents('li.workbench-tab-header');
       if ($p && $p.length > 0) return false;
       me.createTab(null);
       return false;
-    });
+    });*/
     
     // handles tab closing
     $(".tab-header span.ui-icon-close", me.$tabs).live("click", function() {
@@ -589,6 +592,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     });
   } else {
     me.setLanguage(lang, $tab);
+    me.setCode(lang=='python'?'import datastore\n':'', $tab);
   }
   
 
@@ -1114,6 +1118,14 @@ Workbench.prototype.renderDatatable = function(data, $table) {
   //  table.fnClearTable(0);
   //  table.fnAddData(aaData);
   //}
+}
+
+Workbench.prototype.loadDatatableByAjax = function(dsGuid, $table) {
+  $table.dataTable({
+    "bServerSide": true,
+    "bProcessing": true,
+    "sAjaxSource": ctx + "/dataset/" + dsGuid
+  });
 }
 
 

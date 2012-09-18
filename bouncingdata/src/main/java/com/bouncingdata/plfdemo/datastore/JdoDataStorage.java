@@ -186,17 +186,44 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     SearchResult sr = new SearchResult();
     Query q = pm.newQuery(Analysis.class);
     try {
-      q.setFilter("this.name.matches(\".*" + query + ".*\") || this.description.matches(\".*" + query + ".*\")");
+      q.setFilter("this.name.toLowerCase().matches(\".*" + query + ".*\") || this.description.toLowerCase().matches(\".*" + query + ".*\")");
       List<Analysis> apps = (List<Analysis>) pm.detachCopyAll((List<Analysis>) q.execute());
       sr.setAnalyses(apps);
       
       q = pm.newQuery(Dataset.class);
-      q.setFilter("this.name.matches(\".*" + query + ".*\") || this.description.matches(\".*" + query + ".*\")");
+      q.setFilter("this.isActive == true && (this.name.toLowerCase().matches(\".*" + query + ".*\") || this.description.toLowerCase().matches(\".*" + query + ".*\"))");
       List<Dataset> datasets = (List<Dataset>) pm.detachCopyAll((List<Dataset>) q.execute());
       sr.setDatasets(datasets);
       
+      q = pm.newQuery(Scraper.class);
+      q.setFilter("this.name.toLowerCase().matches(\".*" + query + ".*\") || this.description.toLowerCase().matches(\".*" + query + ".*\")");
+      List<Scraper> scrapers = (List<Scraper>) pm.detachCopyAll((List<Scraper>)q.execute());
+      sr.setScrapers(scrapers);
+      
+      return sr;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+  
+  @Override
+  public SearchResult search(String query, int ownerId) {
+    PersistenceManager pm = getPersistenceManager();
+    SearchResult sr = new SearchResult();
+    Query q = pm.newQuery(Analysis.class);
+    try {
+      q.setFilter("this.user.id == " + ownerId + " && (this.name.toLowerCase().matches(\".*" + query + ".*\") || this.description.toLowerCase().matches(\".*" + query + ".*\"))");
+      List<Analysis> apps = (List<Analysis>) pm.detachCopyAll((List<Analysis>) q.execute());
+      sr.setAnalyses(apps);
+      
       q = pm.newQuery(Dataset.class);
-      q.setFilter("this.name.matches(\".*" + query + ".*\") || this.description.matches(\".*" + query + ".*\")");
+      q.setFilter("this.user.id == " + ownerId + " && this.isActive == true && (this.name.toLowerCase().matches(\".*" + query + ".*\") || this.description.toLowerCase().matches(\".*" + query + ".*\"))");
+      List<Dataset> datasets = (List<Dataset>) pm.detachCopyAll((List<Dataset>) q.execute());
+      sr.setDatasets(datasets);
+      
+      q = pm.newQuery(Scraper.class);
+      q.setFilter("this.user.id == " + ownerId + " && (this.name.toLowerCase().matches(\".*" + query + ".*\") || this.description.toLowerCase().matches(\".*" + query + ".*\"))");
       List<Scraper> scrapers = (List<Scraper>) pm.detachCopyAll((List<Scraper>)q.execute());
       sr.setScrapers(scrapers);
       
@@ -385,7 +412,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public Dataset getDatasetByGuid(String guid) {
     PersistenceManager pm = getPersistenceManager();
     Query q = pm.newQuery(Dataset.class);
-    q.setFilter("guid == \"" + guid + "\"");
+    q.setFilter("guid == \"" + guid + "\" && isActive == true");
     Dataset ds = null;
     try {
       List<Dataset> results = (List<Dataset>) q.execute();

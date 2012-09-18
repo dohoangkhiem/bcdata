@@ -86,6 +86,11 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
   
   @Override
+  public SearchResult search(String query, int ownerId) throws Exception {
+    return dataStorage.search(query, ownerId);
+  }
+  
+  @Override
   public Analysis getAnalysis(int appId) throws Exception {
     return dataStorage.getAnalysis(appId);
   }

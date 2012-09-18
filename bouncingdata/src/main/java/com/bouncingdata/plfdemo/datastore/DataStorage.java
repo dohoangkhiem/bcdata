@@ -436,6 +436,8 @@ public interface DataStorage {
   public void createAnalysisDatasets(List<AnalysisDataset> anlsDts);
 
   List<AnalysisDataset> getRelatedAnalysis(int datasetId);
+
+  SearchResult search(String query, int ownerId);
   
 }
 

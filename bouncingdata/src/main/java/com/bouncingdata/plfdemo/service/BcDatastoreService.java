@@ -30,8 +30,24 @@ public class BcDatastoreService {
     return jdbcBcDatastore.getDatasetToList(dataset);
   }
   
+  public List<Map> getDatasetToList(String dataset, int begin, int maxNumber) throws Exception {
+    return jdbcBcDatastore.getDatasetToList(dataset, begin, maxNumber);
+  }
+  
   public String getDatasetToString(String dataset) throws Exception {
     return jdbcBcDatastore.getDataset(dataset);
+  }
+  
+  public List<Object[]> getDatasetToListOfArray(String dataset, int begin, int maxNumber) throws Exception {
+    return jdbcBcDatastore.getDatasetToListOfArray(dataset, begin, maxNumber);
+  }
+  
+  public String getDatasetToString(String dataset, int begin, int maxNumber) throws Exception {
+    return jdbcBcDatastore.getDataset(dataset, begin, maxNumber);
+  }
+  
+  public int getDatasetSize(String dataset) throws Exception {
+    return jdbcBcDatastore.getDatasetSize(dataset);
   }
   
   public List<Map> query(String query) throws Exception {

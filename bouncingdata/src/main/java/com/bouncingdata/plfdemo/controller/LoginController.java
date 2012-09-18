@@ -100,7 +100,7 @@ public class LoginController {
       result.setMessage("Successfully create user " + user.getUsername());
       model.addAttribute("regResult", result);
     } catch (Exception e) {
-      e.printStackTrace();
+      if (logger.isDebugEnabled()) logger.debug("Failed to create new user " + username, e);
       result.setStatusCode(-2);
       result.setMessage(e.getMessage());
       model.addAttribute("regResult", result);

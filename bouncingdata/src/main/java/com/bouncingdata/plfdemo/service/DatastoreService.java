@@ -262,4 +262,6 @@ public interface DatastoreService {
   void updateBcDataScript(BcDataScript script);
 
   void doUpdateAction(User user, BcDataScript script) throws Exception;
+
+  SearchResult search(String query, int ownerId) throws Exception;
 }

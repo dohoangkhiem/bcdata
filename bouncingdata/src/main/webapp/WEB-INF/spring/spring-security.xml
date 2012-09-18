@@ -12,6 +12,7 @@
     <intercept-url pattern="/resources/**" access="permitAll" />
     <intercept-url pattern="/cdn/**" access="permitAll" />
     <intercept-url pattern="/favicon.ico" access="permitAll"/>
+    <intercept-url pattern="/public/**" access="permitAll" />
     <intercept-url pattern="/**" access="isAuthenticated()" />
     <form-login login-page="/auth/login" default-target-url="/main"
       authentication-failure-url="/auth/failed" login-processing-url="/auth/j_spring_security_check"  />

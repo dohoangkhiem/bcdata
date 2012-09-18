@@ -23,6 +23,8 @@
   <!-- Resources mapping -->
   <mvc:resources mapping="/resources/**" location="/resources/, classpath:/META-INF/web-resources/" />
   <mvc:resources mapping="/cdn/**" location="/cdn/" />
+  
+  <mvc:default-servlet-handler />
     
   <context:property-placeholder location="classpath:appstore.properties" />
   

@@ -25,14 +25,6 @@
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.dataTables.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.tmpl.min.js" />"></script>
   
-  <!-- Loads at start page for dev. mode -->
-  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/main.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/dashboard.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/activitystream.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workbench.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
-  
-  
   <script type="text/javascript" src="<c:url value="/resources/dojo/dojo.js" />"> </script>
   <script type="text/javascript" src="<c:url value="/resources/spring/Spring.js" />"> </script>
   <script type="text/javascript" src="<c:url value="/resources/spring/Spring-Dojo.js" />"> </script>
@@ -45,6 +37,15 @@
   <!-- Some external scripts like this need to be loaded in defer way -->
   <script type="text/javascript" src="<c:url value="/resources/js/ace-min/ace.js" />" charset="utf-8"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.form.js" />"></script>
+  
+  <!-- Loads at start page for dev. mode -->
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/main.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/dashboard.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/activitystream.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/workbench.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/nav.js" />"></script>
+  
   <script>
     var ctx = '${pageContext.request.contextPath}';
     var host = '${pageContext.request.remoteHost}';
@@ -75,6 +76,9 @@
         <tiles:insertAttribute name="footer-content" />
       </div>
     </div>
+  </div>
+  <div id="ajaxLoadingMessage">
+    <span class="ajaxLoadingMessage">Loading...</span>
   </div>
 </body>
 </html>

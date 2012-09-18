@@ -7,27 +7,22 @@ Main.prototype.setContext = function(ctx) {
 
 Main.prototype.initUI = function() {
   $(function() {
-    /*
-    outerLayout = $('.content-container #main-layout').layout({
-      center__paneSelector: ".main-layout-center",
-      west__paneSelector:   ".main-layout-west",
-      west__size:       240,
-      applyDefaultStyles: true,
-      resizable: false,
-      center__onresize: "com.bouncingdata.Workspace.resizeAll()"
-    });
-    */
-    /*innerLayout = $('.workspace-container #workspace-layout').layout({
-      center__paneSelector: ".workspace-layout-center",
-      east__paneSelector:   ".workspace-layout-east",
-      east__size: 400,
-      applyDefaultStyles: true
-    });*/
     
     $('input:button').button();
     $('input:submit').button();
     
+    // initializes main navigation
+    com.bouncingdata.Nav.init();
+    
   });
+}
+
+Main.prototype.toggleAjaxLoading = function(display, message) {
+  var $element = $('body > #ajaxLoadingMessage');
+  if (display) $('span.ajaxLoadingMessage', $element).text(message?message:'Loading...')
+  if (display) {
+    $element.show();
+  } else $element.hide();
 }
 
 function Utils() {
