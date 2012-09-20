@@ -8,7 +8,7 @@
 </div>
 <div class="nav-item" id="nav-profile">
   <form action="<c:url value='/profile'/>" method="GET" id="nav-profile-form" style="padding: 0px;margin: 0px;"></form>
-  <a href="#" class="nav-item-link" id="nav-profile-link">
+  <a href="<c:url value='/profile'/>" class="nav-item-link" id="nav-profile-link">
     <div class="nav-item-icon"></div>
     <div class="nav-item-text">Profile</div>
   </a>

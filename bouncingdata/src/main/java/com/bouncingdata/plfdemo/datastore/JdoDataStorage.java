@@ -497,7 +497,9 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       Analysis analysis = pm.getObjectById(Analysis.class, analysisId);
       comment.setUser(user);
       comment.setAnalysis(analysis);
+      analysis.getComments().add(comment);
       pm.makePersistent(comment);
+      pm.makePersistent(analysis);
       tx.commit();
     } finally {
       if (tx.isActive()) {
@@ -514,6 +516,7 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Comment comment = pm.getObjectById(Comment.class, commentId);
     try {
       tx.begin();
+      //Analysis analysis = pm.getObjectById(Analysis.class, comment.getAnalysis().getId());
       pm.deletePersistent(comment);
       tx.commit();
     } finally {
@@ -882,7 +885,8 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       for (Activity ac : activities) {
         try {
           Analysis anls = pm.getObjectById(Analysis.class, ac.getObjectId());
-          List<Comment> comments = getComments(ac.getObjectId());
+          //List<Comment> comments = getComments(ac.getObjectId());
+          List<Comment> comments = anls.getComments();
           anls.setCommentCount(comments!=null?comments.size():0);
           ac.setObject(anls);
         } catch (Exception e) {
@@ -1017,13 +1021,18 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Transaction tx = pm.currentTransaction();
     User user = pm.getObjectById(User.class, dataset.getUser().getId());
     dataset.setUser(user);
+    Scraper scraper = null;
     if (dataset.getScraper() != null) {
-      Scraper scraper = pm.getObjectById(Scraper.class, dataset.getScraper().getId());
+      scraper = pm.getObjectById(Scraper.class, dataset.getScraper().getId());
       dataset.setScraper(scraper);
-    } else dataset.setScraper(null);
+      scraper.getDatasets().add(dataset);
+    } else {
+      dataset.setScraper(null);
+    }
     try {
       tx.begin();
       pm.makePersistent(dataset);
+      if (scraper != null) pm.makePersistent(scraper);
       tx.commit();
     } finally {
       if (tx.isActive()) tx.rollback();
@@ -1035,17 +1044,21 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
   public void createDatasets(List<Dataset> datasets) {
     PersistenceManager pm = getPersistenceManager();
     Transaction tx = pm.currentTransaction();
+    List<Scraper> scrapers = new ArrayList<Scraper>();
     for (Dataset ds : datasets) {
       User user = pm.getObjectById(User.class, ds.getUser().getId());
       ds.setUser(user);
       if (ds.getScraper() != null) {
         Scraper scraper = pm.getObjectById(Scraper.class, ds.getScraper().getId());
         ds.setScraper(scraper);
+        scraper.getDatasets().add(ds);
+        scrapers.add(scraper);
       } else ds.setScraper(null);
     }
     try {
       tx.begin();
       pm.makePersistentAll(datasets);
+      pm.makePersistentAll(scrapers);
       tx.commit();
     } finally {
       if (tx.isActive()) tx.rollback();
@@ -1062,9 +1075,10 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     Transaction tx = pm.currentTransaction();
     try {
       tx.begin();
-      for (Dataset d : datasets) {
+      /*for (Dataset d : datasets) {
         d.setActive(false);
-      }
+      }*/
+      pm.deletePersistentAll(datasets);
       tx.commit();
     } finally {
       if (tx.isActive()) {

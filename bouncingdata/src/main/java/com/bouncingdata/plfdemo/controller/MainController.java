@@ -70,7 +70,7 @@ public class MainController {
     try {
       stuffs.put("analyses", datastoreService.getAnalysisList(userId));
       stuffs.put("scrapers", datastoreService.getScraperList(userId));
-      stuffs.put("datasets", datastoreService.getDatasetList(userId));
+      //stuffs.put("datasets", datastoreService.getDatasetList(userId));
     } catch (Exception e) {
       logger.error("Failed  to retrieve stuffs, user {} ", user.getUsername());
       logger.error("Exception detail: ", e);

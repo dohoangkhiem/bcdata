@@ -6,6 +6,7 @@ Main.prototype.setContext = function(ctx) {
 }
 
 Main.prototype.initUI = function() {
+  this.workbenchSession = {};
   $(function() {
     
     $('input:button').button();
@@ -13,7 +14,7 @@ Main.prototype.initUI = function() {
     
     // initializes main navigation
     com.bouncingdata.Nav.init();
-    
+   
   });
 }
 
@@ -24,6 +25,11 @@ Main.prototype.toggleAjaxLoading = function(display, message) {
     $element.show();
   } else $element.hide();
 }
+
+Main.prototype.setWorkbenchSession = function() {
+  
+}
+
 
 function Utils() {
 }

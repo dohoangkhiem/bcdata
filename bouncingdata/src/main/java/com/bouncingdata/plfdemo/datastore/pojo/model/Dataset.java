@@ -9,6 +9,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 @PersistenceCapable
 public class Dataset {
   @PrimaryKey
@@ -25,8 +27,6 @@ public class Dataset {
   private Date createAt;
   private Date lastUpdate;
   private int rowCount;
-  //@Persistent(defaultFetchGroup="true")
-  //private Analysis analysis;
   private boolean isActive;
   @Persistent(defaultFetchGroup="true")
   private Scraper scraper;
@@ -110,6 +110,7 @@ public class Dataset {
   public void setActive(boolean isActive) {
     this.isActive = isActive;
   }
+  @JsonIgnore
   public Scraper getScraper() {
     return scraper;
   }

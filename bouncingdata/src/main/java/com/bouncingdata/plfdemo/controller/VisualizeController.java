@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 
 @Controller
-@RequestMapping("/visualize")
+@RequestMapping(value={"/visualize", "/public"})
 public class VisualizeController {
   
   private Logger logger = LoggerFactory.getLogger(VisualizeController.class);

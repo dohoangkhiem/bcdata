@@ -13,9 +13,15 @@ Nav.prototype.init = function() {
         var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
         if ($oldSelected) {
           $oldSelected.removeClass('nav-item-selected');
+          var oldPageId = $('a.nav-item-link', $oldSelected).prop('id');
+          if (oldPageId == "nav-create-link") {
+            //
+            com.bouncingdata.Workbench.dispose();
+          }      
         }
         $(this).parent().addClass('nav-item-selected');
         window.history.pushState({linkId: $(this).attr('id')}, $('.nav-item-text', $(this)).text(), $form.attr('action'));
+       
       });
       
       Spring.addDecoration(new Spring.AjaxEventDecoration({

@@ -1,5 +1,8 @@
 package com.bouncingdata.plfdemo.service;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +18,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.JsonNode;
@@ -22,6 +28,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.ServletContextAware;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
@@ -36,7 +43,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.utils.Utils;
 
-public class LocalApplicationExecutor implements ApplicationExecutor {
+public class LocalApplicationExecutor implements ApplicationExecutor, ServletContextAware {
   
   private Logger logger = LoggerFactory.getLogger(LocalApplicationExecutor.class);
   
@@ -45,13 +52,20 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
   
   @Autowired
   private DatastoreService datastoreService;
-    
+  
+  private ServletContext servletContext;
+  
   public void setLogDir(String ld) {
     this.logDir = ld;
   }
 
   public void setStorePath(String sp) {
     this.storePath = sp;
+  }
+  
+  @Override
+  public void setServletContext(ServletContext sc) {
+    this.servletContext = sc;
   }
     
   @Override
@@ -325,6 +339,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
       vDir.mkdirs(); 
     }
     
+    boolean makeThumb = false;
     if (vsFiles != null) {
       for (File f : vsFiles) {
         String filename = f.getName();
@@ -343,11 +358,29 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
         v.setGuid(guid);
         v.setActive(true);
         datastoreService.createVisualization(v);
+        
+        if (!makeThumb && type == VisualizationType.PNG) {
+          // create thumbnail
+          BufferedImage img = ImageIO.read(f);
+          int imgType = img.getType() == 0? BufferedImage.TYPE_INT_ARGB : img.getType();
+          BufferedImage thumbnail = new BufferedImage(100, 100, imgType);
+          Graphics2D g = thumbnail.createGraphics();
+          g.drawImage(img, 0, 0, 100, 100, null);
+          g.dispose();
+          //ImageIO.write(thumbnail, "jpg", new File(storePath + Utils.FILE_SEPARATOR + anls.getGuid() + Utils.FILE_SEPARATOR + anls.getGuid() + ".jpg"));
+          ImageIO.write(thumbnail, "jpg", new File(servletContext.getRealPath("/thumbnails") + Utils.FILE_SEPARATOR + anls.getGuid() + ".jpg"));
+          makeThumb = true;
+        }
         try {
           FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + "." + type.getType()));
         } catch (IOException e) {
           logger.debug("Failed to copy visual file " + f.getAbsolutePath() + " to " + vDir.getAbsolutePath());
         }
+        
+      }
+      
+      if (!makeThumb) {
+        // 
       }
     }
   }
@@ -393,6 +426,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor {
     }
     return visuals;
   }
+
   
   /**
    * Get snapshot visualizations for a execution

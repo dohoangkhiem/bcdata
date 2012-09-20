@@ -219,21 +219,20 @@ public class AnalysisController {
     try {
       Comment comment = datastoreService.getComment(commentId);
       if (comment == null) {
+        // logging
         return;
       }
-      
-      if (!guid.equals(comment.getAnalysis().getGuid())) {
-        //logging
-        return;
-      }
-      
+            
       CommentVote commentVote = new CommentVote();
       commentVote.setVote(vote);
       commentVote.setVoteAt(new Date());
       commentVote.setActive(true);
       datastoreService.addCommentVote(user.getId(), commentId, commentVote);
     } catch (Exception e) {
-      logger.debug("Failed to add new vote to comment id {}, user id {}", commentId, user.getId());
+      if (logger.isDebugEnabled()) {
+        logger.debug("Failed to add new vote to comment id {}, user id {}", commentId, user.getId());
+        logger.debug("Exception detail", e);
+      }
     }
   }
   

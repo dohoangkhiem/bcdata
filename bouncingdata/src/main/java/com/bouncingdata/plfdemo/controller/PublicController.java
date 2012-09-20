@@ -75,7 +75,7 @@ public class PublicController {
         visualsMap = new HashMap<String, VisualizationDetail>();
         for (Visualization v : visuals) {
           if ("html".equals(v.getType())) {
-            visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), "visualize/app/" + guid + "/" + v.getGuid() + "/html", VisualizationType.getVisualType(v.getType())));
+            visualsMap.put(v.getName(), new VisualizationDetail(v.getGuid(), "public/app/" + guid + "/" + v.getGuid() + "/html", VisualizationType.getVisualType(v.getType())));
           } else if ("png".equals(v.getType())) {
             try {
               String source = appStoreService.getVisualization(guid, v.getGuid(), v.getType());

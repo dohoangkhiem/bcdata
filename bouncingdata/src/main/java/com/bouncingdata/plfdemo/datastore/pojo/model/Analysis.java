@@ -13,8 +13,11 @@ public class Analysis extends BcDataScript {
   
   private String status;
   private int score;
+  // 1-N bidirectional relationship, this list should not be added to default fetch group
   @Persistent(mappedBy="analysis") List<Comment> comments;
   private @Join Set<Tag> tags;
+  @Persistent
+  private String thumbnail;
   
   @NotPersistent
   private int commentCount;
@@ -50,5 +53,11 @@ public class Analysis extends BcDataScript {
   @Override
   public void setTags(Set<Tag> tags) {
     this.tags = tags;
+  }
+  public String getThumbnail() {
+    return thumbnail;
+  }
+  public void setThumbnail(String thumbnail) {
+    this.thumbnail = thumbnail;
   }
 }

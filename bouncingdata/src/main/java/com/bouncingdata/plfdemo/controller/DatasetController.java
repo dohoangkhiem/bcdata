@@ -231,7 +231,7 @@ public class DatasetController {
       result.put("sEcho", sEcho);
       
       List<Map> data = userDataService.getDatasetToList(ds.getName(), displayStart, displayLength);
-      int totalDisplayRecords = data.size();
+      //int totalDisplayRecords = data.size();
       int totalRecords = ds.getRowCount();
       result.put("iTotalRecords", totalRecords);
       result.put("iTotalDisplayRecords", totalRecords);

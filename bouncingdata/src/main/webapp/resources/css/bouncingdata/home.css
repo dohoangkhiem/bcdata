@@ -54,9 +54,12 @@
 }
 
 #stream .event .event-content .thumbnail a {
-  width: 90px;
-  height: 110px;
   display: block;
+}
+
+#stream .event .event-content .thumbnail a img {
+  width: 90px;
+  height: 90px;
 }
 
 #stream .event .event-content .time {

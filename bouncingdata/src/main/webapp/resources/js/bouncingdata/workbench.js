@@ -29,16 +29,9 @@ Workbench.prototype.init = function() {
   // current opening applications (only saved apps), key: app guid, value: tab info { tabId, app info, type }
   this.tabsInfo = {};
   
-  // key: index (0, 1, 2, ...), value: app guid, jqconsole, if the tab belongs to new app., value = null 
+  // key: index (0, 1, 2, ...), value: guid = app guid, type = ?, jqconsole, if the tab belongs to new app., value = null 
   this.tabsIndex = [];
-  
-  // current working app 
-  this.currentApp = {};
-  
-  this.$tabs = {};
-  this.$tabTemplate = {};
-  this.$dsTemplate = {};
-  
+      
   // use to name untitled tabs
   this.untitledCounter = 0;
   
@@ -212,9 +205,6 @@ Workbench.prototype.init = function() {
       return false;
     });
     
-    // create an empty tab
-    me.createTab(null, null, 'analysis', 'python');
-    
     /**
      * Toolbar actions
      */
@@ -293,7 +283,10 @@ Workbench.prototype.init = function() {
         }
       }
     });
-             
+    
+    //
+    me.loadLastSession();
+    
   });
 }
 
@@ -311,7 +304,6 @@ Workbench.prototype.openApp = function(app, tabName, type, lang) {
   if (!app) {
     this.tabsCounter++;
     this.untitledCounter++;
-    this.currentApp = null;
     if (!lang) lang = 'python';
     if (!tabName) tabName = 'Untitled' + this.untitledCounter + '.' + (lang=="python"?"py":(lang=="r"?"r":""));
     this.tabsIndex[index].guid = null;
@@ -319,7 +311,6 @@ Workbench.prototype.openApp = function(app, tabName, type, lang) {
     //this.tabsIndex[index].name = tabName;
     this.$tabs.tabs('add', '#tabs-' + this.tabsCounter, tabName);
   } else {
-    this.currentApp = app;
     this.tabsCounter++;
     lang = app.language;
     if (!tabName) tabName = app.name + '.' + (lang=="python"?"py":(lang=="r"?"r":""));
@@ -686,6 +677,59 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   this.tabsIndex[tabIndex].loaded = true;
 }
 
+
+Workbench.prototype.loadLastSession = function() {
+  var session = com.bouncingdata.Main.workbenchSession;
+  if ($.isEmptyObject(session)) {
+    // create an empty tab
+    this.createTab(null, null, 'analysis', 'python');
+    return;
+  }
+    
+  this.tabsCounter = session["tabsCounter"];
+  this.tabsInfo = session["tabsInfo"];
+  this.tabsIndex = session["tabsIndex"];
+  
+  // process to open old tabs
+  for (i in this.tabsIndex) {
+    var tabInfo = this.tabsIndex[i];
+    var lang = tabInfo.lang;
+    var guid = tabInfo.guid;
+    if (guid) {
+      var app = this.tabsInfo[guid].app;
+      tabName = app.name + '.' + (lang=="python"?"py":(lang=="r"?"r":""));
+      this.tabsInfo[guid].tabId = 'tabs-' + (i+1);
+      this.$tabs.tabs('add', '#tabs-' + (i+1), tabName);
+    } else {
+      var tabName = 'Untitled' + ++this.untitledCounter + '.' + (lang=="python"?"py":(lang=="r"?"r":""));
+      this.$tabs.tabs('add', '#tabs-' + (i+1), tabName);
+      // set code
+      this.setCode(tabInfo.code, this.getTabContainer(i)); 
+    }
+  }
+  
+}
+
+Workbench.prototype.saveSession = function() {
+  // save to workbenchSession object of com.bouncingdata.Main
+  for (i in this.tabsIndex) {
+    if (!this.tabsIndex[i].guid) {
+      this.tabsIndex[i].code = this.getCode(this.getTabContainer(i));
+    }
+  }
+  com.bouncingdata.Main.workbenchSession = {
+      "tabsCounter": this.tabsCounter,
+      "tabsInfo": this.tabsInfo,
+      "tabsIndex": this.tabsIndex
+  }
+}
+
+Workbench.prototype.dispose = function() {
+  this.saveSession();
+  this.tabsCounter = null;
+  this.tabsInfo = null;
+  this.tabsIndex = null;
+}
 
 /**
  * Executes code from the tab with given index

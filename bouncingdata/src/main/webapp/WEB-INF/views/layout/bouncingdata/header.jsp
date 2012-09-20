@@ -185,4 +185,27 @@
       </div>
     </div>
   </script>
+  <script  id="browser-item-template" type="text/x-jquery-tmpl">
+    <div class="browser-item">
+      <div class="browser-item-header">
+        <a href="#"><span class="browser-item-title"><strong>\${title}</strong></span></a>
+      </div>
+      <div class="browser-item-footer">
+        <a class="browser-item-footer-link expand-link" href="javascript:void(0);">Expand</a>
+        <a class="browser-item-footer-link browser-item-action open-link" href="javascript:void(0)">Open</a>
+      </div>
+      <div class="browser-item-detail">
+        <div class="browser-item-description browser-item-info">
+          <strong>Description: </strong><span>\${description }</span>
+        </div>
+        <div class="browser-item-info application-language"><strong>Language: </strong>\${language}</div>
+        <div class="browser-item-info"><strong>Author: </strong>\${author }</div>
+        <div class="browser-item-info line-count"><strong>Line count: </strong>\${lineCount }</div>
+        <div class="browser-item-info"><strong>Is public: </strong>\${public }</div>
+        <div class="browser-item-info"><strong>Create date: </strong>\${createDate }</div>
+        <div class="browser-item-info"><strong>Last update: </strong>\${lastUpdate }</div>
+        <div class="browser-item-info browser-item-tags"><strong>Tags: </strong>\${tags }</div>
+      </div>
+  	</div>
+  </script>
 </jqtemplate>
