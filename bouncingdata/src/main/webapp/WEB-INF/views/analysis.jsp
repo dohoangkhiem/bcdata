@@ -1,10 +1,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/analysis.js" />"></script>
+
 <script>
 	$(function() {
-	  com.bouncingdata.Analysis.init('${anls.guid}');
+	  if (!com.bouncingdata.Analysis) {
+	    $.getScript(ctx + "/resources/js/bouncingdata/analysis.js", function() {
+	    	console.debug("analysis.js async. loaded!");
+	    	com.bouncingdata.Analysis.init('${anls.guid}');
+	    });  
+	  } else {
+	    com.bouncingdata.Analysis.init('${anls.guid}');
+	  }
 	  
 	  var dbDetail = $.parseJSON('${dashboardDetail}');
 	  com.bouncingdata.Dashboard.view(dbDetail.visualizations, dbDetail.dashboard, $('#main-content #anls-dashboard'));

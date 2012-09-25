@@ -30,10 +30,10 @@
                     <div class="time">${activity.time}</div> 
                   </div>
                   <div class="thumbnail">
-                    <a target="_blank" href="<c:url value="/anls/${activity.object.guid}" />">
+                    <a id="evt-thumb-${activity.id }" href="<c:url value="/anls/${activity.object.guid}" />">
                       <c:choose>
                         <c:when test="${not empty activity.object.thumbnail }">
-                          <img class="thumb-img" src="<c:url value="/thumbnails/${activity.object.thumbnail}.jpg" />" />
+                          <img class="thumb-img" src="<c:url value="/thumbnails/${activity.object.thumbnail}.jpg" />" onerror="this.src='<c:url value="/thumbnails/no-image.jpg" />'; this.onerror=null;" />
                         </c:when>
                         <c:otherwise>
                           <img class="thumb-img" src="<c:url value="/thumbnails/no-image.jpg" />" />
@@ -42,7 +42,7 @@
                     </a>
                   </div>
                   <p class="title">
-                    <a target="_blank" href="<c:url value="/anls/${activity.object.guid}" />"><strong>${activity.object.name}</strong></a>
+                    <a id="evt-title-${activity.id }" href="<c:url value="/anls/${activity.object.guid}" />"><strong>${activity.object.name}</strong></a>
                   </p>
                   <p class="description">
                     <span>${activity.object.description }</span>
