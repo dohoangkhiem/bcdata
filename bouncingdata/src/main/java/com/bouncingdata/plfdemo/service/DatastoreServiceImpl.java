@@ -422,8 +422,13 @@ public class DatastoreServiceImpl implements DatastoreService {
   }
 
   @Override
-  public Dataset getDatasetByName(String fullname) throws Exception {
-    return dataStorage.getDatasetByName(fullname);
+  public Dataset getDatasetByName(String identifier) throws Exception {
+    /*int firstUnderlineIdx = identifier.indexOf("_");
+    int secondUnderlineIdx = identifier.indexOf(ch, fromIndex)
+    int userId = Integer.parseInt(identifier.substring(0, identifier.indexOf("_") + 1));
+    String scraper = identifier.substring(identifier.indexOf("_") + 1, identifier.indexOf("_", iden) + 1)
+    return dataStorage.getDatasetByName(userId, scraperId, dsName);*/
+    return dataStorage.getDatasetByName(identifier);
   }
 
   @Override

@@ -16,10 +16,11 @@
     <a href="#">Bouncing Data</a>
   </h2>
   <div class="search-container">
-    <div id="search-form" class="search-form">
+    <form id="search-form" class="search-form" action="<c:url value="/main/search" />" method="get" onsubmit="if (!this.elements['query'].value) return false;">
       <input type="text" class="search-input" id="query" name="query" />
+      <input type="hidden" name="criteria" value="global" />
       <input type="submit" value="Search" id="search-submit" />
-    </div>
+    </form>
     <div class="clear"></div>
   </div>
 </div>

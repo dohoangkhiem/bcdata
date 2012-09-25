@@ -226,13 +226,13 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   }
 
   @Override
-  public void dropDataset(String datasetName) {
+  public void dropDataset(String dsFullname) {
     Connection conn = null;
     Statement st = null;
     try {
       conn = getConnection();
       st = conn.createStatement();
-      String sql = "drop table `" + datasetName + "`";
+      String sql = "drop table `" + dsFullname + "`";
       st.executeUpdate(sql);
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -242,8 +242,8 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
     }
   }
   
-  public int getDatasetSize(String dataset) {
-    String sql = "select id from `" + dataset + "`";
+  public int getDatasetSize(String dsFullname) {
+    String sql = "select id from `" + dsFullname + "`";
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -259,7 +259,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
       return rowCount;
     } catch (SQLException e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Error when retrieved dataset {}", dataset);
+        logger.debug("Error when retrieved dataset {}", dsFullname);
         logger.debug("Exception detail: ", e);
       }
       return -1;

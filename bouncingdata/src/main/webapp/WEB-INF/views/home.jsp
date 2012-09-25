@@ -31,7 +31,14 @@
                   </div>
                   <div class="thumbnail">
                     <a target="_blank" href="<c:url value="/anls/${activity.object.guid}" />">
-                      <img class="thumb-img" src="<c:url value="/thumbnails/${activity.object.guid}.jpg" />" onerror="this.src='<c:url value="/thumbnails/no-image.jpg" />';this.onerror=null;" />
+                      <c:choose>
+                        <c:when test="${not empty activity.object.thumbnail }">
+                          <img class="thumb-img" src="<c:url value="/thumbnails/${activity.object.thumbnail}.jpg" />" />
+                        </c:when>
+                        <c:otherwise>
+                          <img class="thumb-img" src="<c:url value="/thumbnails/no-image.jpg" />" />
+                        </c:otherwise>
+                      </c:choose>
                     </a>
                   </div>
                   <p class="title">

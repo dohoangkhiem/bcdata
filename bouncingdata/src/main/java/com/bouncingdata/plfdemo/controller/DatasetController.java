@@ -130,8 +130,9 @@ public class DatasetController {
     try {
       List<String[]> data = Utils.parseExcel(file.getInputStream());
       String[] headers = data.get(0);
-      String dsName = user.getUsername() + "." + filename + "_uploaded";
-      userDataService.storeData(dsName, headers, data.subList(1, data.size()));
+      String dsFName = user.getUsername() + "." + filename + "_uploaded";
+      //String identifier = user.getId() + "__" + dsName;
+      userDataService.storeData(dsFName, headers, data.subList(1, data.size()));
       
       Dataset ds = new Dataset();
       ds.setUser(user);
@@ -143,14 +144,14 @@ public class DatasetController {
       //Dataset oldDs = datastoreService.getDatasetByName(user.getUsername() + "." + datasetName);
       //if (oldDs != null) tableName = tableName + "_1";
       //ds.setName(tableName);
-      ds.setName(dsName);
+      ds.setName(dsFName);
       ds.setScraper(null);
       ds.setRowCount(data.size() - 1);
       ds.setGuid(Utils.generateGuid());
       
       
       StringBuilder schema = new StringBuilder("CREATE TABLE `");
-      schema.append(dsName).append("` (");
+      schema.append(dsFName).append("` (");
       for (String h : headers) {
         schema.append("`").append(h).append("` text,");
       }

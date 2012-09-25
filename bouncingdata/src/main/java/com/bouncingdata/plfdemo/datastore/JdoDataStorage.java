@@ -200,6 +200,11 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       List<Scraper> scrapers = (List<Scraper>) pm.detachCopyAll((List<Scraper>)q.execute());
       sr.setScrapers(scrapers);
       
+      q = pm.newQuery(User.class);
+      q.setFilter("this.username.toLowerCase().matches(\".*" + query + ".*\") || this.firstName.toLowerCase().matches(\".*" + query + ".*\") || " +
+      		"this.lastName.toLowerCase().matches(\".*" + query + ".*\") || this.email.toLowerCase().matches(\".*" + query + ".*\")"); 
+      List<User> users = (List<User>) pm.detachCopyAll((List<User>)q.execute());
+      sr.setUsers(users);
       return sr;
     } finally {
       q.closeAll();
@@ -379,7 +384,8 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
       anls.setLastUpdate(new Date());
       anls.setPublished(analysis.isPublished());
       anls.setTags(analysis.getTags());
-      anls.setLineCount(anls.getLineCount());
+      anls.setLineCount(analysis.getLineCount());
+      anls.setThumbnail(analysis.getThumbnail());
       //
       tx.commit();
     } finally {

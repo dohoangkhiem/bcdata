@@ -175,7 +175,7 @@ Browser.prototype.setMyStuff = function(stuffs) {
 
 Browser.prototype.loadMyStuff = function(stuffs) {
   this.loadStuff(stuffs['analyses'], 'analysis', $('#browser-tabs #browser-mystuff #analysis-list'));
-  //this.loadStuff(stuffs['datasets'], 'dataset', $('#browser-tabs #browser-mystuff #dataset-list'));
+  this.loadStuff(stuffs['datasets'], 'dataset', $('#browser-tabs #browser-mystuff #dataset-list'));
   this.loadStuff(stuffs['scrapers'], 'scraper', $('#browser-tabs #browser-mystuff #scraper-list'));
 }
 
@@ -183,22 +183,47 @@ Browser.prototype.loadStuff = function(stuffs, type, $container) {
   $container.empty();
   for (key in stuffs) {
     var itemObj = stuffs[key];
+    var $item;
+    if (type == "scraper" || type == "analysis") {
+      $item = $.tmpl(this.$itemTemplate, {
+        title: itemObj.name,
+        description: itemObj.description,
+        author: itemObj['user'].username,
+        lineCount: itemObj.lineCount,
+        'public': itemObj['published'],
+        createDate: new Date(itemObj['createAt']),
+        lastUpdate: new Date(itemObj['lastUpdate']),
+        tags: itemObj['tags']?itemObj['tags']:''    
+      });
+    } else if (type == "dataset") {
+      $item = $.tmpl(this.$itemTemplate, {
+        title: itemObj.name,
+        description: itemObj.description,
+        author: itemObj['user'].username,
+        lineCount: null,
+        'public': itemObj['public'],
+        createDate: new Date(itemObj['createAt']),
+        lastUpdate: new Date(itemObj['lastUpdate']),
+        tags: itemObj['tags']?itemObj['tags']:''
+      });
+      
+      $('.line-count', $item).replaceWith('<div class="browser-item-info row-count"><strong>Row count: </strong>' + itemObj.rowCount + '</div>')
+      $('.row-count', $item).after('<div class="browser-item-info dataset-schema"><strong>Schema: </strong>' + itemObj.schema + '</div>') ;
     
-    var $item = $.tmpl(this.$itemTemplate, {
-      title: itemObj.name,
-      description: itemObj.description,
-      author: itemObj['user'].username,
-      lineCount: itemObj.lineCount,
-      'public': itemObj['published'],
-      createDate: new Date(itemObj['createAt']),
-      lastUpdate: new Date(itemObj['lastUpdate']),
-      tags: itemObj['tags']?itemObj['tags']:''    
-    });
+      if (itemObj.scraper) {
+        $('.browser-item-header', $item).append('<div class="source-scraper">by <a href="#">' + itemObj.scraper.name + '</a></div>');
+      }
+      
+      var $viewLink = $('<a class="browser-item-footer-link view-link" target="_blank" href="' + ctx + '/dataset/view/' + itemObj.guid + '">View</a>');
+      $('.browser-item-footer', $item).append($viewLink);
+      
+    } else return;
+    
         
-    var $children = $('<div class="browser-item-children" style="padding-left: 10px;"></div>');
-    $children.appendTo($item);
+    //var $children = $('<div class="browser-item-children" style="padding-left: 10px;"></div>');
+    //$children.appendTo($item);
     
-    if (type == "scraper") {
+    /*if (type == "scraper") {
       var datasetList = itemObj['datasets'];
       if (datasetList && datasetList.length > 0) {     
         for (i in datasetList) {
@@ -222,7 +247,7 @@ Browser.prototype.loadStuff = function(stuffs, type, $container) {
           $children.append($dataset);
         }
       }
-    }
+    }*/
     
     $item.load().appendTo($container);
        
@@ -290,11 +315,11 @@ Browser.prototype.renderSearchResult = function(results, query) {
   var $datasets = $('<div class="search-result-datasets-panel"><h4>Datasets</h4><div class="search-result-datasets"></div></div>');
   var $scrapers = $('<div class="search-result-scrapers-panel"><h4>Scrapers</h4><div class="search-result-scrapers"></div></div>');
   $resultTab.append('<div style="margin: 5px 0;">All results for &ldquo;<b>' + query + '</b>&rdquo;</div>')
-    //.append($datasets).append('<div class="browser-separator"></div>')
+    .append($datasets).append('<div class="browser-separator"></div>')
     .append($analyses).append('<div class="browser-separator"></div>')
     .append($scrapers);
   this.loadStuff(results['analyses'], 'analysis', $('.search-result-analyses', $analyses));
-  //this.loadStuff(results['datasets'], 'dataset', $('.search-result-datasets', $datasets));
+  this.loadStuff(results['datasets'], 'dataset', $('.search-result-datasets', $datasets));
   this.loadStuff(results['scrapers'], 'scraper', $('.search-result-scrapers', $scrapers)); 
 }
 
@@ -336,7 +361,7 @@ Browser.prototype.search = function(query, criteria) {
         if (criteria == "mystuff") {
           me.setMode("search");
           me.loadStuff(json['analyses'], 'analysis', $('#browser-mystuff #analysis-list', me.$tabs));
-          //me.loadStuff(json['datasets'], 'dataset', $('#browser-mystuff #dataset-list', me.$tabs));
+          me.loadStuff(json['datasets'], 'dataset', $('#browser-mystuff #dataset-list', me.$tabs));
           me.loadStuff(json['scrapers'], 'scraper', $('#browser-mystuff #scraper-list', me.$tabs));
         } else if (criteria == "global") {
           console.debug("Received global search results.");

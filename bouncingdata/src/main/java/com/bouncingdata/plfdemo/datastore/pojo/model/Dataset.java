@@ -110,7 +110,6 @@ public class Dataset {
   public void setActive(boolean isActive) {
     this.isActive = isActive;
   }
-  @JsonIgnore
   public Scraper getScraper() {
     return scraper;
   }

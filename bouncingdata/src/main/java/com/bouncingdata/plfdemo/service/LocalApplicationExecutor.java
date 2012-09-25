@@ -77,7 +77,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
     if (app == null || app instanceof Analysis) {
       mode = "not-persistent";
     }
-    String[] args = new String[] {ticket, user.getUsername(), mode};
+    
+    String dataPrefix = user.getId() + "_" + (app!=null?app.getId():"") + "_";
+    String[] args = new String[] {ticket, dataPrefix, mode};
     ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, args[0], args[1], args[2]);
     pb.redirectErrorStream(true);
     
@@ -282,7 +284,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
             JsonNode dataObj = mapper.readTree(s);
             JsonNode data = dataObj.get("data");
             Dataset ds = new Dataset();
-            ds.setName(dataObj.get("name").getTextValue());
+            String identifier = dataObj.get("name").getTextValue();
+            //String dsName = identifier.substring(identifier.indexOf("_", identifier.indexOf("_") + 1) + 1);
+            ds.setName(identifier);
             ds.setDescription(dataObj.get("description").getTextValue());
             String guid = Utils.generateGuid();
             ds.setGuid(guid);
@@ -370,6 +374,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
           //ImageIO.write(thumbnail, "jpg", new File(storePath + Utils.FILE_SEPARATOR + anls.getGuid() + Utils.FILE_SEPARATOR + anls.getGuid() + ".jpg"));
           ImageIO.write(thumbnail, "jpg", new File(servletContext.getRealPath("/thumbnails") + Utils.FILE_SEPARATOR + anls.getGuid() + ".jpg"));
           makeThumb = true;
+          anls.setThumbnail(anls.getGuid());
+          datastoreService.updateAnalysis(anls);
         }
         try {
           FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + "." + type.getType()));

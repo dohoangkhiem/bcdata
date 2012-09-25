@@ -20,8 +20,9 @@ Nav.prototype.init = function() {
           }      
         }
         $(this).parent().addClass('nav-item-selected');
-        window.history.pushState({linkId: $(this).attr('id')}, $('.nav-item-text', $(this)).text(), $form.attr('action'));
-       
+        if (!e.originalEvent["isBackAction"]) {
+          window.history.pushState({linkId: $(this).attr('id')}, $('.nav-item-text', $(this)).text(), $form.attr('action'));
+        }
       });
       
       Spring.addDecoration(new Spring.AjaxEventDecoration({
@@ -41,8 +42,27 @@ Nav.prototype.init = function() {
       if(e.state) {
         var linkId = e.state.linkId;
         var $link = $('a#' + linkId);
-        //$link.click();
-        $link.prev().submit();
+        if (!linkId || $link.length < 1) {
+          location.reload();
+          return;
+        }
+        
+        // create a native event
+        var event;
+        if (document.createEvent) {
+          event = document.createEvent("HTMLEvents");
+          event.initEvent("click", true, true);
+          event["isBackAction"] = true;
+          $link[0].dispatchEvent(event);
+        } else { // IE
+          event = document.createEventObject();
+          event.eventType = "click";
+          event["isBackAction"] = true;
+          $link[0].fireEvent("on" + event.eventType, event);
+        }
+        
+      } else {
+        location.reload();
       }
     }
     

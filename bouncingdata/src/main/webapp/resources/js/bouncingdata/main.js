@@ -15,6 +15,16 @@ Main.prototype.initUI = function() {
     // initializes main navigation
     com.bouncingdata.Nav.init();
    
+    /*var searchF = function(query, criteria) {
+      if (!query || !criteria) return;
+      window.location = ctx + "/main/search?query=" + query + "&criteria=" + criteria;
+    }
+    
+    $('#search-form #search-submit').click(function() {
+      searchF();
+    });*/
+    
+    
   });
 }
 

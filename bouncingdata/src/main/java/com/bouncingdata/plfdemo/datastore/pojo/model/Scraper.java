@@ -9,7 +9,7 @@ import javax.jdo.annotations.Persistent;
 
 @PersistenceCapable
 public class Scraper extends BcDataScript {
-  @Persistent(mappedBy="scraper", defaultFetchGroup="true")
+  @Persistent(mappedBy="scraper")
   private List<Dataset> datasets;
   private @Join Set<Tag> tags;
   

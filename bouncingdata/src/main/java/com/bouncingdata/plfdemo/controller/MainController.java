@@ -70,7 +70,7 @@ public class MainController {
     try {
       stuffs.put("analyses", datastoreService.getAnalysisList(userId));
       stuffs.put("scrapers", datastoreService.getScraperList(userId));
-      //stuffs.put("datasets", datastoreService.getDatasetList(userId));
+      stuffs.put("datasets", datastoreService.getDatasetList(userId));
     } catch (Exception e) {
       logger.error("Failed  to retrieve stuffs, user {} ", user.getUsername());
       logger.error("Exception detail: ", e);
@@ -226,7 +226,7 @@ public class MainController {
   }
   
   @RequestMapping(value="/search", method = RequestMethod.GET)
-  public @ResponseBody SearchResult search(@RequestParam(value="query", required=true) String query, @RequestParam(value="criteria", required=true) String criteria, ModelMap model, Principal principal) {
+  public String search(@RequestParam(value="query", required=true) String query, @RequestParam(value="criteria", required=true) String criteria, ModelMap model, Principal principal) {
     SearchResult result = null;
     User user = (User) ((Authentication)principal).getPrincipal();
     try {
@@ -238,7 +238,9 @@ public class MainController {
     } catch (Exception e) {
       logger.error("Failed to execute search with query: " + query, e);
     }
-    return result;
+    //return result;
+    model.addAttribute("searchResult", result);
+    return "search";
   }
   
 }

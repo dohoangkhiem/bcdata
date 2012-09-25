@@ -33,5 +33,9 @@
   <definition name="connect" extends="based-layout">
     <put-attribute name="main-content" value="/WEB-INF/views/connect.jsp"></put-attribute>
   </definition>
+  
+  <definition name="search" extends="based-layout">
+    <put-attribute name="main-content" value="/WEB-INF/views/search.jsp"></put-attribute>
+  </definition>
     
 </tiles-definitions>

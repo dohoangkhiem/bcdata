@@ -158,7 +158,7 @@ Workbench.prototype.init = function() {
         // trick here: select before finish the adding, by this way the layout achieves the full width
         var index = ui.index;
         me.tabsIndex[index].loaded = false;
-        me.$tabs.tabs('select', index);
+        //me.$tabs.tabs('select', index);
             
         var guid = me.tabsIndex[index].guid;
         var type = me.tabsIndex[index].type;
@@ -177,6 +177,7 @@ Workbench.prototype.init = function() {
           me.processTab(index, $tabContent);
         }
         
+        me.$tabs.tabs('select', index);
       }, 
       
       // each time show the tab
