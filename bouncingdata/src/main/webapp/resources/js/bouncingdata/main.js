@@ -12,18 +12,25 @@ Main.prototype.initUI = function() {
     $('input:button').button();
     $('input:submit').button();
     
-    // initializes main navigation
-    com.bouncingdata.Nav.init();
-   
-    /*var searchF = function(query, criteria) {
-      if (!query || !criteria) return;
-      window.location = ctx + "/main/search?query=" + query + "&criteria=" + criteria;
-    }
+    // initializes main navigation & ajax loading capabilities
+    com.bouncingdata.Nav.init();    
     
-    $('#search-form #search-submit').click(function() {
-      searchF();
-    });*/
+    $('.search-container #search-form').submit(function(e) {
+      e.preventDefault();
+      var query = $('#query', $(this)).val();
+      var criteria = $('#criteria', $(this)).val();
+      if (!query || !criteria) return false;
+      com.bouncingdata.Nav.fireAjaxLoad(ctx + '/main/search/?query=' + query + '&criteria=' + criteria, false);      
+      return false;
+    });
     
+    /*// 
+    Spring.addDecoration(new Spring.AjaxEventDecoration({
+      elementId: 'search-form',
+      formId: 'search-form',
+      event: "onsubmit",
+      params: {fragments: "main-content"}
+    }));*/
     
   });
 }

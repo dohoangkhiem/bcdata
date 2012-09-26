@@ -119,7 +119,7 @@ public class DatasetController {
   }
   
   @RequestMapping(value="/up", method = RequestMethod.POST)
-  public @ResponseBody long processUploadDataset(@RequestParam(value="file", required=true) MultipartFile file, ModelMap model,
+  public @ResponseBody long uploadDataset(@RequestParam(value="file", required=true) MultipartFile file, ModelMap model,
       Principal principal) {
     User user = (User) ((Authentication)principal).getPrincipal();
     String filename = file.getOriginalFilename();    

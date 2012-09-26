@@ -631,42 +631,9 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
       publishFunc();
     }
     
-    /*$.ajax({
-      url: ctx + '/app/a/publish/' + guid,
-      type: 'post',
-      data: {
-        value: value
-      },
-      success: function(result) {
-        console.debug("Successfully" + value?"publish":"un-publish" + " analysis.");
-        app.published = value;
-        if (value) {
-          if (window.confirm("Your analysis has published! View your analysis now?")) {
-            window.open(ctx + "/anls/" + guid);
-          }
-        } else {
-          window.alert("Your analysis has become private");
-        }
-        $publish.attr('value', value?"Make private":"Publish");
-      },
-      error: function(result) {
-        console.debug("Failed to publis analysis.");
-      }
-    });*/
     return false;
   }).css('display', app?'inline':'none').attr('value', app&&app.published?"Make private":"Publish");
-  
-  /*
-  $(function() {
-    // just for demo
-    var $iframe = $('<iframe style="position: absolute; width: 100%; height: 100%; border: 0 none;"></iframe>');
-    var $dashboard = $('#viz-dashboard-' + tabId, $tab);
-    $iframe.load().appendTo($dashboard);
-    $dashboard.append('<script type="text/javascript"> $("#viz-dashboard-' + tabId + ' iframe").attr("src", "http://bouncingdata.com/cdn/dashboard.html") </script>');
-    //$iframe.attr('src', "http://bouncingdata.com/cdn/dashboard.html");
-  });
-  */
-  
+    
   $('.console-actions .clear-console', $tab).click(function() {
     var index = me.getSelectedIndex();
     var jqconsole = me.tabsIndex[index].jqConsole;
@@ -678,7 +645,9 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   this.tabsIndex[tabIndex].loaded = true;
 }
 
-
+/**
+ * 
+ */
 Workbench.prototype.loadLastSession = function() {
   var session = com.bouncingdata.Main.workbenchSession;
   if ($.isEmptyObject(session)) {
@@ -711,6 +680,9 @@ Workbench.prototype.loadLastSession = function() {
   
 }
 
+/**
+ * 
+ */
 Workbench.prototype.saveSession = function() {
   // save to workbenchSession object of com.bouncingdata.Main
   for (i in this.tabsIndex) {
@@ -725,6 +697,9 @@ Workbench.prototype.saveSession = function() {
   }
 }
 
+/**
+ * 
+ */
 Workbench.prototype.dispose = function() {
   this.saveSession();
   this.tabsCounter = null;

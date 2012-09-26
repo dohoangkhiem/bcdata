@@ -6,22 +6,19 @@ ActivityStream.prototype.init = function() {
   $('#stream .event').each(function() {
     var $title = $('.title a', $(this));
     var $thumb = $('.thumbnail a', $(this));
-    
-    var clickF = function($ele, evt) {
-      Main.prototype.toggleAjaxLoading(true);
-      //
-      if (!evt.originalEvent["isBackAction"]) {
-        window.history.pushState({linkId: $ele.prop('href'), type: 'anls'}, $ele.prop('id'), $ele.prop('href'));
-      }
-      evt.preventDefault();
-    }
+    var name = $title.text();
+    var href = $title.prop('href');
     
     $title.click(function(e) {
-      clickF($(this), e);
+      Main.prototype.toggleAjaxLoading(true);
+      window.history.pushState({linkId: href, type: 'anls'}, name, href);
+      e.preventDefault();
     });
     
     $thumb.click(function(e) {
-      clickF($(this), e);
+      Main.prototype.toggleAjaxLoading(true);
+      window.history.pushState({linkId: href, type: 'anls'}, name, href);
+      e.preventDefault();
     });
     
     Spring.addDecoration(new Spring.AjaxEventDecoration({
