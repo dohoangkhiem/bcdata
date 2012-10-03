@@ -6,6 +6,7 @@ ActivityStream.prototype.init = function() {
   $('#stream .event').each(function() {
     var $title = $('.title a', $(this));
     var $thumb = $('.thumbnail a', $(this));
+    var $comment = $('.event-footer a.comments-link', $(this))
     var name = $title.text();
     var href = $title.prop('href');
     
@@ -21,6 +22,12 @@ ActivityStream.prototype.init = function() {
       e.preventDefault();
     });
     
+    $comment.click(function(e) {
+      Main.prototype.toggleAjaxLoading(true);
+      window.history.pushState({linkId: href, type: 'anls'}, name, href);
+      e.preventDefault();
+    });
+    
     Spring.addDecoration(new Spring.AjaxEventDecoration({
       elementId: $title.prop('id'),
       event: "onclick",
@@ -29,6 +36,12 @@ ActivityStream.prototype.init = function() {
     
     Spring.addDecoration(new Spring.AjaxEventDecoration({
       elementId: $thumb.prop('id'),
+      event: "onclick",
+      params: {fragments: "main-content"}
+    }));
+    
+    Spring.addDecoration(new Spring.AjaxEventDecoration({
+      elementId: $comment.prop('id'),
       event: "onclick",
       params: {fragments: "main-content"}
     }));

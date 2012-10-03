@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.Utils;
 
 public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   

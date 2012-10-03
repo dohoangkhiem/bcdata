@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.dataparsing.DataParser;
+import com.bouncingdata.plfdemo.util.dataparsing.DataParserFactory;
+import com.bouncingdata.plfdemo.util.dataparsing.DataParserFactory.FileType;
 
 @ContextConfiguration
 public class JdbcBcDatastoreTest extends AbstractJUnit38SpringContextTests {
@@ -48,7 +50,8 @@ public class JdbcBcDatastoreTest extends AbstractJUnit38SpringContextTests {
   public void testParseExcel() throws Exception {
     String tableName = "demo.from_excel";
     InputStream is = new FileInputStream("/home/khiem/workbook.xls");
-    List<String[]> data = Utils.parseExcel(is);
+    DataParser parser = DataParserFactory.getDataParser(FileType.EXCEL);
+    List<String[]> data = parser.parse(is);
     try {
       jdbcBcDatastore.persistDataset(tableName, data.get(0), data.subList(1, data.size()));
     } catch (Exception e) {

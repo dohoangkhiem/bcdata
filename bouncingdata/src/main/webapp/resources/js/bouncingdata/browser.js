@@ -149,10 +149,15 @@ Browser.prototype.getApplicationList = function() {
 
 Browser.prototype.getMyStuff = function() {
   var me = this;
+  var $mystuffOverlay = $('<div class="mystuff-overlay" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>');
+  $mystuffOverlay.css('background', 'url("' + ctx + '/resources/images/ajax-loader.gif") no-repeat 50% 10% #eee')
+    .css('z-index', 10).css('background-size', '30px 30px').css('opacity', '0.8');
+  $('#browser-mystuff').append($mystuffOverlay);
   $.ajax({
     url: ctx + '/main/mystuff',
     dataType: 'json',
     success: function(result) {
+      $mystuffOverlay.remove();
       me.setMyStuff(result);
       me.loadMyStuff(result);
     },
@@ -214,41 +219,17 @@ Browser.prototype.loadStuff = function(stuffs, type, $container) {
         $('.browser-item-header', $item).append('<div class="source-scraper">by <a href="#">' + itemObj.scraper.name + '</a></div>');
       }
       
-      var $viewLink = $('<a class="browser-item-footer-link view-link" target="_blank" href="' + ctx + '/dataset/view/' + itemObj.guid + '">View</a>');
+      var $viewLink = $('<a class="browser-item-footer-link view-link" href="' + ctx + '/dataset/view/' + itemObj.guid + '">View</a>');
       $('.browser-item-footer', $item).append($viewLink);
+      $viewLink.click(function(lnk) {
+        return function() {
+          com.bouncingdata.Nav.fireAjaxLoad(lnk, false);
+          return false;
+        }
+      }($viewLink.prop('href')));
       
     } else return;
-    
         
-    //var $children = $('<div class="browser-item-children" style="padding-left: 10px;"></div>');
-    //$children.appendTo($item);
-    
-    /*if (type == "scraper") {
-      var datasetList = itemObj['datasets'];
-      if (datasetList && datasetList.length > 0) {     
-        for (i in datasetList) {
-          dataset = datasetList[i];
-          $dataset = $.tmpl(this.$itemTemplate, {
-            title: dataset.name,
-            description: dataset.description,
-            author: itemObj['user'].username,
-            lineCount: null,
-            'public': dataset['public'],
-            createDate: new Date(dataset['createAt']),
-            lastUpdate: new Date(dataset['lastUpdate']),
-            tags: dataset['tags']?dataset['tags']:''
-          });
-          
-          $('.line-count', $dataset).replaceWith('<div class="browser-item-info row-count"><strong>Row count: </strong>' + dataset.rowCount + '</div>')
-            .before('<div class="browser-item-info dataset-schema"><strong>Schema: </strong>' + dataset.schema + '</div>') ;
-          
-          var $openLink = $('<a class="browser-item-footer-link open-link" target="_blank" href="' + ctx + '/dataset/view/' + dataset.guid + '">Open</a>');
-          $('.browser-item-footer', $dataset).append($openLink);
-          $children.append($dataset);
-        }
-      }
-    }*/
-    
     $item.load().appendTo($container);
        
     // open new tab when clicking on 'open' link
@@ -352,7 +333,7 @@ Browser.prototype.search = function(query, criteria) {
   var me = this;
   $(function() {
     $.ajax({
-      url: ctx + '/main/search',
+      url: ctx + '/main/browsersearch',
       data: {
         query: query,
         criteria: criteria

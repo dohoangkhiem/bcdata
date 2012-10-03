@@ -2,7 +2,8 @@ function Analysis() {
   
 }
 
-Analysis.prototype.init = function(guid) {
+Analysis.prototype.init = function(anls) {
+  var guid = anls.guid;
   $('#anls-content').easytabs();
   var me = this;
   
@@ -71,6 +72,35 @@ Analysis.prototype.init = function(guid) {
     var embedded = '<iframe src="http://' + host + ctx + '/public/embed/' + guid + '" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>';
     $('#embedded-link-text', $embedded).val(embedded).click(function() { $(this).select() });
   });
+  
+  var $edit = $('.anls-action-links a#anls-edit-button');
+  if ($edit.length > 0) {
+    
+    $edit.click(function() {
+      // check if the current workbench's cache has contained this analysis already
+      if (com.bouncingdata.Main.workbenchSession.tabsInfo
+          && guid in com.bouncingdata.Main.workbenchSession.tabsInfo) {
+        com.bouncingdata.Main.workbenchSession.currentSelected = {guid: guid};
+      } else { // if not, add this analysis then open workbench
+        if (!com.bouncingdata.Main.workbenchSession.tabsInfo) {
+          com.bouncingdata.Main.workbenchSession.tabsInfo = {};
+          com.bouncingdata.Main.workbenchSession.tabsInfo[guid] = {'app': anls};
+          if (!com.bouncingdata.Main.workbenchSession.tabsIndex) {
+            com.bouncingdata.Main.workbenchSession.tabsIndex = [];
+          }
+          com.bouncingdata.Main.workbenchSession.tabsIndex.push({'guid': guid, 'type': 'analysis'});
+          com.bouncingdata.Main.workbenchSession.tabsCounter = com.bouncingdata.Main.workbenchSession.tabsIndex.length;
+          com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid};
+        } else {
+          com.bouncingdata.Main.workbenchSession.tabsInfo[guid] = {'app': anls};
+          com.bouncingdata.Main.workbenchSession.tabsIndex.push({'guid': guid, 'type': 'analysis'});
+          com.bouncingdata.Main.workbenchSession.tabsCounter = com.bouncingdata.Main.workbenchSession.tabsIndex.length;
+          com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid};
+        }
+      }
+      com.bouncingdata.Nav.openWorkbench();
+    });
+  }
 }
 
 Analysis.prototype.postComment = function(guid, message, parentId, callback) {

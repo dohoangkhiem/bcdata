@@ -36,8 +36,8 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.utils.ScriptType;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.ScriptType;
+import com.bouncingdata.plfdemo.util.Utils;
 
 @Controller
 @RequestMapping(value = "/main")
@@ -162,8 +162,10 @@ public class MainController {
     BcDataScript script;
     if (ScriptType.SCRAPER.getType().equals(type)) {
       script = new Scraper();
+      script.setType("scraper");
     } else if (ScriptType.ANALYSIS.getType().equals(type)) {
       script = new Analysis();
+      script.setType("analysis");
     } else return null;
     
     script.setName(appname);
@@ -241,6 +243,22 @@ public class MainController {
     //return result;
     model.addAttribute("searchResult", result);
     return "search";
+  }
+  
+  @RequestMapping(value="/browsersearch", method = RequestMethod.GET)
+  public @ResponseBody SearchResult browerSearch(@RequestParam(value="query", required=true) String query, @RequestParam(value="criteria", required=true) String criteria, ModelMap model, Principal principal) {
+    SearchResult result = null;
+    User user = (User) ((Authentication)principal).getPrincipal();
+    try {
+      if ("global".equals(criteria)) {
+        result = datastoreService.search(query.toLowerCase());
+      } else if ("mystuff".equals(criteria)) {
+        result = datastoreService.search(query.toLowerCase(), user.getId());
+      }
+    } catch (Exception e) {
+      logger.debug("Failed to execute browser search with query: " + query, e);
+    }
+    return result;
   }
   
 }

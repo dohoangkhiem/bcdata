@@ -29,6 +29,7 @@ public abstract class BcDataScript {
   private Date createAt;
   private Date lastUpdate;
   private boolean isExecuted;
+  private String type;
   
   public int getId() {
     return id;
@@ -106,6 +107,12 @@ public abstract class BcDataScript {
   }
   public void setExecuted(boolean isExecuted) {
     this.isExecuted = isExecuted;
+  }
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
+    this.type = type;
   }
   
 }

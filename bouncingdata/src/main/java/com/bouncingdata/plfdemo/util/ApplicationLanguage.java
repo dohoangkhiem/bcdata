@@ -1,4 +1,4 @@
-package com.bouncingdata.plfdemo.utils;
+package com.bouncingdata.plfdemo.util;
 
 public enum ApplicationLanguage {
   PYTHON("python"), RUBY("ruby"), R("r") ;

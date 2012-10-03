@@ -27,8 +27,8 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
-import com.bouncingdata.plfdemo.utils.Action;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.Action;
+import com.bouncingdata.plfdemo.util.Utils;
 
 @Transactional
 public class DatastoreServiceImpl implements DatastoreService {

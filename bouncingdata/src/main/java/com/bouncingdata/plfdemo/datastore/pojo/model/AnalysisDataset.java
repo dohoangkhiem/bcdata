@@ -11,9 +11,9 @@ public class AnalysisDataset {
   @PrimaryKey
   @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
   private int id;
-  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.NONE, dependent="true")
   private Analysis analysis;
-  @Persistent(defaultFetchGroup="true", nullValue=NullValue.EXCEPTION)
+  @Persistent(defaultFetchGroup="true", nullValue=NullValue.NONE, dependent="true")
   private Dataset dataset;
   private boolean isActive;
   

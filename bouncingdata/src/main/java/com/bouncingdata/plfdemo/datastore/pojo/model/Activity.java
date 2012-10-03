@@ -9,7 +9,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.bouncingdata.plfdemo.utils.Action;
+import com.bouncingdata.plfdemo.util.Action;
 
 @PersistenceCapable
 public class Activity {

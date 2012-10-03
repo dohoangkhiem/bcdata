@@ -30,7 +30,10 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.Utils;
+import com.bouncingdata.plfdemo.util.dataparsing.DataParser;
+import com.bouncingdata.plfdemo.util.dataparsing.DataParserFactory;
+import com.bouncingdata.plfdemo.util.dataparsing.DataParserFactory.FileType;
 
 @Controller
 @RequestMapping("/dataset")
@@ -119,7 +122,7 @@ public class DatasetController {
   }
   
   @RequestMapping(value="/up", method = RequestMethod.POST)
-  public @ResponseBody long uploadDataset(@RequestParam(value="file", required=true) MultipartFile file, ModelMap model,
+  public @ResponseBody long uploadDataset(@RequestParam(value="file", required=true) MultipartFile file, @RequestParam(value="type", required=true) String type, ModelMap model,
       Principal principal) {
     User user = (User) ((Authentication)principal).getPrincipal();
     String filename = file.getOriginalFilename();    
@@ -128,7 +131,16 @@ public class DatasetController {
     if (size <= 0) return -1;
     logger.debug("UPLOAD FILE: Received {} file. Size {}", filename, size);
     try {
-      List<String[]> data = Utils.parseExcel(file.getInputStream());
+      DataParser parser;
+      if (type.equals("xls") || type.equals("xlsx")) {
+        parser = DataParserFactory.getDataParser(FileType.EXCEL);       
+      } else if (type.equals("txt")) {
+        parser = DataParserFactory.getDataParser(FileType.TEXT);
+      } else if (type.equals("csv")) {
+        parser = DataParserFactory.getDataParser(FileType.CSV);
+      } else return -1;
+      
+      List<String[]> data = parser.parse(file.getInputStream());      
       String[] headers = data.get(0);
       String dsFName = user.getUsername() + "." + filename + "_uploaded";
       //String identifier = user.getId() + "__" + dsName;
@@ -139,11 +151,7 @@ public class DatasetController {
       ds.setActive(true);
       ds.setCreateAt(new Date());
       ds.setLastUpdate(new Date());
-      ds.setDescription("Uploaded from " + file.getOriginalFilename());
-       
-      //Dataset oldDs = datastoreService.getDatasetByName(user.getUsername() + "." + datasetName);
-      //if (oldDs != null) tableName = tableName + "_1";
-      //ds.setName(tableName);
+      ds.setDescription("Uploaded from " + file.getOriginalFilename());       
       ds.setName(dsFName);
       ds.setScraper(null);
       ds.setRowCount(data.size() - 1);
@@ -178,7 +186,7 @@ public class DatasetController {
       
       model.addAttribute("dataset", ds);
       ObjectMapper mapper = new ObjectMapper();
-      if (ds.getRowCount() < 5000) {
+      if (ds.getRowCount() < 1000) {
         List<Map> data = userDataService.getDatasetToList(ds.getName());
           
         model.addAttribute("data", mapper.writeValueAsString(data));

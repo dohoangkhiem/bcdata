@@ -2,6 +2,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
+	$(function() {
+	  $('.result-analysis ul.analysis-list li').each(function() {
+	    var $link = $('a.anls-item', $(this));
+	    $link.click(function() {
+	      com.bouncingdata.Nav.fireAjaxLoad($link.prop('href'), false);
+	      return false;
+	    });
+	  });
+	  
+	  $('.result-dataset ul.dataset-list li').each(function() {
+	    var $link = $('a.dataset-item', $(this));
+	    $link.click(function() {
+	      com.bouncingdata.Nav.fireAjaxLoad($link.prop('href'), false);
+	      return false;
+	    });
+	  });
+	});
 </script>
 <div id="main-content" class="main-content search-page" style="min-height: 480px; padding: 10px; background-color: #fff;">
   <div class="result-container">
@@ -58,7 +75,7 @@
           <c:when test="${empty searchResult.analyses }">No analysis matched.</c:when>
           <c:otherwise>
             <c:forEach items="${searchResult.analyses }" var="anls">
-              <li><a class="anls-item" target="_blank" href="<c:url value="/anls/${anls.guid}" />" title="View analysis">${anls.name }</a></li>
+              <li><a class="anls-item" href="<c:url value="/anls/${anls.guid}" />" title="View analysis">${anls.name }</a></li>
             </c:forEach>
           </c:otherwise>
         </c:choose>

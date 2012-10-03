@@ -43,8 +43,21 @@ Nav.prototype.init = function() {
   
   $('#hiddenLinkForAjax').click(function(e) {
     com.bouncingdata.Main.toggleAjaxLoading(true);
+    
+    var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
+    if (($oldSelected.length > 0) && ($oldSelected.prop('id') != 'nav-home')) {
+      $oldSelected.removeClass('nav-item-selected');
+      var oldPageId = $('a.nav-item-link', $oldSelected).prop('id');
+      if (oldPageId == "nav-create-link") {
+        //
+        com.bouncingdata.Workbench.dispose();
+      }      
+    }
+    
+    $('#page>.main-container>.main-navigation div.nav-item#nav-home').addClass('nav-item-selected');
+    
     if (!e.originalEvent["isBackAction"]) {
-      window.history.pushState({linkId: $(this).prop('href'), type:'search'}, 'Search result', $(this).prop('href'));
+      window.history.pushState({linkId: $(this).prop('href')}, null, $(this).prop('href'));
     }
     return false;
   });
@@ -71,7 +84,7 @@ Nav.prototype.init = function() {
         // create a native event on nav. link
         if (document.createEvent) {
           event = document.createEvent("HTMLEvents");
-          event.initEvent("click", false, false);
+          event.initEvent("click", false, true);
           event["isBackAction"] = true;
           $link[0].dispatchEvent(event);
         } else { // IE
@@ -80,7 +93,7 @@ Nav.prototype.init = function() {
           event["isBackAction"] = true;
           $link[0].fireEvent("on" + event.eventType, event);
         }
-      } else if (type == 'anls' || type == 'search') {
+      } else {
         com.bouncingdata.Nav.fireAjaxLoad(linkId, true);
       }
       
@@ -109,14 +122,30 @@ Nav.prototype.fireAjaxLoad = function(link, isBack) {
   var event;
   if (document.createEvent) {
     event = document.createEvent("HTMLEvents");
-    event.initEvent("click", false, false);
+    event.initEvent("click", false, true);
     event["isBackAction"] = isBack;
     $hiddenLink[0].dispatchEvent(event);
-  } else {
+  } else { //IE?
     event = document.createEventObject();
     event.eventType = "click";
     event["isBackAction"] = isBack;
     $hiddenLink[0].fireEvent("on" + event.eventType, event);
+  }
+}
+
+Nav.prototype.openWorkbench = function() {
+  //create a native event on workbench navigation link
+  var $link = $('a#nav-create-link');
+  if (document.createEvent) {
+    event = document.createEvent("HTMLEvents");
+    event.initEvent("click", false, true);
+    event["isBackAction"] = false;
+    $link[0].dispatchEvent(event);
+  } else { // IE
+    event = document.createEventObject();
+    event.eventType = "click";
+    event["isBackAction"] = false;
+    $link[0].fireEvent("on" + event.eventType, event);
   }
 }
 

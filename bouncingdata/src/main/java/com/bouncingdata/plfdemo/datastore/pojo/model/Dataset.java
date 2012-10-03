@@ -1,6 +1,7 @@
 package com.bouncingdata.plfdemo.datastore.pojo.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.NullValue;
@@ -8,8 +9,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 @PersistenceCapable
 public class Dataset {
@@ -31,6 +30,8 @@ public class Dataset {
   @Persistent(defaultFetchGroup="true")
   private Scraper scraper;
   private boolean isPublic;
+  @Persistent(mappedBy="dataset")
+  List<AnalysisDataset> relations;
   
   public int getId() {
     return id;

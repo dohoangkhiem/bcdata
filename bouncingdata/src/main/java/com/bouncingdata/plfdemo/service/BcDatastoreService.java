@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bouncingdata.plfdemo.datastore.DataStorage;
 import com.bouncingdata.plfdemo.datastore.JdbcBcDatastore;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.Utils;
 
 @Transactional
 public class BcDatastoreService {
@@ -57,10 +57,5 @@ public class BcDatastoreService {
   public void storeData(String dsFullName, String[] headers, List<String[]> data) throws Exception {
     jdbcBcDatastore.persistDataset(dsFullName , headers, data);
   }
-  
-  public void storeExcel(String dsFullName, InputStream excelIs) throws Exception {
-    List<String[]> excelData = Utils.parseExcel(excelIs);
-    jdbcBcDatastore.persistDataset(dsFullName , excelData.get(0), excelData.subList(1, excelData.size()));
-  }
-    
+      
 }

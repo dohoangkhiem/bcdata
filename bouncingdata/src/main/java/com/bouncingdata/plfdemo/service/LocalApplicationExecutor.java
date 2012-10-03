@@ -41,7 +41,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.Utils;
 
 public class LocalApplicationExecutor implements ApplicationExecutor, ServletContextAware {
   
@@ -78,8 +78,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
       mode = "not-persistent";
     }
     
-    String dataPrefix = user.getId() + "_" + (app!=null?app.getId():"") + "_";
-    String[] args = new String[] {ticket, dataPrefix, mode};
+    //String dataPrefix = user.getId() + "_" + (app!=null?app.getId():"") + "_";
+    String[] args = new String[] {ticket, user.getUsername(), mode};
     ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, args[0], args[1], args[2]);
     pb.redirectErrorStream(true);
     
@@ -238,14 +238,11 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
       datasets = new HashMap<String, DatasetDetail>();
       List<AnalysisDataset> relations = new ArrayList<AnalysisDataset>();
       for (File f : datasetFiles) {
-        //String filename = f.getName();
-        //String identifier = filename.substring(0, filename.lastIndexOf("."));
         try {
           String s = FileUtils.readFileToString(f);
           JsonNode dataObj = mapper.readTree(s);
           JsonNode data = dataObj.get("data");
           String identifier = dataObj.get("name").getTextValue();
-          //String dsName = identifier.substring(identifier.indexOf(user.getUsername()) + user.getUsername().length() + 1);
           Dataset dataset = datastoreService.getDatasetByName(identifier);
           if (dataset != null) {
             String guid = dataset.getGuid(); 
@@ -339,9 +336,11 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
       }
     });
     File vDir = new File(storePath + Utils.FILE_SEPARATOR + anls.getGuid() + Utils.FILE_SEPARATOR + "v");
-    if (!vDir.isDirectory()) {
-      vDir.mkdirs(); 
+    if (vDir.isDirectory()) {
+      vDir.delete(); 
     }
+    
+    vDir.mkdirs();
     
     boolean makeThumb = false;
     if (vsFiles != null) {

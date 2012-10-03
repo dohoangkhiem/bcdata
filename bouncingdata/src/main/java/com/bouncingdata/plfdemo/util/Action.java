@@ -1,4 +1,4 @@
-package com.bouncingdata.plfdemo.utils;
+package com.bouncingdata.plfdemo.util;
 
 public enum Action {
   PUBLISH("publish"), LIKE("like"), COMMENT("comment"), UPDATE("update"), UNPUBLISH("unpublish");

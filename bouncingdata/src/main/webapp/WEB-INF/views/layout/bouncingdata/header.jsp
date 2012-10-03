@@ -110,8 +110,75 @@
       </div>    
     </div>
   </script>
-      
-  <!-- workbench templates -->
+  
+  <script id="workbench-content-template" type="text/x-jquery-tmpl">
+    <div class="workbench-ide-content">
+      <div class="app-status">
+          <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loader.gif" />" style="opacity: 0;"  />
+          <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+        </div>
+        <div class="app-info">
+          <div class='app-title'><label style='font-weight: bold;'>Application name: </label>\${appName}</div>
+          <div class='app-language' id='app-language'><label style='font-weight: bold;'>Language: </label>\${appLang}</div>
+          <div class='app-author'><label style='font-weight: bold;'>Author: </label>\${appAuthor}</div>
+        </div>
+        <div class="new-app-info">
+          <strong>Language: </strong>
+          <select class="language-select">
+            <option value='python'>Python</option>
+            <option value='r'>R</option>
+          </select>
+        </div>
+        <div class="clear"></div>
+        <div class="app-editor-container app-editor-tabs">
+          <ul>
+            <li><a href="#\${tabId}-code">Code</a></li>
+            <li><a href="#\${tabId}-viz">Visualization</a></li>
+            <li><a href="#\${tabId}-data">Data</a></li>
+          </ul>
+          
+          <div class="app-code" id="\${tabId}-code">
+            <div class="app-code-layout">
+              <div class="app-code-layout-center app-code-editor" id="app-code-layout-center-\${tabId }">
+                <div>
+                  <div id="code-editor-\${tabId}" class="code-editor"></div>
+                </div>    
+              </div>
+              <div class="app-code-layout-east app-execution-logs" id="app-code-layout-east-\${tabId }">
+                <div id="app-execution-logs-\${tabId}">
+                  <div class="console prompt" style="display: block;"></div>
+                  <div class="console-actions">
+                    <input class="clear-console" type="button" value="Clear console" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="app-viz" id="\${tabId}-viz">
+            <div><strong>Visualization Dashboard.</strong></div><br />
+            <div class="app-viz-dashboard">
+              <div class="dashboard-ruler">
+                <div class="dashboard-ruler-left ruler"></div>
+                <div class="dashboard-ruler-top ruler"></div>
+                <div class="dashboard-ruler-right ruler"></div>
+                <div class="dashboard-ruler-bottom ruler"></div>
+                <div class="snap-line-left snap-line"></div>
+                <div class="snap-line-top snap-line"></div>
+                <div class="snap-line-right snap-line"></div>
+                <div class="snap-line-bottom snap-line"></div>
+              </div>
+              <div id="dashboard-wrapper-\${tabId}" class="dashboard-wrapper" style="width: 800px;position: absolute; visibility: hidden; height: 14000px;"></div>
+              <div class="viz-dashboard" id="viz-dashboard-\${tabId}"></div>
+            </div>
+          </div>
+          <div class="app-data" id="\${tabId}-data">
+            <div>No data</div>
+          </div>
+        </div>
+    </div>
+  </script>    
+  
+  <!-- workbench templates 
   <script id="workbench-content-template" type="text/x-jquery-tmpl">
     <div class="workbench-ide-content">
       <div class="app-status">
@@ -134,7 +201,6 @@
       <div class="app-code-container">
         <div class="app-code-layout">
           <div class="app-code-layout-center app-code-editor" id="app-code-layout-center-\${tabId }">
-            <!-- textarea rows='15' id='code-editor-\${tabId}' class='code-editor' spellcheck='false'></textarea-->
             <div>
               <div id="code-editor-\${tabId}" class="code-editor"></div>
             </div>    
@@ -158,10 +224,6 @@
         </ul>
         <div id="app-output-viz-\${tabId}" class="app-output-viz">
           <div><strong>Visualization Dashboard.</strong></div><br />
-          <div class="app-output-actions">
-            <input class="dashboard-preview" type="button" value="Preview" />
-            <input class="dashboard-publish" type="button" value="Publish" />
-          </div>
           <div class="app-output-viz-dashboard">
             <div class="dashboard-ruler">
               <div class="dashboard-ruler-left ruler"></div>
@@ -185,7 +247,8 @@
         </div>
       </div>
     </div>
-  </script>
+  </script-->
+  
   <script  id="browser-item-template" type="text/x-jquery-tmpl">
     <div class="browser-item">
       <div class="browser-item-header">

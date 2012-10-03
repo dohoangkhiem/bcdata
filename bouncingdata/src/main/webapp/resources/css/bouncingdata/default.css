@@ -129,6 +129,7 @@ div.clear {
 
 #page .main-navigation .nav-item a:hover, #page .main-navigation .nav-item-selected a {
   color: #000000;
+  font-weight: bold;
 }
 
 #page .main-navigation .nav-item .nav-item-icon {

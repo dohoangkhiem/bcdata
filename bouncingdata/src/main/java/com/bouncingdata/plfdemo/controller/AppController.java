@@ -36,8 +36,8 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationExecutor;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.utils.ScriptType;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.ScriptType;
+import com.bouncingdata.plfdemo.util.Utils;
 
 @Controller
 @RequestMapping("/app")
@@ -89,7 +89,7 @@ public class AppController {
       AnalysisDetail detail = new AnalysisDetail(code, datasets, visualsMap, dashboard);
       return detail;
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to get application", e);
       return null;
     }
   }
@@ -122,7 +122,7 @@ public class AppController {
       
       return new DashboardDetail(visualsMap, dashboard);
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to get visualization map", e);
       return null;
     }
   }
@@ -211,42 +211,45 @@ public class AppController {
       }
       
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Execution error", e);
       return new ExecutionResult(null, null, null, -3, "Unknown error");
     }
     
   }
   
-  @RequestMapping(value="/s/{appGuid}", method = RequestMethod.POST)
-  public @ResponseBody String saveApp(@PathVariable String appGuid, @RequestParam(value="code", required=true) String code, 
-      @RequestParam(value="language", required=false) String language, ModelMap model, Principal principal) {
+  @RequestMapping(value="/s/{guid}", method = RequestMethod.POST)
+  public @ResponseBody String saveApp(@PathVariable String guid, @RequestParam(value="code", required=true) String code, 
+      @RequestParam(value="type", required=true) String type, @RequestParam(value="language", required=false) String language, 
+      ModelMap model, Principal principal) {
     
     User user = (User) ((Authentication)principal).getPrincipal();
     if (user == null) return null;
     
     try {
-      Analysis anls = datastoreService.getAnalysisByGuid(appGuid);
-      if (anls == null) {
+      BcDataScript script;
+      if ("analysis".equals(type)) {
+        script = datastoreService.getAnalysisByGuid(guid);
+      } else if ("scraper".equals(type)) {
+        script = datastoreService.getScraperByGuid(guid);
+      } else {
+        return "Unknown application type.";
+      }
+      if (script == null) {
         return "Cannot find application";
       }
       
-      if (anls.getUser().getId() != user.getId()) {
+      if (script.getUser().getId() != user.getId()) {
         return "No permission";
       }
       
-      try {
-        appStoreService.saveApplicationCode(appGuid, anls.getLanguage(), code);
-        //return "OK";
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      appStoreService.saveApplicationCode(guid, script.getLanguage(), code);
       
       int lines = Utils.countLines(code);
-      anls.setLineCount(lines);
-      datastoreService.updateAnalysis(anls);
+      script.setLineCount(lines);
+      datastoreService.updateBcDataScript(script);
       
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to update application.", e);
     }
     
     return "OK";
@@ -272,7 +275,7 @@ public class AppController {
       }
       datastoreService.updateDashboard(guid, status);
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to update dashboard.", e);
       return "KO";
     }
     return "OK";
@@ -285,7 +288,7 @@ public class AppController {
       //datastoreService.createDashboard(guid, status);
       datastoreService.updateDashboard(guid, status);
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to create dashboard.", e);
     }
   }
   
@@ -305,7 +308,7 @@ public class AppController {
       }
       datastoreService.publishAnalysis(user, analysis, value);
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to publish analysis", e);
     }
   }
   
@@ -326,7 +329,7 @@ public class AppController {
       return new ScraperDetail(code, scr, dsList);
       
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("Failed to get scraper", e);
       return null;
     }
   }

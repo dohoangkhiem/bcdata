@@ -19,7 +19,7 @@ function Workbench() {
   this.untitledCounter = 0;*/
 }
 
-Workbench.prototype.init = function() {
+Workbench.prototype.init = function(callback) {
   console.info('Initializing Workbench..');
   var me = this;
   
@@ -98,14 +98,34 @@ Workbench.prototype.init = function() {
         "Upload": function() {
           console.debug("Upload dataset file...");
           var $form = $('form#file-upload-form', $(this));
-          if (!$form.prop('value')) {
+          //var file = $form.prop('value');
+          var file = $('#file', $form).val();
+          if (!file) {
             return;
           }
+          // determine file type
+          if (file.indexOf('/') > -1) file = file.substring(file.lastIndexOf('/') + 1);
+          else if (file.indexOf('\\') > -1) file = file.substring(file.lastIndexOf('\\') + 1);
+          
+          if (file.indexOf('.') < 0) {
+            $('.upload-status', $form).text('This file could not be imported. Supported formats: .xls, .xlsx, .csv, .txt').show();
+            return;
+          }
+          
+          var extension = file.substring(file.lastIndexOf('.') + 1);
+          if (!$.inArray(extension, ['xls', 'xlsx', 'csv', 'txt'])) {
+            $('.upload-status', $form).text('This file could not be imported. Supported formats: .xls, .xlsx, .csv, .txt').show();
+            return;
+          }
+          
           $('.upload-in-progress', $form).show();
           $('.upload-status', $form).text('Uploading in progress').show();
           $form.ajaxSubmit({
             url: ctx + '/dataset/up',
             type: 'post',
+            data: {
+              type: extension
+            },
             clearForm: true,
             resetForm: true,
             success: function(res) {
@@ -235,6 +255,11 @@ Workbench.prototype.init = function() {
           me.$newDialog.dialog('open');
         } else if (actionId == 'upload-data') {
           me.$uploadDataDialog.dialog('open');
+        } else if (actionId == 'view-app') {
+          var guid = me.tabsIndex[index].guid;
+          if (guid && me.tabsIndex[index].type == 'analysis') {
+            com.bouncingdata.Nav.fireAjaxLoad(ctx + '/anls/' + guid, false);
+          }         
         } else if (actionId == 'publish-app') {
           // WHY IT'S SO COMPLICATED???
           var guid = me.tabsIndex[index].guid;
@@ -287,6 +312,8 @@ Workbench.prototype.init = function() {
     
     //
     me.loadLastSession();
+    
+    if(callback) callback();
     
   });
 }
@@ -510,13 +537,18 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   }
   
   // init. tabs
-  $('.app-execution-logs-tabs', $tab).tabs();
+  /*$('.app-execution-logs-tabs', $tab).tabs();
   var $tabs = $('.app-output-tabs', $tab).tabs();
   if (type == "scraper") {   
     $tabs.tabs("select", 1);
     $tabs.tabs("disable", 0);
-  }
+  }*/
   
+  var $tabs = $('.app-editor-tabs', $tab).tabs();
+  if (type == "scraper") {   
+    $tabs.tabs("select", 0);
+    $tabs.tabs("disable", 1);
+  }
 
   // init console
   var jqConsole = $('#app-execution-logs-' + tabId + ' .console', $tab).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
@@ -561,13 +593,17 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
         url: url,
         success: function(result) {
           console.debug(result);
-          var $codeText = $("<pre></pre>");
-          $codeText.text(result.code).appendTo($('.app-output-code .code-block', $tab));
+          /*var $codeText = $("<pre></pre>");
+          $codeText.text(result.code).appendTo($('.app-output-code .code-block', $tab));*/
           
           
           me.setCode(result.code, $tab);
           if (type == "analysis") {
-            me.loadDashboard(result['visualizations'], result['dashboard'], $tab, app);
+            //if ($tabs.tabs("option", "select") == 1 && !$tabs['dbloaded']) {
+              me.loadDashboard(result['visualizations'], result['dashboard'], $tab, app);
+            //} else {
+            //  $tab['dbloaded'] = false;
+            //}
             me.loadDatasets(result['datasets'], $tab);
           } else if (type == "scraper") {
             // 
@@ -587,53 +623,6 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     me.setCode(lang=='python'?'import datastore\n':'', $tab);
   }
   
-
-  $(".dashboard-preview", $tab).click(function() {
-    if (guid) {
-      window.open(ctx + "/anls/" + guid);
-    }
-    return false;
-  }).css('display', app?'inline':'none');
-
-  
-  $(".dashboard-publish", $tab).click(function() {
-    var $publish = $(this);
-    var value = !app.published;
-    var publishFunc = function() {
-      me.publish(guid, value, function() {
-        console.debug("Successfully" + value?"publish":"un-publish" + " analysis.");
-        app.published = value;
-        if (value) {
-          if (window.confirm("Your analysis has published! View your analysis now?")) {
-            window.open(ctx + "/anls/" + guid);
-          }
-        } else {
-          window.alert("Your analysis has become private");
-        }
-        $publish.attr('value', value?"Make private":"Publish");
-      });
-    };
-      
-    if (value) {
-      me.$publishDialog.dialog("option", "buttons", {
-        "Save": function() {
-          publishFunc();
-          $(this).dialog("close");          
-        }, 
-        "Cancel": function() {
-          $(this).dialog("close");
-        } 
-      });
-      me.$publishDialog.dialog("open");
-      me.$publishDialog.css('z-index', 10000).css('position', 'relative');
-      $('#anls-name', me.$publishDialog).text(app.name);
-    } else {
-      publishFunc();
-    }
-    
-    return false;
-  }).css('display', app?'inline':'none').attr('value', app&&app.published?"Make private":"Publish");
-    
   $('.console-actions .clear-console', $tab).click(function() {
     var index = me.getSelectedIndex();
     var jqconsole = me.tabsIndex[index].jqConsole;
@@ -650,7 +639,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
  */
 Workbench.prototype.loadLastSession = function() {
   var session = com.bouncingdata.Main.workbenchSession;
-  if ($.isEmptyObject(session)) {
+  if ($.isEmptyObject(session) || session["tabsIndex"].length == 0) {
     // create an empty tab
     this.createTab(null, null, 'analysis', 'python');
     return;
@@ -668,13 +657,22 @@ Workbench.prototype.loadLastSession = function() {
     if (guid) {
       var app = this.tabsInfo[guid].app;
       tabName = app.name + '.' + (lang=="python"?"py":(lang=="r"?"r":""));
-      this.tabsInfo[guid].tabId = 'tabs-' + (i+1);
-      this.$tabs.tabs('add', '#tabs-' + (i+1), tabName);
+      this.tabsInfo[guid].tabId = 'tabs-' + (i*1+1);
+      this.$tabs.tabs('add', '#tabs-' + (i*1+1), tabName);
     } else {
       var tabName = 'Untitled' + ++this.untitledCounter + '.' + (lang=="python"?"py":(lang=="r"?"r":""));
-      this.$tabs.tabs('add', '#tabs-' + (i+1), tabName);
+      this.$tabs.tabs('add', '#tabs-' + (i*1+1), tabName);
       // set code
       this.setCode(tabInfo.code, this.getTabContainer(i)); 
+    }
+  }
+  
+  if (session["currentSelected"]) {
+    var guid = session["currentSelected"].guid;
+    if (guid) {
+      this.$tabs.tabs("select", '#' + this.tabsInfo[guid].tabId);
+    } else {
+      this.$tabs.tabs("select", session["currentSelected"].index);
     }
   }
   
@@ -693,7 +691,11 @@ Workbench.prototype.saveSession = function() {
   com.bouncingdata.Main.workbenchSession = {
       "tabsCounter": this.tabsCounter,
       "tabsInfo": this.tabsInfo,
-      "tabsIndex": this.tabsIndex
+      "tabsIndex": this.tabsIndex,
+      "currentSelected": {
+        guid: this.tabsIndex[this.getSelectedIndex()].guid,
+        index: this.getSelectedIndex()
+      }
   }
 }
 
@@ -767,11 +769,11 @@ Workbench.prototype.execute = function(tabIndex) {
               me.reloadDashboard(app, $tab);
               app.executed = true;
               var datasets = result['datasets'];
-              var $dsContainer = $('#app-output-data-' + tabId, $tab);
+              var $dsContainer = $('#' + tabId + '-data', $tab);
               me.renderDatasets(datasets, $dsContainer);
             } else if (type == 'scraper') {
               var datasets = result['datasets'];
-              var $dsContainer = $('#app-output-data-' + tabId, $tab);
+              var $dsContainer = $('#' + tabId + '-data', $tab);
               //for (name in datasets) {
               //  var data = datasets[name];
               //  me.renderDataset(name, data, $dsContainer);
@@ -804,6 +806,7 @@ Workbench.prototype.saveCode = function(tabIndex) {
   var me = this;
   var $tab = this.getTabContainer(tabIndex);
   var code = this.getCode($tab);
+  var type = this.tabsIndex[tabIndex].type;
   
   if (!code || $.trim(code).length == 0) {
     console.debug("No code to save.");
@@ -827,7 +830,8 @@ Workbench.prototype.saveCode = function(tabIndex) {
         url : ctx + "/app/s/" + guid,
         data : {         
           code : code,
-          language: app.language
+          language: app.language,
+          type: type
         },
         success : function(json) {
           console.info("Update code: " + JSON.stringify(json));
@@ -999,6 +1003,7 @@ Workbench.prototype.loadDashboard = function(visuals, dashboard, $tab, app) {
   var $dashboard = $("#viz-dashboard-" + $tab.attr('id'), $tab);
   $dashboard.attr('guid', app['guid']).attr('tabid', $tab.attr('id')); 
   com.bouncingdata.Dashboard.load(visuals, dashboard, $dashboard, app.user.username==com.bouncingdata.Main.username);
+  $tab['dbloaded'] = true;
 }
 
 /**
@@ -1064,7 +1069,7 @@ Workbench.prototype.loadDatasets = function(dsList, $tab) {
     type: 'get',
     dataType: 'json',
     success: function(result) {
-      var $dsContainer = $('#app-output-data-' + $tab.attr('id'), $tab);
+      var $dsContainer = $('#' + $tab.attr('id') + '-data', $tab);
       $dsContainer.empty();
       me.renderDatasets(result, $dsContainer);
     },

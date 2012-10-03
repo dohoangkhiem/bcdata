@@ -79,20 +79,20 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
   
   var $vizContainer = $('<div class="viz-container"></div>');
   $vizContainer.attr('guid', viz.guid).attr('n', viz.name);
-    
-  var $vizHandle = $('<div class="viz-handle"><span class="permalink viz-permalink"><a href="" target="_blank">permalink</a></span></div>');
+  $vizContainer.css('width', w + 'px').css('height', h + 'px');  
+  //var $vizHandle = $('<div class="viz-handle"><span class="permalink viz-permalink"><a href="" target="_blank">permalink</a></span></div>');
+  var $vizHandle = $('<div class="viz-handle"></div>');
   $vizContainer.append($vizHandle);
   
   var $inner;
   switch(type) {
   case "html":
-    $inner = $('<iframe></iframe>');
+    $inner = $('<iframe style="width:' + (w-10) + 'px; height:' + (h-15) + 'px;"></iframe>');
     $('a', $vizHandle).attr('href', src);
     $inner.load().appendTo($vizContainer);
-    $inner.attr('src', ctx + '/' + src)
-      .css('height', (h - 15) + "px")
-      .css('width', (w - 10) + "px");
-    $vizContainer.css('width', w + 'px').css('height', h + 'px');
+    
+    $inner.attr('src', ctx + '/' + src);
+      
     if ($container.height() < (y + h)) {
       $container.css('height', (y + h + 10) + "px");
       if (editMode) me.updateRuler($container);

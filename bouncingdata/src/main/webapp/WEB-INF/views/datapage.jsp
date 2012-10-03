@@ -34,9 +34,19 @@
         <p class="related-analyses">
           <strong>Related analyses: </strong>
           <c:forEach items="${relatedAnls }" var="anls">
-            <a href="<c:url value="/anls" />/${anls.guid}">${anls.name }</a>&nbsp;
+            <a class="related-anls-link" href="<c:url value="/anls" />/${anls.guid}">${anls.name }</a>&nbsp;
           </c:forEach>
         </p>
+        <script>
+          $(function() {
+            $('.related-analyses a.related-anls-link').each(function() {
+              $(this).click(function() {
+                com.bouncingdata.Nav.fireAjaxLoad($(this).prop('href'), false);
+                return false;
+              });
+            });
+          });
+      	</script>
       </c:if>
     </div>  
   </div>

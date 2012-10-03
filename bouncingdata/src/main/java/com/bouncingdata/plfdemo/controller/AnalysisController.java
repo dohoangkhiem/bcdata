@@ -36,7 +36,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
-import com.bouncingdata.plfdemo.utils.Utils;
+import com.bouncingdata.plfdemo.util.Utils;
 
 @Controller
 @RequestMapping("/anls")
@@ -68,6 +68,10 @@ public class AnalysisController {
         model.addAttribute("errorMsg", "This analysis is not public!");
         return "error";
       }
+      
+      if (anls.getUser().getUsername().equals(user.getUsername())) {
+        model.addAttribute("isOwner", true);
+      } else model.addAttribute("isOwner", false);
       
       model.addAttribute("anls", anls);
       
@@ -102,16 +106,20 @@ public class AnalysisController {
       String code = appStoreService.getScriptCode(guid, null);
       model.addAttribute("anlsCode", StringEscapeUtils.escapeJavaScript(code));
       
-      List<AnalysisDataset> relations = datastoreService.getAnalysisDatasets(anls.getId());
-      if (relations != null) {
-        Map<String, DatasetDetail> datasetDetailMap = new HashMap<String, DatasetDetail>();
-        for (AnalysisDataset relation : relations) {
-          Dataset ds = relation.getDataset();
-          String data = userDataService.getDatasetToString(ds.getName());
-          DatasetDetail detail = new DatasetDetail(ds.getGuid(), ds.getName(), data);
-          datasetDetailMap.put(ds.getGuid(), detail);
+      try {
+        List<AnalysisDataset> relations = datastoreService.getAnalysisDatasets(anls.getId());
+        if (relations != null) {
+          Map<String, DatasetDetail> datasetDetailMap = new HashMap<String, DatasetDetail>();
+          for (AnalysisDataset relation : relations) {
+            Dataset ds = relation.getDataset();
+            String data = userDataService.getDatasetToString(ds.getName());
+            DatasetDetail detail = new DatasetDetail(ds.getGuid(), ds.getName(), data);
+            datasetDetailMap.put(ds.getGuid(), detail);
+          }
+          model.addAttribute("datasetDetailMap", mapper.writeValueAsString(datasetDetailMap));
         }
-        model.addAttribute("datasetDetailMap", mapper.writeValueAsString(datasetDetailMap));
+      } catch (Exception e) {
+        logger.debug("Error when trying to get relation datasets", e);
       }
       
       return "analysis";

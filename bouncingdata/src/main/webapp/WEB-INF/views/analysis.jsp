@@ -7,12 +7,28 @@
 	  if (!com.bouncingdata.Analysis) {
 	    $.getScript(ctx + "/resources/js/bouncingdata/analysis.js", function() {
 	    	console.debug("analysis.js async. loaded!");
-	    	com.bouncingdata.Analysis.init('${anls.guid}');
+	    	
+	    	var anls = {
+	    	    guid: '${anls.guid}',
+	    	    name: '${anls.name}',
+	    	    description: '${anls.description}',
+	    	    user: {username: '${anls.user.username}'},
+	    	    language: '${anls.language}'
+	    	}	
+	  	  	
+	    	com.bouncingdata.Analysis.init(anls);
 	    });  
 	  } else {
-	    com.bouncingdata.Analysis.init('${anls.guid}');
+	    var anls = {
+	  	    guid: '${anls.guid}',
+	  	    name: '${anls.name}',
+	  	    description: '${anls.description}',
+	  	    user: {username: '${anls.user.username}'},
+	  	    language: '${anls.language}'
+	  	}
+	    com.bouncingdata.Analysis.init(anls);
 	  }
-	  
+	 
 	  var dbDetail = $.parseJSON('${dashboardDetail}');
 	  com.bouncingdata.Dashboard.view(dbDetail.visualizations, dbDetail.dashboard, $('#main-content #anls-dashboard'));
 	
@@ -55,7 +71,12 @@
             	var $relatedDatasets = $('.related-info p.relatedDatasets');
             	for (guid in datasetDetailMap) {
             	  var dataset = datasetDetailMap[guid];
-            	  $relatedDatasets.append('<a target="_blank" href="' + ctx + '/dataset/view/' + guid + '">' + dataset.name + '</a>&nbsp;');  
+            	  var $ds = $('<a class="related-dataset-link" href="' + ctx + '/dataset/view/' + guid + '">' + dataset.name + '</a>&nbsp;');
+            	  $relatedDatasets.append($ds);
+            	  $ds.click(function() {
+            	    com.bouncingdata.Nav.fireAjaxLoad($ds.prop('href'), false);
+            	    return false;
+            	  });
             	}
             });
           </script>
@@ -71,9 +92,12 @@
         <div class="anls-title main-title"><h2>${anls.name}</h2></div>
         <div class="anls-action-links">
           <h3 class="anls-score">${anls.score}</h3>&nbsp;
-          <a href="#" class="anls-vote-up">Vote up</a>&nbsp;
-          <a href="#" class="anls-vote-down">Vote down</a>&nbsp;
-          <a href="#" class="anls-embed-button" id="anls-embed-button">Embed</a>
+          <a href="javascript:void(0)" class="anls-vote-up">Vote up</a>&nbsp;&nbsp;
+          <a href="javascript:void(0)" class="anls-vote-down">Vote down</a>&nbsp;&nbsp;
+          <a href="javascript:void(0)" class="anls-embed-button" id="anls-embed-button">Embed</a>
+          <c:if test="${isOwner }">
+            <a href="javascript:void(0)" class="anls-edit-button" id="anls-edit-button" title="Edit this analysis in your workbench">Edit</a>
+          </c:if>
         </div>
         <div class="embedded-link" id="embedded-link">
           <textarea id="embedded-link-text" spellcheck='false'></textarea>

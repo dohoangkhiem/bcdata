@@ -86,15 +86,22 @@
   height: 100%;
 }
 
-.workbench-ide-content .app-code-container {
-  margin-top: 15px;  
+.workbench-ide-content .app-editor-tabs.app-editor-container {
+  position: relative;
+  margin-top: 20px;
 }
 
-.workbench-ide-content .app-code-container, .workbench-ide-content .app-code-container .app-code-layout {
+.workbench-ide-content .app-editor-tabs > ul {
+  position: absolute;
+  top: -32px;
+  right: 0;
+}
+
+.workbench-ide-content .app-code, .workbench-ide-content .app-code .app-code-layout {
   height: 350px;
 }
 
-.workbench-ide-content .app-code-container .app-code-layout-center>div {
+.workbench-ide-content .app-code .app-code-layout-center>div {
   height: 328px;
   position: relative;
   padding: 0;
@@ -140,16 +147,16 @@
 
 /** Visualization styles **/
 
-.workbench-ide-content .app-output-viz {
+.workbench-ide-content .app-viz {
   overflow-y: auto;  
 }
 
-.workbench-ide-content .app-output-viz .app-output-viz-dashboard {
+.workbench-ide-content .app-viz .app-viz-dashboard {
   position: relative;
   overflow: hidden;
 }
 
-.workbench-ide-content .app-output-viz .dashboard-ruler {
+.workbench-ide-content .app-viz .dashboard-ruler {
   position: absolute;
   top: 0;
   left: 0;
@@ -158,30 +165,30 @@
   border: 0 none;
 }
 
-.app-output-viz .dashboard-ruler .snap-line {
+.app-viz .dashboard-ruler .snap-line {
   position: absolute;
   opacity: 0;  
   z-index: 9999;
 }
 
-.app-output-viz .dashboard-ruler .snap-line-left, .app-output-viz .dashboard-ruler .snap-line-right {
+.app-viz .dashboard-ruler .snap-line-left, .app-viz .dashboard-ruler .snap-line-right {
   border: 0 none;
   width: 1px;
   background-color: #00FF00;
 }
 
-.app-output-viz .dashboard-ruler .snap-line-top, .app-output-viz .dashboard-ruler .snap-line-bottom {
+.app-viz .dashboard-ruler .snap-line-top, .app-viz .dashboard-ruler .snap-line-bottom {
   border: 0 none;
   height: 1px;
   background-color: #00FF00;
 }
 
-.app-output-viz .dashboard-ruler .ruler {
+.app-viz .dashboard-ruler .ruler {
   position: absolute;
   z-index: 9999;
 }
 
-.app-output-viz .dashboard-ruler .dashboard-ruler-top {
+.app-viz .dashboard-ruler .dashboard-ruler-top {
   top: 0;
   left: 0;
   height: 10px;
@@ -189,7 +196,7 @@
   background: url('../../images/ruler-top.gif') repeat-x scroll left top transparent;
 }
 
-.app-output-viz .dashboard-ruler .dashboard-ruler-left {
+.app-viz .dashboard-ruler .dashboard-ruler-left {
   top: 0;
   left: 0;
   width: 10px;
@@ -197,7 +204,7 @@
   background: url('../../images/ruler-left.gif') repeat-y scroll left top transparent;
 }
 
-.app-output-viz .dashboard-ruler .dashboard-ruler-right {
+.app-viz .dashboard-ruler .dashboard-ruler-right {
   right: 0;
   top: 0; 
   height: 100%;
@@ -205,7 +212,7 @@
   background: url('../../images/ruler-left.gif') repeat-y scroll right top transparent;
 }
 
-.app-output-viz .dashboard-ruler .dashboard-ruler-bottom {
+.app-viz .dashboard-ruler .dashboard-ruler-bottom {
   bottom: 0;
   left: 0;
   height: 10px;
@@ -213,14 +220,14 @@
   background: url('../../images/ruler-top.gif') repeat-x scroll left bottom transparent;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard {
+.workbench-ide-content .app-viz .viz-dashboard {
   min-height: 450px;
   border: 0 none;
   width: 800px;
   background: url('../../images/grid.gif') repeat scroll left top transparent;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container {
   border: 1px solid #999999;
   background: none repeat scroll left top #FFFFFF;
   border-top-left-radius: 5px;
@@ -228,29 +235,29 @@
   overflow: hidden;
 }
 
-.workbench-ide-content .app-output-viz .app-output-actions {
+.workbench-ide-content .app-viz .app-output-actions {
   margin: 10px 0;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container-hover {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container-hover {
   /*border: 1px dotted #888888;*/
   border: 1px dotted #347C17;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container .ui-resizable-handle {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container .ui-resizable-handle {
   opacity: 0;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container-hover .ui-resizable-handle {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container-hover .ui-resizable-handle {
   opacity: 1;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container > iframe {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container > iframe {
   border: 1px dashed #DDDDDD;  
   overflow: hidden;
 }
 
-.app-output-viz .viz-dashboard .viz-container .viz-handle {
+.app-viz .viz-dashboard .viz-container .viz-handle {
   height: 12px;
   display: block;
   margin: 0;
@@ -259,12 +266,12 @@
   background: none repeat scroll left top #C0C0C0;
 }
 
-.app-output-viz .viz-dashboard .viz-container .viz-handle-hover {
+.app-viz .viz-dashboard .viz-container .viz-handle-hover {
   /*background: #BBBBBB no-repeat scroll left top;*/
   cursor: crosshair;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle .permalink {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container .viz-handle .permalink {
   opacity: 0;
   float: right;
   color: #333333;
@@ -273,7 +280,7 @@
   text-decoration: none;
 }
 
-.workbench-ide-content .app-output-viz .viz-dashboard .viz-container .viz-handle-hover .permalink {
+.workbench-ide-content .app-viz .viz-dashboard .viz-container .viz-handle-hover .permalink {
   opacity: 0.9;
 }
 
