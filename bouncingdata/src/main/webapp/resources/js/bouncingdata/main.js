@@ -5,7 +5,7 @@ Main.prototype.setContext = function(ctx) {
   this.ctx = ctx;
 }
 
-Main.prototype.initUI = function() {
+Main.prototype.init = function() {
   this.workbenchSession = {};
   $(function() {
     
@@ -32,6 +32,8 @@ Main.prototype.initUI = function() {
       params: {fragments: "main-content"}
     }));*/
     
+    window.history.pushState({linkId: window.location.href}, null, window.location.href);
+    
   });
 }
 
@@ -42,11 +44,6 @@ Main.prototype.toggleAjaxLoading = function(display, message) {
     $element.show();
   } else $element.hide();
 }
-
-Main.prototype.setWorkbenchSession = function() {
-  
-}
-
 
 function Utils() {
 }
@@ -63,7 +60,7 @@ com.bouncingdata = {};
 com.bouncingdata.Main = new Main();
 com.bouncingdata.Utils = new Utils();
 Utils = com.bouncingdata.Utils;
-com.bouncingdata.Main.initUI();
+com.bouncingdata.Main.init();
 
 /**
  * Extra function for jQuery, to get html content of an object, including outer tag

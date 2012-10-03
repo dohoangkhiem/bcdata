@@ -2,6 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
+<script>
+	$(function() {
+	  com.bouncingdata.Nav.setSelected('data', '${dataset.guid}');
+	});
+</script>
 <div id="main-content" class="datapage-container">
   <div class="data-info right-content">
     <div class="dataset-summary summary">

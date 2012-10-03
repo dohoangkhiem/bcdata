@@ -14,7 +14,7 @@
     <intercept-url pattern="/favicon.ico" access="permitAll"/>
     <intercept-url pattern="/public/**" access="permitAll" />
     <intercept-url pattern="/**" access="isAuthenticated()" />
-    <form-login login-page="/auth/login" default-target-url="/main"
+    <form-login login-page="/auth/login" default-target-url="/"
       authentication-failure-url="/auth/failed" login-processing-url="/auth/j_spring_security_check"  />
     <http-basic />
     <logout logout-success-url="/auth/logout" logout-url="/auth/j_spring_security_logout" />

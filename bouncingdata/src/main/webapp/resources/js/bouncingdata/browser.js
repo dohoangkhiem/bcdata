@@ -198,7 +198,8 @@ Browser.prototype.loadStuff = function(stuffs, type, $container) {
         'public': itemObj['published'],
         createDate: new Date(itemObj['createAt']),
         lastUpdate: new Date(itemObj['lastUpdate']),
-        tags: itemObj['tags']?itemObj['tags']:''    
+        tags: itemObj['tags']?itemObj['tags']:'',
+        language: itemObj['language']
       });
     } else if (type == "dataset") {
       $item = $.tmpl(this.$itemTemplate, {
@@ -212,6 +213,7 @@ Browser.prototype.loadStuff = function(stuffs, type, $container) {
         tags: itemObj['tags']?itemObj['tags']:''
       });
       
+      $('.application-language', $item).remove();
       $('.line-count', $item).replaceWith('<div class="browser-item-info row-count"><strong>Row count: </strong>' + itemObj.rowCount + '</div>')
       $('.row-count', $item).after('<div class="browser-item-info dataset-schema"><strong>Schema: </strong>' + itemObj.schema + '</div>') ;
     

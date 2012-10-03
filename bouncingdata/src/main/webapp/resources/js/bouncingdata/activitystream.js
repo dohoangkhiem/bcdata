@@ -48,6 +48,7 @@ ActivityStream.prototype.init = function() {
     
   });
   
+  com.bouncingdata.Nav.setSelected('page', 'stream');
 }
 
 /**

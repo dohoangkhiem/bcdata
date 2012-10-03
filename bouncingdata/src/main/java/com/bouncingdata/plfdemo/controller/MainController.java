@@ -241,6 +241,7 @@ public class MainController {
       logger.error("Failed to execute search with query: " + query, e);
     }
     //return result;
+    model.addAttribute("query", query);
     model.addAttribute("searchResult", result);
     return "search";
   }

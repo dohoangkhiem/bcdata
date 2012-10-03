@@ -65,7 +65,7 @@ Connect.prototype.init = function() {
     return false;
   });
   
-  
+  com.bouncingdata.Nav.setSelected('page', 'connect');
 }
 
 /**

@@ -80,7 +80,7 @@ Analysis.prototype.init = function(anls) {
       // check if the current workbench's cache has contained this analysis already
       if (com.bouncingdata.Main.workbenchSession.tabsInfo
           && guid in com.bouncingdata.Main.workbenchSession.tabsInfo) {
-        com.bouncingdata.Main.workbenchSession.currentSelected = {guid: guid};
+        com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid, 'tab': 1};
       } else { // if not, add this analysis then open workbench
         if (!com.bouncingdata.Main.workbenchSession.tabsInfo) {
           com.bouncingdata.Main.workbenchSession.tabsInfo = {};
@@ -90,17 +90,19 @@ Analysis.prototype.init = function(anls) {
           }
           com.bouncingdata.Main.workbenchSession.tabsIndex.push({'guid': guid, 'type': 'analysis'});
           com.bouncingdata.Main.workbenchSession.tabsCounter = com.bouncingdata.Main.workbenchSession.tabsIndex.length;
-          com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid};
+          com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid, 'tab': 1};
         } else {
           com.bouncingdata.Main.workbenchSession.tabsInfo[guid] = {'app': anls};
           com.bouncingdata.Main.workbenchSession.tabsIndex.push({'guid': guid, 'type': 'analysis'});
           com.bouncingdata.Main.workbenchSession.tabsCounter = com.bouncingdata.Main.workbenchSession.tabsIndex.length;
-          com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid};
+          com.bouncingdata.Main.workbenchSession.currentSelected = {'guid': guid, 'tab': 1};
         }
       }
       com.bouncingdata.Nav.openWorkbench();
     });
   }
+  
+  com.bouncingdata.Nav.setSelected('anls', anls.guid);
 }
 
 Analysis.prototype.postComment = function(guid, message, parentId, callback) {

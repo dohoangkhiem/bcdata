@@ -26,7 +26,7 @@ public class ActivityController {
   @Autowired
   private DatastoreService datastoreService;
   
-  @RequestMapping(value={"/", "/a", "/home"}, method=RequestMethod.GET)
+  @RequestMapping(value={"/", "/stream", "/home"}, method=RequestMethod.GET)
   public String getActivityStream(ModelMap model, Principal principal) {
     try {
       User user = (User) ((Authentication)principal).getPrincipal();
@@ -36,7 +36,7 @@ public class ActivityController {
       logger.debug("Failed to load activity stream", e);
       model.addAttribute("errorMsg", "Failed to load the activity stream");
     }
-    return "home";
+    return "stream";
   }
   
   @RequestMapping(value="/a/more/{lastId}", method=RequestMethod.GET)

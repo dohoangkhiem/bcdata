@@ -1,5 +1,5 @@
 function Nav() {
-  selected = null;
+  this.selected = null;
 }
 
 Nav.prototype.init = function() {
@@ -9,7 +9,7 @@ Nav.prototype.init = function() {
     
     $link.bind('click', function(e) {
       com.bouncingdata.Main.toggleAjaxLoading(true);
-      var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
+      /*var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
       if ($oldSelected) {
         $oldSelected.removeClass('nav-item-selected');
         var oldPageId = $('a.nav-item-link', $oldSelected).prop('id');
@@ -18,7 +18,8 @@ Nav.prototype.init = function() {
           com.bouncingdata.Workbench.dispose();
         }      
       }
-      $(this).parent().addClass('nav-item-selected');
+      $(this).parent().addClass('nav-item-selected');*/
+            
       if (!e.originalEvent["isBackAction"]) {
         window.history.pushState({linkId: $(this).attr('id'), type:'page'}, $('.nav-item-text', $(this)).text(), $form.attr('action'));
       }
@@ -44,7 +45,7 @@ Nav.prototype.init = function() {
   $('#hiddenLinkForAjax').click(function(e) {
     com.bouncingdata.Main.toggleAjaxLoading(true);
     
-    var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
+    /*var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
     if (($oldSelected.length > 0) && ($oldSelected.prop('id') != 'nav-home')) {
       $oldSelected.removeClass('nav-item-selected');
       var oldPageId = $('a.nav-item-link', $oldSelected).prop('id');
@@ -54,7 +55,9 @@ Nav.prototype.init = function() {
       }      
     }
     
-    $('#page>.main-container>.main-navigation div.nav-item#nav-home').addClass('nav-item-selected');
+    $('#page>.main-container>.main-navigation div.nav-item#nav-home').addClass('nav-item-selected');*/
+    
+    
     
     if (!e.originalEvent["isBackAction"]) {
       window.history.pushState({linkId: $(this).prop('href')}, null, $(this).prop('href'));
@@ -107,10 +110,31 @@ Nav.prototype.init = function() {
 }
 
 /**
- * Set selected item
+ * Sets current selected item
+ * @param type one of 'page', 'anls', 'data', 'search'
+ * @param ref the reference string, it's the page name ('create', 'stream', ...) in case of type 'page',</br> 
+ * guid in case of type 'anls' or 'data', query string if type is 'search'
  */
-Nav.prototype.setSelected = function() {
-  this.selected = {};
+Nav.prototype.setSelected = function(type, ref) {
+  var $oldSelected = $('#page>.main-container>.main-navigation div.nav-item-selected');
+  if ($oldSelected) {
+    $oldSelected.removeClass('nav-item-selected');
+    var oldPageId = $('a.nav-item-link', $oldSelected).prop('id');
+    if (oldPageId == "nav-create-link" && this.selected.type == 'page' && this.selected.ref == 'create') {
+      com.bouncingdata.Workbench.dispose();
+    }      
+  }
+  
+  this.selected = {
+    'type': type,
+    'ref': ref
+  };
+  
+  if (type == 'page') {
+    $('#page>.main-container>.main-navigation div.nav-item#nav-' + ref).addClass('nav-item-selected');
+  } else {
+    $('#page>.main-container>.main-navigation div.nav-item#nav-stream').addClass('nav-item-selected');
+  }
 }
 
 /**

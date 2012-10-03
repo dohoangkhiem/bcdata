@@ -19,6 +19,9 @@ function Workbench() {
   this.untitledCounter = 0;*/
 }
 
+/**
+ * Initializes workbench: init. variables, bind handlers, load last session
+ */
 Workbench.prototype.init = function(callback) {
   console.info('Initializing Workbench..');
   var me = this;
@@ -313,6 +316,7 @@ Workbench.prototype.init = function(callback) {
     //
     me.loadLastSession();
     
+    com.bouncingdata.Nav.setSelected('page', 'create');
     if(callback) callback();
     
   });
@@ -413,7 +417,7 @@ Workbench.prototype.resizeEditor = function($tab) {
 }
 
 /**
- * Builds tab content from the template for particular application or dataset 
+ * Builds tab content from the template for given application or dataset 
  */
 Workbench.prototype.makeTabContent = function(tabId, obj, type) {
   if (type == 'analysis' || type == 'scraper') {
@@ -443,7 +447,7 @@ Workbench.prototype.makeTabContent = function(tabId, obj, type) {
 }
 
 /**
- * Some magic works to make the tab content appears & functions correctly
+ * Some magic works to render tab content & function correctly
  */
 Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   
@@ -635,7 +639,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
 }
 
 /**
- * 
+ * Loads the last saved session
  */
 Workbench.prototype.loadLastSession = function() {
   var session = com.bouncingdata.Main.workbenchSession;
@@ -672,14 +676,18 @@ Workbench.prototype.loadLastSession = function() {
     if (guid) {
       this.$tabs.tabs("select", '#' + this.tabsInfo[guid].tabId);
     } else {
-      this.$tabs.tabs("select", session["currentSelected"].index);
+      this.$tabs.tabs("select", session["currentSelected"].index);      
+    }
+    if (session["currentSelected"].tab) {
+      var $tab = this.getSelectedTabContainer();
+      $('.app-editor-tabs', $tab).tabs("select", session["currentSelected"].tab);
     }
   }
   
 }
 
 /**
- * 
+ * Saves current session
  */
 Workbench.prototype.saveSession = function() {
   // save to workbenchSession object of com.bouncingdata.Main
@@ -689,18 +697,19 @@ Workbench.prototype.saveSession = function() {
     }
   }
   com.bouncingdata.Main.workbenchSession = {
-      "tabsCounter": this.tabsCounter,
-      "tabsInfo": this.tabsInfo,
-      "tabsIndex": this.tabsIndex,
-      "currentSelected": {
-        guid: this.tabsIndex[this.getSelectedIndex()].guid,
-        index: this.getSelectedIndex()
+      'tabsCounter': this.tabsCounter,
+      'tabsInfo': this.tabsInfo,
+      'tabsIndex': this.tabsIndex,
+      'currentSelected': {
+        'guid': this.tabsIndex[this.getSelectedIndex()].guid,
+        'index': this.getSelectedIndex(),
+        'tab': $('.app-editor-tabs', this.getSelectedTabContainer()).tabs("option", "select")
       }
   }
 }
 
 /**
- * 
+ * Saves current session then dispose
  */
 Workbench.prototype.dispose = function() {
   this.saveSession();
@@ -940,7 +949,9 @@ Workbench.prototype.createApp = function(appname, language, description, code, i
 }
 
 /**
- * 
+ * Converts current anonymous tab to an application's tab
+ * @param index the current tab index
+ * @param app the application to bind to tab
  */
 Workbench.prototype.bindAppToTab = function(index, app) {
   if (!app) return;
@@ -1089,12 +1100,12 @@ Workbench.prototype.renderDatasets = function(datasetDetailMap, $dsContainer) {
   var i = 0;
   for (guid in datasetDetailMap) {
     var name = datasetDetailMap[guid].name;
-    htmlToAppend[i] = '<div class="dataset-item" style="margin-top: 2em;" dsguid="' 
+    htmlToAppend[i++] = '<div class="dataset-item" style="margin-top: 2em;" dsguid="' 
       + guid + '"><span class="dataset-item-title">'
       + '<strong><a target="_blank" href="' + ctx + '/dataset/view/' + guid + '">' + name + '</a></strong></span><table class="dataset-item-table"></table></div>';
   }
   
-  $dsContainer.empty();
+  //$dsContainer.empty();
   $dsContainer.append(htmlToAppend.join());
   
   $('.dataset-item', $dsContainer).each(function() {
@@ -1102,6 +1113,27 @@ Workbench.prototype.renderDatasets = function(datasetDetailMap, $dsContainer) {
     var guid = $dsItem.attr('dsguid');
     var $table = $('table.dataset-item-table', $dsItem);
     me.renderDatatable($.parseJSON(datasetDetailMap[guid].data), $table);
+  });
+}
+
+Workbench.prototype.renderAttachments = function(attachmentList, $dsContainer) {
+  var me = this;
+  var htmlToAppend = [];
+  var i = 0;
+  for (index in attachmentList) {
+    var attachment = attachmentList[index];
+    var name = attachment.name;
+    htmlToAppend[i++] = '<div attIdx="' + index + '" class="attachment-item" style="margin-top: 2em;"><span class="attachment-item-title">'
+      + '<strong><a href="javascript:void(0)">' + name + '</a></strong></span><table class="attachment-item-table"></table></div>';
+  }
+  
+  $dsContainer.append(htmlToAppend.join());
+  
+  $('.attachment-item', $dsContainer).each(function() {
+    var $attItem = $(this);
+    var index = $attItem.attr('attIdx');
+    var $table = $('table.attachment-item-table', $attItem);
+    me.renderDatatable($.parseJSON(attachmentList[index].data), $table);
   });
 }
 

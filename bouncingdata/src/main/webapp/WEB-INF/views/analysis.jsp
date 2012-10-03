@@ -120,12 +120,19 @@
           </div>
           <div class="anls-data" id="anls-data">
             <c:choose>
-              <c:when test="${not empty datasetDetailMap }">
+              <c:when test="${not empty datasetDetailMap or not empty attachments}">
                 <script>
                 	$(function() {
                 	  var datasetDetailMap = ${datasetDetailMap};
-                  	var $dsContainer = $('#anls-data');
-                  	com.bouncingdata.Workbench.renderDatasets(datasetDetailMap, $dsContainer);  
+                	  var $dsContainer = $('#anls-data');
+                	  $dsContainer.empty();
+                  	if (datasetDetailMap) {
+                  		com.bouncingdata.Workbench.renderDatasets(datasetDetailMap, $dsContainer);  
+                  	}
+                  	var attachmentList = ${attachments};
+                  	if (attachmentList) {
+                      com.bouncingdata.Workbench.renderAttachments(attachmentList, $dsContainer);  
+                  	}
                 	});
                 </script>
               </c:when>

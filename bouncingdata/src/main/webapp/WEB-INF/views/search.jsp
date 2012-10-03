@@ -18,6 +18,8 @@
 	      return false;
 	    });
 	  });
+	  
+	  com.bouncingdata.Nav.setSelected('search', '${query}');
 	});
 </script>
 <div id="main-content" class="main-content search-page" style="min-height: 480px; padding: 10px; background-color: #fff;">

@@ -99,7 +99,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
           }
           this.cancel();
         }
-      }, 1000*60*5);
+      }, 1000*60*2);
       
       InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
       int c;
@@ -223,12 +223,14 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
     File[] datasetFiles;
     Map<String, DatasetDetail> datasets = null;
     ObjectMapper mapper = new ObjectMapper();
+    
     if (script instanceof Analysis) {
+      File anlsLocation = new File(storePath + Utils.FILE_SEPARATOR + script.getGuid());
       Analysis analysis = (Analysis) script;
       datasetFiles = execLogDir.listFiles(new FileFilter() {
         @Override
         public boolean accept(File pathname) {
-          if (pathname.isFile() && pathname.getName().endsWith(".out")) {
+          if (pathname.isFile() && (pathname.getName().endsWith(".out") || pathname.getName().endsWith(".att"))) {
             return true;
           } else return false;
         }
@@ -243,14 +245,24 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
           JsonNode dataObj = mapper.readTree(s);
           JsonNode data = dataObj.get("data");
           String identifier = dataObj.get("name").getTextValue();
-          Dataset dataset = datastoreService.getDatasetByName(identifier);
-          if (dataset != null) {
-            String guid = dataset.getGuid(); 
-            // create & persist new AnalysisDataset
-            AnalysisDataset anlsDts = new AnalysisDataset(analysis, dataset, true);
-            relations.add(anlsDts);
-            datasets.put(guid, new DatasetDetail(guid, identifier, data.toString()));
+          if (f.getName().endsWith(".out")) {
+            Dataset dataset = datastoreService.getDatasetByName(identifier);
+            if (dataset != null) {
+              String guid = dataset.getGuid(); 
+              // create & persist new AnalysisDataset
+              AnalysisDataset anlsDts = new AnalysisDataset(analysis, dataset, true);
+              relations.add(anlsDts);
+              datasets.put(guid, new DatasetDetail(guid, identifier, data.toString()));
+            }
+          } else if (f.getName().endsWith(".att")) {
+            datasets.put(identifier, new DatasetDetail(identifier, identifier, data.toString()));
+            try {
+              FileUtils.copyFile(f, new File(anlsLocation.getAbsoluteFile() + Utils.FILE_SEPARATOR + f.getName()));
+            } catch (IOException e) {
+              logger.debug("Failed to copy attachment file " + f.getAbsolutePath() + " to " + anlsLocation.getAbsolutePath());
+            }
           }
+          
         } catch (IOException e) {
           logger.debug("Can't read dataset file {}", f.getAbsolutePath());
         }

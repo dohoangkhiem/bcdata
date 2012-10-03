@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
@@ -121,6 +122,9 @@ public class AnalysisController {
       } catch (Exception e) {
         logger.debug("Error when trying to get relation datasets", e);
       }
+      
+      List<Attachment> attachments = appStoreService.getAttachmentData(guid);
+      model.addAttribute("attachments", mapper.writeValueAsString(attachments));
       
       return "analysis";
     } catch (Exception e) {
