@@ -426,7 +426,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
         if ("png".equals(extension)) type = VisualizationType.PNG;
         else if ("html".equals(extension)) {
           type = VisualizationType.HTML;
-          visuals.put(name, new VisualizationDetail(null, "temp/" + executionId + "/" + name + "/html", type));
+          visuals.put(name, new VisualizationDetail(null, "visualize/temp/" + executionId + "/" + name + "/html", type));
           continue;
         }
         

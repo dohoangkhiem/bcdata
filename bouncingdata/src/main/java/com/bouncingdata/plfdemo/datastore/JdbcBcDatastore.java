@@ -21,7 +21,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
 
   @Override
   public String getDataset(String dataset) throws DataAccessException {
-    String sql = "select * from `" + dataset + "`";
+    String sql = "SELECT * FROM `" + dataset + "`";
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -45,7 +45,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   }
   
   public String getDataset(String dataset, int begin, int maxNumber) throws DataAccessException {
-    String sql = "select * from `" + dataset + "` limit " + begin + "," + maxNumber;
+    String sql = "SELECT * FROM `" + dataset + "` LIMIT " + begin + "," + maxNumber;
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -69,7 +69,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   }
   
   public List<Map> getDatasetToList(String dataset, int begin, int maxNumber) throws DataAccessException {
-    String sql = "select * from `" + dataset + "` limit " + begin + "," + maxNumber;
+    String sql = "SELECT * FROM `" + dataset + "` LIMIT " + begin + "," + maxNumber;
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -93,7 +93,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   }
   
   public List<Object[]> getDatasetToListOfArray(String dataset, int begin, int maxNumber) throws DataAccessException {
-    String sql = "select * from `" + dataset + "` limit " + begin + "," + maxNumber;
+    String sql = "SELECT * FROM `" + dataset + "` LIMIT " + begin + "," + maxNumber;
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -118,7 +118,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   
   @Override
   public List<Map> getDatasetToList(String dataset) throws DataAccessException {
-    String sql = "select * from `" + dataset + "`";
+    String sql = "SELECT * FROM `" + dataset + "`";
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -175,25 +175,25 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
     try {
       conn = getDataSource().getConnection();
       st = conn.createStatement();
-      String sql = "drop table if exists `" + tableName + "`";
+      String sql = "DROP TABLE IF EXISTS `" + tableName + "`";
       st.executeUpdate(sql);
       
-      StringBuilder createSql = new StringBuilder("create table `" + tableName + "` (");
+      StringBuilder createSql = new StringBuilder("CREATE TABLE `" + tableName + "` (");
       for (String header : headers) {
         createSql.append("`" + header + "`");
-        createSql.append(" text,");
+        createSql.append(" TEXT,");
       }
       
       sql = createSql.substring(0, createSql.length() -1) + ")";
-      logger.debug("Create table: {}.", sql);
+      logger.debug("Creating table: {}...", sql);
       st.execute(sql);
       
-      StringBuilder insertSql = new StringBuilder("insert into `" + tableName + "`(");
+      StringBuilder insertSql = new StringBuilder("INSERT INTO `" + tableName + "`(");
       for (int i = 0; i < columnNum; i++) {
         insertSql.append("`" + headers[i] + "`,");
       }
       insertSql = new StringBuilder(insertSql.substring(0, insertSql.length() - 1));
-      insertSql.append(") values ");
+      insertSql.append(") VALUES ");
       
       for (int i = 0; i < data.size(); i++) {      
         StringBuilder row = new StringBuilder("(");
@@ -214,8 +214,27 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
         }
       }
       //int result = st.executeUpdate(sql);
+      
+      boolean disabledKey = false;
+      if (data.size() > 1000) {
+        // disable keys
+        sql = "ALTER TABLE `" + tableName + "` DISABLE KEYS";
+        st.executeUpdate(sql);
+        disabledKey = true;
+      }
+      
+      logger.debug("Inserting data to table `{}`...", tableName);
+      // execute insert
       int result = pst.executeUpdate();
-      logger.debug("Insert complete: {} rows.", result);
+      
+      // enable keys
+      if (disabledKey) {
+        sql = "ALTER TABLE `" + tableName + "` ENABLE KEYS";
+        st.executeUpdate(sql);
+      }
+      
+      logger.debug("Insert completed: {} rows.", result);
+      
     } catch (SQLException e) {
       throw new RuntimeException(e);
     } finally {
@@ -232,7 +251,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
     try {
       conn = getConnection();
       st = conn.createStatement();
-      String sql = "drop table `" + dsFullname + "`";
+      String sql = "DROP TABLE `" + dsFullname + "`";
       st.executeUpdate(sql);
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -243,7 +262,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   }
   
   public int getDatasetSize(String dsFullname) {
-    String sql = "select id from `" + dsFullname + "`";
+    String sql = "SELECT id FROM `" + dsFullname + "`";
     Connection conn = null;
     Statement st = null;
     ResultSet rs = null;
@@ -259,7 +278,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
       return rowCount;
     } catch (SQLException e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Error when retrieved dataset {}", dsFullname);
+        logger.debug("Error occurs when retrieve dataset {}", dsFullname);
         logger.debug("Exception detail: ", e);
       }
       return -1;

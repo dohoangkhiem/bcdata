@@ -16,7 +16,7 @@
         <column name="description" jdbc-type="LONGVARCHAR" />
       </field>
       <field name="schema">
-        <column name="schema" jdbc-type="VARCHAR" length="2000" />
+        <column name="schema" jdbc-type="LONGVARCHAR" />
       </field>
       <field name="guid">
         <column name="guid" jdbc-type="VARCHAR" length="40" />

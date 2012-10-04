@@ -116,7 +116,7 @@ Workbench.prototype.init = function(callback) {
           }
           
           var extension = file.substring(file.lastIndexOf('.') + 1);
-          if (!$.inArray(extension, ['xls', 'xlsx', 'csv', 'txt'])) {
+          if ($.inArray(extension, ['xls', 'xlsx', 'csv', 'txt']) < 0) {
             $('.upload-status', $form).text('This file could not be imported. Supported formats: .xls, .xlsx, .csv, .txt').show();
             return;
           }

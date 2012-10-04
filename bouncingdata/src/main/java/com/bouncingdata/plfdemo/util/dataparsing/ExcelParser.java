@@ -24,11 +24,6 @@ class ExcelParser implements DataParser {
     Workbook wb = WorkbookFactory.create(is);
     Sheet sheet = wb.getSheetAt(0);
 
-    System.out.println("First row: " + sheet.getFirstRowNum());
-    System.out.println("Last row: " + sheet.getLastRowNum());
-
-    System.out.println(sheet.getTopRow());
-
     // from the first row, determine the schema
     int firstRowNum = sheet.getFirstRowNum();
     int lastRowNum = sheet.getLastRowNum();
@@ -36,15 +31,11 @@ class ExcelParser implements DataParser {
     int firstCellNum = firstRow.getFirstCellNum();
     int lastCellNum = firstRow.getLastCellNum() - 1;
 
-    System.out.println("First column: " + firstCellNum);
-    System.out.println("Last column: " + lastCellNum);
-
     int columnNum = lastCellNum - firstCellNum + 1;
     String[] headers = new String[columnNum];
     List<String[]> result = null;
     for (int i = firstCellNum; i <= lastCellNum; i++) {
       Cell headerCell = firstRow.getCell(i);
-      System.out.println("header at column " + i + " " + headerCell.toString());
       headers[i - firstCellNum] = getCellStringValue(headerCell);
     }
 
@@ -52,9 +43,7 @@ class ExcelParser implements DataParser {
     result.add(headers);
 
     // now the data range is from [firstRow+1, firstCell] -> [lastRow, lastCell]
-    System.out.format("Data range is from [%d, %d] to [%d, %d]%n", firstRowNum + 1, firstCellNum, lastRowNum,
-        lastCellNum);
-
+    logger.debug("Data range is from [{}, {}] to [{}, {}]", new String[] { String.valueOf(firstRowNum + 1), String.valueOf(firstCellNum), String.valueOf(lastRowNum), String.valueOf(lastCellNum) });
     for (int i = firstRowNum + 1; i <= lastRowNum; i++) {
       String[] rowValues = new String[columnNum];
       Row row = sheet.getRow(i);
