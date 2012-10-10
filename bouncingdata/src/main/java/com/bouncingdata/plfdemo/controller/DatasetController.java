@@ -112,7 +112,21 @@ public class DatasetController {
           logger.debug("Can't find the dataset {}", guid);
           continue;
         }
-        DatasetDetail detail = new DatasetDetail(guid, ds.getName(), userDataService.getDatasetToString(ds.getName(), 0, 100));
+        String data = null;
+        String[] columns = null;
+        if (ds.getRowCount() < 500) {
+          data = userDataService.getDatasetToString(ds.getName());
+        } else {
+          Map row = userDataService.getDatasetToList(ds.getName(), 0, 1).get(0);
+          columns = new String[row.keySet().size()];
+          int i = 0;
+          for (Object s : row.keySet()) {
+            columns[i++] = (String) s;
+          }
+          
+        }
+        DatasetDetail detail = new DatasetDetail(guid, ds.getName(), ds.getRowCount(), columns, data);
+        //DatasetDetail detail = new DatasetDetail(guid, ds.getName());
         results.put(ds.getGuid(), detail);
       } catch (Exception e) {
         logger.debug("Exception occurs when retrieving dataset " + guid, e);

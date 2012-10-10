@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.AnalysisDetail;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
@@ -86,7 +87,9 @@ public class AppController {
         }
       }
       
-      AnalysisDetail detail = new AnalysisDetail(code, datasets, visualsMap, dashboard);
+      List<Attachment> attachments = appStoreService.getAttachmentData(guid);
+      
+      AnalysisDetail detail = new AnalysisDetail(code, datasets, attachments, visualsMap, dashboard);
       return detail;
     } catch (Exception e) {
       logger.error("Failed to get application", e);

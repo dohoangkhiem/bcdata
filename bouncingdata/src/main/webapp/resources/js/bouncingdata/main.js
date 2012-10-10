@@ -54,6 +54,43 @@ Utils.prototype.getConsoleCaret = function(language) {
   else return null;
 }
 
+Utils.prototype.renderDatatable = function(data, $table) {
+  if (!data || data.length <= 0) return;
+  
+  //prepare data
+  var first = data[0];
+  var aoColumns = [];
+  for (key in first) {
+    aoColumns.push({ "sTitle": key});
+  }
+  
+  var aaData = [];
+  for (index in data) {
+    var item = data[index];
+    var arr = [];
+    for (key in first) {
+      arr.push(item[key]);
+    }
+    aaData.push(arr);
+  }
+  $table.dataTable({
+    "aaData": aaData, "aoColumns": aoColumns
+  });
+}
+
+Utils.prototype.setOverlay = function($panel, isActive) {
+  if (isActive) {
+    var $overlay = $('<div class="overlay-panel" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>');
+    $overlay.css('background', 'url("' + ctx + '/resources/images/ajax-loader.gif") no-repeat 50% 10% #eee')
+      .css('z-index', 10).css('background-size', '30px 30px').css('opacity', '0.8');
+    if (!$panel.css('position')) {
+      $panel.css('position', 'relative');
+    }
+    $panel.append($overlay);
+  } else {
+    $('div.overlay-panel', $panel).remove();
+  }
+}
 
 com = {};
 com.bouncingdata = {};

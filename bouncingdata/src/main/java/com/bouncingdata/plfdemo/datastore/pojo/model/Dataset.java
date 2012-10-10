@@ -10,6 +10,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 @PersistenceCapable
 public class Dataset {
   @PrimaryKey
@@ -111,6 +113,7 @@ public class Dataset {
   public void setActive(boolean isActive) {
     this.isActive = isActive;
   }
+  @JsonIgnore
   public Scraper getScraper() {
     return scraper;
   }

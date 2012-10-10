@@ -539,21 +539,17 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     this.tabsIndex[tabIndex].loaded = true;
     return;
   }
+    
   
-  // init. tabs
-  /*$('.app-execution-logs-tabs', $tab).tabs();
-  var $tabs = $('.app-output-tabs', $tab).tabs();
-  if (type == "scraper") {   
-    $tabs.tabs("select", 1);
-    $tabs.tabs("disable", 0);
-  }*/
-  
+  // initializes the inner tabs: code, visualizations, data
   var $tabs = $('.app-editor-tabs', $tab).tabs();
   if (type == "scraper") {   
     $tabs.tabs("select", 0);
     $tabs.tabs("disable", 1);
   }
 
+  this.tabsIndex[tabIndex].dsloaded = false;
+  
   // init console
   var jqConsole = $('#app-execution-logs-' + tabId + ' .console', $tab).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
   this.tabsIndex[tabIndex].jqConsole = jqConsole;
@@ -607,11 +603,23 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
               me.loadDashboard(result['visualizations'], result['dashboard'], $tab, app);
             //} else {
             //  $tab['dbloaded'] = false;
-            //}
-            me.loadDatasets(result['datasets'], $tab);
+            //}       
+            $tabs.bind('tabsselect', function(event, ui) {
+              //var tabIndex = me.getTabIndex($tab.prop('id'));
+              //if (ui.index == 2 && !me.tabsIndex[tabIndex].dsloaded) {
+              if (ui.index == 2 && !$tab.dsloaded) {
+                me.loadDatasets(result['datasets'], $tab);
+                //me.renderAttachments(result['attachments'], $('#' + $tab.attr('id') + '-data', $tab););
+              }
+            });  
+            
           } else if (type == "scraper") {
             // 
-            me.loadDatasets(result['datasets'], $tab);
+            $tabs.bind('tabsselect', function(event, ui) {
+              if (ui.index == 1 && !me.tabsIndex[tabIndex].dsloaded) {
+                me.loadDatasets(result['datasets'], $tab);
+              }
+            });  
           }
           
           me.setStatus($tab, "");
@@ -1075,14 +1083,17 @@ Workbench.prototype.loadDatasets = function(dsList, $tab) {
     guids += ds.guid + ',';
   }
   guids = guids.substring(0, guids.length - 1);
+  var $dsContainer = $('#' + $tab.attr('id') + '-data', $tab);
+  com.bouncingdata.Utils.setOverlay($dsContainer, true);
   $.ajax({
     url: ctx + '/dataset/m/' + guids,
     type: 'get',
     dataType: 'json',
     success: function(result) {
-      var $dsContainer = $('#' + $tab.attr('id') + '-data', $tab);
       $dsContainer.empty();
       me.renderDatasets(result, $dsContainer);
+      //me.tabsIndex[me.getTabIndex($tab.prop('id'))].dsloaded = true;
+      $tab.dsloaded = true;
     },
     error: function(result) {
       console.debug('Failed to load datasets.');
@@ -1112,7 +1123,25 @@ Workbench.prototype.renderDatasets = function(datasetDetailMap, $dsContainer) {
     var $dsItem = $(this);
     var guid = $dsItem.attr('dsguid');
     var $table = $('table.dataset-item-table', $dsItem);
-    me.renderDatatable($.parseJSON(datasetDetailMap[guid].data), $table);
+    var size = datasetDetailMap[guid].size;
+    var data = datasetDetailMap[guid].data;
+    if (data) {
+      me.renderDatatable($.parseJSON(datasetDetailMap[guid].data), $table);
+    } else if (size > 0) {
+      console.debug("Load datatable by Ajax...");
+      var columns = datasetDetailMap[guid].columns;
+      var aoColumns = [];
+      for (idx in columns) {
+        aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
+      }
+      $table.dataTable({
+        "bServerSide": true,
+        "bProcessing": true,
+        "sAjaxSource": ctx + "/dataset/ajax/" + guid,
+        "aoColumns": aoColumns
+      });
+    }
+    
   });
 }
 
@@ -1148,33 +1177,7 @@ Workbench.prototype.renderDataset = function(name, data, $dsContainer) {
 }
 
 Workbench.prototype.renderDatatable = function(data, $table) {
-  if (!data || data.length <= 0) return;
-    
-  //prepare data
-  var first = data[0];
-  var aoColumns = [];
-  for (key in first) {
-    aoColumns.push({ "sTitle": key});
-  }
-  
-  var aaData = [];
-  for (index in data) {
-    var item = data[index];
-    var arr = [];
-    for (key in first) {
-      arr.push(item[key]);
-    }
-    aaData.push(arr);
-  }
-  //if (isNew) {
-    $table.dataTable({
-      "aaData": aaData, "aoColumns": aoColumns
-    });
-  //} else {
-  //  var table = $table.dataTable();
-  //  table.fnClearTable(0);
-  //  table.fnAddData(aaData);
-  //}
+  com.bouncingdata.Utils.renderDatatable(data, $table);
 }
 
 Workbench.prototype.loadDatatableByAjax = function(dsGuid, $table) {

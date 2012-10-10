@@ -57,5 +57,9 @@ public class BcDatastoreService {
   public void storeData(String dsFullName, String[] headers, List<String[]> data) throws Exception {
     jdbcBcDatastore.persistDataset(dsFullName , headers, data);
   }
+  
+  public String[] getColumnNames(String dsFullname) throws Exception {
+    return jdbcBcDatastore.getColumnNames(dsFullname);
+  }
       
 }

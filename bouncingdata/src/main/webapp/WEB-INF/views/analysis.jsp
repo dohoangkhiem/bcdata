@@ -13,7 +13,7 @@
 	    	    name: '${anls.name}',
 	    	    description: '${anls.description}',
 	    	    user: {username: '${anls.user.username}'},
-	    	    language: '${anls.language}'
+	    	    language: '${anls.language}'  	    
 	    	}	
 	  	  	
 	    	com.bouncingdata.Analysis.init(anls);
@@ -62,24 +62,14 @@
         <div class="anls-info-title">Related Info</div>
         <div class="anls-info-title-line"></div>
       </div>
-      <c:if test="${not empty datasetDetailMap }">
+      
+      <c:if test="${not empty datasetList }">
         <p class="relatedDatasets">
           <strong>Related datasets: </strong>
-          <script>
-            $(function() {
-              var datasetDetailMap = ${datasetDetailMap};
-            	var $relatedDatasets = $('.related-info p.relatedDatasets');
-            	for (guid in datasetDetailMap) {
-            	  var dataset = datasetDetailMap[guid];
-            	  var $ds = $('<a class="related-dataset-link" href="' + ctx + '/dataset/view/' + guid + '">' + dataset.name + '</a>&nbsp;');
-            	  $relatedDatasets.append($ds);
-            	  $ds.click(function() {
-            	    com.bouncingdata.Nav.fireAjaxLoad($ds.prop('href'), false);
-            	    return false;
-            	  });
-            	}
-            });
-          </script>
+          
+          <c:forEach items="${datasetList }" var="entry">
+            <a class="related-dataset-link" href="<c:url value="/dataset/view/${entry.key }" />"${entry.value }></a>&nbsp;
+          </c:forEach>
         </p>
       </c:if>
     </div>
@@ -119,31 +109,46 @@
             </div>
           </div>
           <div class="anls-data" id="anls-data">
-            <c:choose>
-              <c:when test="${not empty datasetDetailMap or not empty attachments}">
+            <c:if test="${not empty datasetList}">
+              <c:forEach items="${datasetList }" var="entry">
+                <div class="anls-dataset" style="margin-top: 2em;" dsguid="${entry.key }">
+                  <span class="dataset-item-title">
+                    <strong>
+                      <a href="<c:url value="/dataset/view/${entry.key }" />">${entry.value }</a>
+                    </strong>
+                  </span>
+                  <table dsguid="${entry.key }" class="dataset-table"></table>
+                </div>
+              </c:forEach>
+            </c:if>
+            <c:if test="${not empty attachments }">
+              <c:forEach items="${attachments }" var="attachment">
                 <script>
                 	$(function() {
-                	  var datasetDetailMap = ${datasetDetailMap};
-                	  var $dsContainer = $('#anls-data');
-                	  $dsContainer.empty();
-                  	if (datasetDetailMap) {
-                  		com.bouncingdata.Workbench.renderDatasets(datasetDetailMap, $dsContainer);  
-                  	}
-                  	var attachmentList = ${attachments};
-                  	if (attachmentList) {
-                      com.bouncingdata.Workbench.renderAttachments(attachmentList, $dsContainer);  
-                  	}
+                	  var $attachment = $('<div class="anls-attachment" style="margin-top: 2em;"><span class="dataset-item-title"><strong>'
+                	  + '<a href="">${attachment.name}</a></strong></span><table class="attachment-table"></table></div>');
+                	  $attachment.appendTo($('#anls-data'));
+                	  var $table = $('table', $attachment);
+                	  var data = '${attachment.data}';
+                	  com.bouncingdata.Workbench.renderDatatable($.parseJSON(data), $table);
                 	});
-                </script>
-              </c:when>
-              <c:otherwise>
-                <script>
-                	var $dsContainer = $('#anls-data');
-                	$dsContainer.append('<p>No data for this analysis.</p>');
-                </script>
-              </c:otherwise>
-            </c:choose>
-            
+              	</script>
+                <!-- div class="anls-attachment" style="margin-top: 2em;">
+                  <span class="dataset-item-title">
+                    <strong>
+                      <a href="#">${attachment.name }</a>
+                    </strong>
+                  </span>
+                  <table class="attachment-table"></table>
+                  <span>${attachment.data }</span>
+                  <script>
+                  	$(function() {
+                  	  
+                  	});
+                  </script>                
+                </div-->
+              </c:forEach>  
+            </c:if>
           </div>
         </div>
         

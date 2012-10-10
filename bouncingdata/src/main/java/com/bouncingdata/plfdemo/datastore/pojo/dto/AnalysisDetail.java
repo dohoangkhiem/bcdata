@@ -13,13 +13,16 @@ public class AnalysisDetail {
   Map<String, VisualizationDetail> visualizations;
   Map<String, DashboardPosition> dashboard;
   
-  public AnalysisDetail(String code, List<Dataset> datasets,
+  List<Attachment> attachments;
+  
+  public AnalysisDetail(String code, List<Dataset> datasets, List<Attachment> attachments,
       Map<String, VisualizationDetail> visualizations, Map<String, DashboardPosition> dashboard) {
     super();
     this.code = code;
     this.datasets = datasets;
     this.visualizations = visualizations;
     this.dashboard = dashboard;
+    this.attachments = attachments;
   }
 
   public String getCode() {
@@ -52,6 +55,14 @@ public class AnalysisDetail {
 
   public void setDashboard(Map<String, DashboardPosition> dashboard) {
     this.dashboard = dashboard;
+  }
+
+  public List<Attachment> getAttachments() {
+    return attachments;
+  }
+
+  public void setAttachments(List<Attachment> attachments) {
+    this.attachments = attachments;
   }
   
   

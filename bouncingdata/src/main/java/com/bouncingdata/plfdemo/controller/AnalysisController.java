@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
-import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
@@ -35,7 +34,6 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Visualization;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
-import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.util.Utils;
 
@@ -50,10 +48,7 @@ public class AnalysisController {
 
   @Autowired
   private ApplicationStoreService appStoreService;
-  
-  @Autowired
-  private BcDatastoreService userDataService;
-  
+    
   @RequestMapping(value="/{guid}", method=RequestMethod.GET)
   public String viewAnalysis(@PathVariable String guid, ModelMap model, Principal principal) {
     logger.debug("Received request for analysis {}", guid);
@@ -110,21 +105,20 @@ public class AnalysisController {
       try {
         List<AnalysisDataset> relations = datastoreService.getAnalysisDatasets(anls.getId());
         if (relations != null) {
-          Map<String, DatasetDetail> datasetDetailMap = new HashMap<String, DatasetDetail>();
+          // key: dataset guid, value: dataset name
+          Map<String, String> datasetList = new HashMap<String, String>();
           for (AnalysisDataset relation : relations) {
             Dataset ds = relation.getDataset();
-            String data = userDataService.getDatasetToString(ds.getName());
-            DatasetDetail detail = new DatasetDetail(ds.getGuid(), ds.getName(), data);
-            datasetDetailMap.put(ds.getGuid(), detail);
+            datasetList.put(ds.getGuid(), ds.getName());
           }
-          model.addAttribute("datasetDetailMap", mapper.writeValueAsString(datasetDetailMap));
+          model.addAttribute("datasetList", datasetList);
         }
       } catch (Exception e) {
         logger.debug("Error when trying to get relation datasets", e);
       }
       
       List<Attachment> attachments = appStoreService.getAttachmentData(guid);
-      model.addAttribute("attachments", mapper.writeValueAsString(attachments));
+      model.addAttribute("attachments", attachments);
       
       return "analysis";
     } catch (Exception e) {

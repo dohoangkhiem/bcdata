@@ -4,8 +4,61 @@ function Analysis() {
 
 Analysis.prototype.init = function(anls) {
   var guid = anls.guid;
-  $('#anls-content').easytabs();
+  //$('#anls-content').easytabs();
+  $('#anls-content').tabs();
   var me = this;
+  this.loadedData = false;
+  
+  $('#anls-content').bind('tabsselect', function(event, ui) {
+    // select data tab
+    if (ui.index == 2 && me.loadedData == false) {
+      var $dataPanel = $('#anls-data');
+      com.bouncingdata.Utils.setOverlay($dataPanel, true);
+      var dsguids = '';
+      $('.anls-dataset', $dataPanel).each(function() {
+        dsguids += $(this).attr('dsguid') + ',';
+      });
+      dsguids = dsguids.substring(0, dsguids.length - 1);
+      if (dsguids.length > 0) {
+        $.ajax({
+          url: ctx + '/dataset/m/' + dsguids,
+          type: 'get',
+          dataType: 'json',
+          success: function(result) {
+            com.bouncingdata.Utils.setOverlay($dataPanel, false);
+            $('.anls-dataset', $dataPanel).each(function() {
+              var dsguid = $(this).attr('dsguid');
+              var $table = $('table', $(this));
+              var data = result[dsguid].data;
+              if (data) {
+                com.bouncingdata.Workbench.renderDatatable($.parseJSON(data), $table);
+              } else if (result[dsguid].size > 0) {
+                console.debug("Load datatable by Ajax...");
+                var columns = result[dsguid].columns;
+                var aoColumns = [];
+                for (idx in columns) {
+                  aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
+                }
+                $table.dataTable({
+                  "bServerSide": true,
+                  "bProcessing": true,
+                  "sAjaxSource": ctx + "/dataset/ajax/" + dsguid,
+                  "aoColumns": aoColumns
+                });
+              }
+            });
+            me.loadedData = true;
+          },
+          error: function(result) {
+            console.debug('Failed to load datasets.');
+            console.debug(result);
+            $dataPanel.text('Failed to load datasets.');
+          }
+        });
+      }
+    }
+  });
+  
   
   $('#comment-form #comment-submit').click(function() {
     // validate

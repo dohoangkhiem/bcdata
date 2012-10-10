@@ -1,7 +1,6 @@
 package com.bouncingdata.plfdemo.service;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -220,51 +219,61 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
   private Map<String, DatasetDetail> dataPostProcess(String executionId, BcDataScript script, User user) throws Exception {
     String execLogPath = logDir + Utils.FILE_SEPARATOR + executionId;
     File execLogDir = new File(execLogPath);
-    File[] datasetFiles;
     Map<String, DatasetDetail> datasets = null;
     ObjectMapper mapper = new ObjectMapper();
     
-    if (script instanceof Analysis) {
-      File anlsLocation = new File(storePath + Utils.FILE_SEPARATOR + script.getGuid());
+    if (script instanceof Analysis) {  
       Analysis analysis = (Analysis) script;
-      datasetFiles = execLogDir.listFiles(new FileFilter() {
-        @Override
-        public boolean accept(File pathname) {
-          if (pathname.isFile() && (pathname.getName().endsWith(".out") || pathname.getName().endsWith(".att"))) {
-            return true;
-          } else return false;
-        }
-      });
-      if (datasetFiles == null || datasetFiles.length == 0) return null;
-      
       datasets = new HashMap<String, DatasetDetail>();
       List<AnalysisDataset> relations = new ArrayList<AnalysisDataset>();
-      for (File f : datasetFiles) {
-        try {
-          String s = FileUtils.readFileToString(f);
-          JsonNode dataObj = mapper.readTree(s);
-          JsonNode data = dataObj.get("data");
-          String identifier = dataObj.get("name").getTextValue();
-          if (f.getName().endsWith(".out")) {
+      File scriptLocation = new File(storePath + Utils.FILE_SEPARATOR + script.getGuid());
+      
+      try {
+        File datasetOut = new File(execLogDir.getAbsolutePath() + Utils.FILE_SEPARATOR + "dataset.out");
+        if (datasetOut.isFile()) {
+          String s = FileUtils.readFileToString(datasetOut);
+          JsonNode dsLogNode = mapper.readTree(s);
+          for (int i = 0; i < dsLogNode.size(); i++) {
+            JsonNode dsNode =  dsLogNode.get(i);
+            String identifier = dsNode.get("name").getTextValue();
             Dataset dataset = datastoreService.getDatasetByName(identifier);
             if (dataset != null) {
-              String guid = dataset.getGuid(); 
+              String dsGuid = dataset.getGuid();
               // create & persist new AnalysisDataset
               AnalysisDataset anlsDts = new AnalysisDataset(analysis, dataset, true);
               relations.add(anlsDts);
-              datasets.put(guid, new DatasetDetail(guid, identifier, data.toString()));
-            }
-          } else if (f.getName().endsWith(".att")) {
-            datasets.put(identifier, new DatasetDetail(identifier, identifier, data.toString()));
-            try {
-              FileUtils.copyFile(f, new File(anlsLocation.getAbsoluteFile() + Utils.FILE_SEPARATOR + f.getName()));
-            } catch (IOException e) {
-              logger.debug("Failed to copy attachment file " + f.getAbsolutePath() + " to " + anlsLocation.getAbsolutePath());
+              datasets.put(dsGuid, new DatasetDetail(dsGuid, identifier, dataset.getRowCount(), null, null));
             }
           }
-          
-        } catch (IOException e) {
-          logger.debug("Can't read dataset file {}", f.getAbsolutePath());
+        }
+      } catch (IOException e) {
+        logger.debug("Failed to process dataset log.", e);  
+      }
+      
+      File[] attachmentFiles = execLogDir.listFiles(new FileFilter() {
+        
+        @Override
+        public boolean accept(File pathname) {
+          return pathname.getName().endsWith(".att");
+        }
+      });
+      
+      if (attachmentFiles != null) {
+        for (File f : attachmentFiles) {
+          try {
+            String s = FileUtils.readFileToString(f);
+            JsonNode rootNode = mapper.readTree(s);
+            String identifier = rootNode.get("name").getTextValue();
+            JsonNode data = rootNode.get("data");
+            datasets.put(identifier, new DatasetDetail(identifier, identifier, data.size(), null, data.toString()));
+            try {
+              FileUtils.copyFile(f, new File(scriptLocation.getAbsoluteFile() + Utils.FILE_SEPARATOR + f.getName()));
+            } catch (IOException e) {
+              logger.debug("Failed to copy attachment file " + f.getAbsolutePath() + " to " + scriptLocation.getAbsolutePath());
+            }
+          } catch (Exception e) {
+            logger.debug("Failed to process attachment log.", e);
+          }
         }
       }
       
@@ -273,53 +282,69 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
       
     } else if (script instanceof Scraper) {
       Scraper scraper = (Scraper) script;
-      datasetFiles = execLogDir.listFiles(new FileFilter() {
-        @Override
-        public boolean accept(File pathname) {
-          if (pathname.isFile() && pathname.getName().endsWith(".inp")) {
-            return true;
-          } else return false;
-        }
-      });
+      datasets = new HashMap<String, DatasetDetail>();
       List<Dataset> dsList = new ArrayList<Dataset>();
-      
-      if (datasetFiles != null) {
-        datasets = new HashMap<String, DatasetDetail>();
-        for (File f : datasetFiles) {
-          //String filename = f.getName();
-          //String name = filename.substring(0, filename.lastIndexOf("."));
-          try {
-            String s = FileUtils.readFileToString(f);
-            JsonNode dataObj = mapper.readTree(s);
-            JsonNode data = dataObj.get("data");
+      File dsLogFile = new File(execLogDir.getAbsolutePath() + Utils.FILE_SEPARATOR + "dataset.inp");
+      File scriptLocation = new File(storePath + Utils.FILE_SEPARATOR + script.getGuid());
+      if (dsLogFile.isFile()) {
+        try {
+          String s = FileUtils.readFileToString(dsLogFile);
+          JsonNode dsLogNode = mapper.readTree(s);
+          for (int i = 0; i < dsLogNode.size(); i++) {
+            JsonNode dsNode = dsLogNode.get(i);
+            String identifier = dsNode.get("name").getTextValue();
             Dataset ds = new Dataset();
-            String identifier = dataObj.get("name").getTextValue();
-            //String dsName = identifier.substring(identifier.indexOf("_", identifier.indexOf("_") + 1) + 1);
             ds.setName(identifier);
-            ds.setDescription(dataObj.get("description").getTextValue());
+            ds.setDescription(dsNode.get("description").getTextValue());
             String guid = Utils.generateGuid();
             ds.setGuid(guid);
-            ds.setSchema(dataObj.get("schema").getTextValue());
+            ds.setSchema(dsNode.get("schema").getTextValue());
             ds.setUser(user);
             ds.setCreateAt(new Date());
             ds.setLastUpdate(new Date());
             ds.setScraper(scraper);
-            ds.setRowCount(data.size());
+            ds.setRowCount(dsNode.get("size").getIntValue());
             ds.setActive(true);
             dsList.add(ds);
-            
-            datasets.put(guid, new DatasetDetail(guid, ds.getName(), data.toString()));
-            
-          } catch (IOException e) {
-            logger.debug("Can't read dataset file {}", f.getAbsolutePath());
-          }        
+            datasets.put(guid, new DatasetDetail(guid, ds.getName(), ds.getRowCount(), null, null));
+          }
+        } catch (IOException e) {
+          logger.debug("Failed to process dataset log.", e);
+        }  
+        
+        File[] attachmentFiles = execLogDir.listFiles(new FileFilter() {
+          
+          @Override
+          public boolean accept(File pathname) {
+            return pathname.getName().endsWith(".att");
+          }
+        });
+        
+        if (attachmentFiles != null) {
+          for (File f : attachmentFiles) {
+            try {
+              String s = FileUtils.readFileToString(f);
+              JsonNode rootNode = mapper.readTree(s);
+              String identifier = rootNode.get("name").getTextValue();
+              JsonNode data = rootNode.get("data");
+              datasets.put(identifier, new DatasetDetail(identifier, identifier, data.size(), null, data.toString()));
+              try {
+                FileUtils.copyFile(f, new File(scriptLocation.getAbsoluteFile() + Utils.FILE_SEPARATOR + f.getName()));
+              } catch (IOException e) {
+                logger.debug("Failed to copy attachment file " + f.getAbsolutePath() + " to " + scriptLocation.getAbsolutePath());
+              }
+            } catch (Exception e) {
+              logger.debug("Failed to process attachment log.", e);
+            }
+          }
         }
-        
+             
         // invalidate old datasets?
-        datastoreService.invalidateDataset(scraper);
-        
+        datastoreService.invalidateDataset(scraper);      
         datastoreService.createDatasets(dsList);
+        
       }
+      
     } else if (script == null) {
       // temporarily ignore the anonymous script
       return null;
