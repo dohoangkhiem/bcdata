@@ -13,7 +13,8 @@
 	    	    name: '${anls.name}',
 	    	    description: '${anls.description}',
 	    	    user: {username: '${anls.user.username}'},
-	    	    language: '${anls.language}'  	    
+	    	    language: '${anls.language}',
+	    	    code: '${anlsCode}'
 	    	}	
 	  	  	
 	    	com.bouncingdata.Analysis.init(anls);
@@ -24,7 +25,8 @@
 	  	    name: '${anls.name}',
 	  	    description: '${anls.description}',
 	  	    user: {username: '${anls.user.username}'},
-	  	    language: '${anls.language}'
+	  	    language: '${anls.language}',
+	  	    code: '${anlsCode}'
 	  	}
 	    com.bouncingdata.Analysis.init(anls);
 	  }
@@ -97,18 +99,23 @@
       </div>
       <div class="anls-header-rule"></div>
       <div class="anls-content anls-tab-container" id="anls-content">
-        <div>
+        <ul class="anls-tabs">
+          <li class="anls-tab"><a href="#anls-dashboard">Dashboard</a></li>
+          <li class="anls-tab"><a href="#anls-code">Code</a></li>
+          <li class="anls-tab"><a href="#anls-data">Data</a></li>
+        </ul>
+        <div class="clear"></div>
+        <div class="anls-tabs-content-wrapper">
           <div class="anls-dashboard" id="anls-dashboard"></div>
           <div class="anls-code" id="anls-code">
             <div class="code-block" id="code-block">
-              <pre></pre>
-              <script>
-                var code = "${anlsCode}";
-                $('#code-block pre').text(code);
-              </script>
+              <pre class="brush: js"></pre>
             </div>
           </div>
           <div class="anls-data" id="anls-data">
+            <c:if test="${empty datasetList and empty attachments }">
+              <span>No dataset</span>
+            </c:if>
             <c:if test="${not empty datasetList}">
               <c:forEach items="${datasetList }" var="entry">
                 <div class="anls-dataset" style="margin-top: 2em;" dsguid="${entry.key }">
@@ -133,30 +140,10 @@
                 	  com.bouncingdata.Workbench.renderDatatable($.parseJSON(data), $table);
                 	});
               	</script>
-                <!-- div class="anls-attachment" style="margin-top: 2em;">
-                  <span class="dataset-item-title">
-                    <strong>
-                      <a href="#">${attachment.name }</a>
-                    </strong>
-                  </span>
-                  <table class="attachment-table"></table>
-                  <span>${attachment.data }</span>
-                  <script>
-                  	$(function() {
-                  	  
-                  	});
-                  </script>                
-                </div-->
               </c:forEach>  
             </c:if>
           </div>
         </div>
-        
-        <ul class="anls-tabs">
-          <li class="anls-tab"><a href="#anls-dashboard">Dashboard</a></li>
-          <li class="anls-tab"><a href="#anls-code">Code</a></li>
-          <li class="anls-tab"><a href="#anls-data">Data</a></li>
-        </ul>
       </div>
         
       <div class="comments-container">

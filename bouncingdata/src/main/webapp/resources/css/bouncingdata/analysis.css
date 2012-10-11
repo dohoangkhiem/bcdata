@@ -115,6 +115,16 @@
   color: #444444;
 }
 
+#anls-content {
+  width: 800px;
+}
+.anls-content ul.anls-tabs {
+  float: right;
+}
+
+.anls-content .anls-tabs-content-wrapper > .ui-tabs-panel {
+  padding: 0;
+} 
 
 /** Tabs **/
 .anls-tabs { 
@@ -135,13 +145,13 @@
 }
 
 .anls-tab a {
-  font-size: 14px;
+  /*font-size: 14px;
   line-height: 2em;
   display: block;
   padding: 0 10px;
   outline: none;
   text-decoration: none;
-  color: #000;
+  color: #000;*/
 }
 
 .anls-tab a:hover {
@@ -168,9 +178,15 @@
   -webkit-border-radius: 0 4px 4px 4px;
 }
 
+
 .anls-content .anls-code .code-block {
-  background-color: #EEEEEE;
-  padding: 6px;
+  /*background-color: #EEEEEE;
+  padding: 6px;*/
+  font-size: 13px;
+}
+
+.anls-content #anls-code #code-block .syntaxhighlighter {
+  padding: 10px 0;
 }
 
 .anls-content .anls-code .code-block pre {

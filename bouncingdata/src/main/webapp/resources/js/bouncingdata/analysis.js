@@ -13,13 +13,13 @@ Analysis.prototype.init = function(anls) {
     // select data tab
     if (ui.index == 2 && me.loadedData == false) {
       var $dataPanel = $('#anls-data');
-      com.bouncingdata.Utils.setOverlay($dataPanel, true);
       var dsguids = '';
       $('.anls-dataset', $dataPanel).each(function() {
         dsguids += $(this).attr('dsguid') + ',';
       });
       dsguids = dsguids.substring(0, dsguids.length - 1);
       if (dsguids.length > 0) {
+        com.bouncingdata.Utils.setOverlay($dataPanel, true);
         $.ajax({
           url: ctx + '/dataset/m/' + dsguids,
           type: 'get',
@@ -50,6 +50,7 @@ Analysis.prototype.init = function(anls) {
             me.loadedData = true;
           },
           error: function(result) {
+            com.bouncingdata.Utils.setOverlay($dataPanel, false);
             console.debug('Failed to load datasets.');
             console.debug(result);
             $dataPanel.text('Failed to load datasets.');
@@ -155,6 +156,8 @@ Analysis.prototype.init = function(anls) {
     });
   }
   
+  $('#anls-code #code-block pre').text(anls["code"]);
+  SyntaxHighlighter.highlight();
   com.bouncingdata.Nav.setSelected('anls', anls.guid);
 }
 

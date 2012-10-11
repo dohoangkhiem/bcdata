@@ -46,6 +46,12 @@
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/browser.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/bouncingdata/nav.js" />"></script>
   
+  <script type="text/javascript" src="<c:url value="/resources/js/syntaxhighlighter/scripts/shCore.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/syntaxhighlighter/scripts/shBrushJScript.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/syntaxhighlighter/scripts/shBrushPython.js" />"></script>
+  <link href="<c:url value="/resources/js/syntaxhighlighter/styles/shCore.css" />" rel="stylesheet" type="text/css" />
+  <link href="<c:url value="/resources/js/syntaxhighlighter/styles/shThemeFadeToGrey.css" />" rel="stylesheet" type="text/css" />  
+    
   <script>
     var ctx = '${pageContext.request.contextPath}';
     var host = '${pageContext.request.remoteHost}';

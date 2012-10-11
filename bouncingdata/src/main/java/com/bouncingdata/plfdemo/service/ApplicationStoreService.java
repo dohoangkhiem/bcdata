@@ -127,7 +127,10 @@ public class ApplicationStoreService {
         try {
           JsonNode root = mapper.readTree(s);
           String name = root.get("name").getTextValue();
-          String description = root.get("description").getTextValue();
+          String description = null;
+          if (root.has("description")) {
+            description = root.get("description").getTextValue();
+          }
           String data = root.get("data").toString();
           Attachment attachment = new Attachment(-1, name, description, data);
           results.add(attachment);

@@ -469,57 +469,33 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
     return visuals;
   }
 
-  
-  /**
-   * Get snapshot visualizations for a execution
-   * @param executionId
-   * @return
-   *//*
-  private List<String> getEncodedVisualizations(String executionId) {
-    // scan visualization dir
-    String visualizationPath = logDir + Utils.FILE_SEPARATOR + executionId; // + Utils.FILE_SEPARATOR + "visualizations";
-    File visualizationDir = new File(visualizationPath);
-    File[] snapshots = visualizationDir.listFiles(new FileFilter() {
-      
-      @Override
-      public boolean accept(File pathname) {
-        if (pathname.isFile() && pathname.getName().endsWith(".png")) {
-          return true;
-        } else return false;
-      }
-    });
-    
-    List<String> encodedSnapshots = null;
-    if (snapshots != null) {
-      encodedSnapshots = new ArrayList<String>();
-      for (File snapshot : snapshots) {
-        int length = (int) snapshot.length();
-        if (length > Integer.MAX_VALUE) {
-          // File is too large
-        }
-        byte[] bytes = new byte[(int)length];
-        try {
-          InputStream is = new FileInputStream(snapshot);
-          // Read in the bytes
-          int offset = 0;
-          int numRead = 0;
-          while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-          }
-
-          // Ensure all the bytes have been read in
-          if (offset < bytes.length) {
-              throw new IOException("Could not completely read file " + snapshot.getName());
-          }
-          String base64 = new String(Base64.encodeBase64(bytes)); 
-          encodedSnapshots.add(base64);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }            
-      }
+  public static void main(String[] jargs) {
+    File file = new File("/home/khiem/r/testArgs.R");
+    String[] args = new String[] {"111", "khiem", "non-persistent"};
+    ProcessBuilder pb = new ProcessBuilder("Rscript", file.getAbsolutePath(), args[0], args[1], args[2]);
+    if (!pb.environment().containsKey("R_DEFAULT_DEVICE")) {
+      pb.environment().put("R_DEFAULT_DEVICE", "png");
     }
+    pb.redirectErrorStream(true);
+    pb.directory(file.getParentFile());
     
-    return encodedSnapshots;
+    String output = null;
+    /* read the console output */ 
+    try {
+      Process p = pb.start();   
+      InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
+      int c;
+      StringBuilder out = new StringBuilder();
+      byte[] b = new byte[1024];
+      while ((c = appOutputStream.read(b)) != -1) {
+        String chunk = new String(b, 0, c);
+        out.append(chunk);
+      }
+      output = out.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
   }
-  */
+  
 }
