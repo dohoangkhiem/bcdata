@@ -113,10 +113,6 @@
   
   <script id="workbench-content-template" type="text/x-jquery-tmpl">
     <div class="workbench-ide-content">
-      <div class="app-status">
-          <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loader.gif" />" style="opacity: 0;"  />
-          <span id="ajax-message" style="color: Green; font-style: italic;"></span>
-        </div>
         <div class="app-info">
           <div class='app-title'><label style='font-weight: bold;'>Application name: </label>\${appName}</div>
           <div class='app-language' id='app-language'><label style='font-weight: bold;'>Language: </label>\${appLang}</div>
@@ -129,6 +125,10 @@
             <option value='r'>R</option>
           </select>
         </div>
+        <div class="app-status">
+          <img id="ajax-loading" width="20px" height="20px" src="<c:url value="/resources/images/ajax-loader.gif" />" style="opacity: 0;"  />
+          <span id="ajax-message" style="color: Green; font-style: italic;"></span>
+        </div>
         <div class="clear"></div>
         <div class="app-editor-container app-editor-tabs">
           <ul>
@@ -138,21 +138,21 @@
           </ul>
           
           <div class="app-code" id="\${tabId}-code">
-            <div class="app-code-layout">
+            <!--div class="app-code-layout"-->
               <div class="app-code-layout-center app-code-editor" id="app-code-layout-center-\${tabId }">
                 <div>
                   <div id="code-editor-\${tabId}" class="code-editor"></div>
                 </div>    
               </div>
-              <div class="app-code-layout-east app-execution-logs" id="app-code-layout-east-\${tabId }">
+              <!--div class="app-code-layout-east app-execution-logs" id="app-code-layout-east-\${tabId }">
                 <div id="app-execution-logs-\${tabId}">
                   <div class="console prompt" style="display: block;"></div>
                   <div class="console-actions">
                     <input class="clear-console" type="button" value="Clear console" />
                   </div>
                 </div>
-              </div>
-            </div>
+              </div-->
+            <!--/div-->
           </div>
           <div class="app-viz" id="\${tabId}-viz">
             <div><strong>Visualization Dashboard.</strong></div><br />
@@ -173,6 +173,14 @@
           </div>
           <div class="app-data" id="\${tabId}-data">
             <div>No data</div>
+          </div>
+        </div>
+        
+        <div class="clear"></div>
+        <div id="execution-logs-\${tabId}" class="execution-logs">
+          <div class="console prompt" style="display: block;"></div>
+          <div class="console-actions">
+            <input class="clear-console" type="button" value="Clear console" />
           </div>
         </div>
     </div>

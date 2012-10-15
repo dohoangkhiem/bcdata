@@ -43,8 +43,8 @@
   padding: 2px;
 }
 
-.workbench-ide-content .app-status {
-  float: right;
+.workbench-ide-content .app-status, .workbench-ide-content .app-info, .workbench-ide-content .new-app-info {
+  float: left;
 }
 
 .workbench-main-tabs .workbench-main-tabs-bar li .ui-icon-close { 
@@ -124,16 +124,11 @@
   height: 328px;
 }
 
-.workbench-ide .app-execution-logs-tabs {
-  margin-top: 10px;
-  padding: 1em .5em;
-}
-
-.workbench-ide-content .app-execution-logs .console-actions {
+.workbench-ide-content .execution-logs .console-actions {
   margin-top: 5px;
 }
 
-.app-execution-logs .console-actions input.ui-button {
+.execution-logs .console-actions input.ui-button {
   float: right;
 }
 
@@ -143,7 +138,12 @@
 
 .workbench-ide-content .app-output-tabs .app-output-data, .workbench-ide-content .app-output-tabs .app-output-code {
   overflow-x: auto;
-} 
+}
+
+.workbench-ide-content .execution-logs {
+  position: relative;
+  margin-top: 10px;
+}
 
 /** Visualization styles **/
 
@@ -324,10 +324,10 @@ body>div.resizable-iframe-fix, body>div.ui-draggable-iframeFix {
 /** Console styles **/
 
 /* The console container element */
-.app-execution-logs .console {
+.workbench-ide-content .execution-logs .console {
   position: relative;
-  height: 302px;
-  background-color: #FFFFFF;
+  height: 200px;
+  background-color: #CCC;
   font-size: .9em;
   border: 1px solid #D3D3D3;
 }

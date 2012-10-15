@@ -1,5 +1,6 @@
 package com.bouncingdata.plfdemo.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
@@ -242,4 +243,24 @@ public class AnalysisController {
     }
   }
   
+  @RequestMapping(value="/source/{guid}", method = RequestMethod.GET)
+  public @ResponseBody String getSourceCode(@PathVariable String guid) {
+    Analysis anls = null;
+    try {
+      anls = datastoreService.getAnalysisByGuid(guid);
+    } catch (Exception e) {
+      return "Analysis not found!";
+    }
+    
+    if (anls == null) {
+      return "Analysis not found!";
+    }
+    
+    try {
+      return appStoreService.getScriptCode(anls.getGuid(), anls.getLanguage());
+    } catch (Exception e) {
+      logger.debug("Failed to retrive source code for analysis " + anls.getGuid(), e);
+      return "Failed to retrieve analysis source code. This file maybe corrupted or deleted.";
+    }
+  }
 }

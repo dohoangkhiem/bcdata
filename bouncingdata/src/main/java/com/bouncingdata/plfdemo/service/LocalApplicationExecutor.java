@@ -77,7 +77,6 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
       mode = "not-persistent";
     }
     
-    //String dataPrefix = user.getId() + "_" + (app!=null?app.getId():"") + "_";
     String[] args = new String[] {ticket, user.getUsername(), mode};
     ProcessBuilder pb = new ProcessBuilder("python", "-c",  code, args[0], args[1], args[2]);
     pb.redirectErrorStream(true);
@@ -149,17 +148,15 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
     
   @Override
   public ExecutionResult executeR(BcDataScript app, String code, User user) throws Exception {
-    String ticket = Utils.getExecutionId();
+    final String ticket = Utils.getExecutionId();
     String tempFile = logDir + Utils.FILE_SEPARATOR + ticket + Utils.FILE_SEPARATOR + ticket + ".R";
     File temp = new File(tempFile);
-    //String updatedCode = "options(device=png)\npng(width=1200)\n" + code;
     try {
       if (!temp.getParentFile().isDirectory()) {
         temp.getParentFile().mkdirs();
       }
       
       BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
-      //writer.write(updatedCode);
       writer.write(code);
       writer.close();
     } catch (Exception e) { 
@@ -180,19 +177,49 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
     pb.directory(temp.getParentFile());
     
     String output = null;
-    /* read the console output */ 
+    
     try {
-      Process p = pb.start();   
+      logger.info("Starting the execution {}, requested user {}, appId: {}", new Object[] { ticket, user.getUsername(), app==null?"-1":app.getId() });
+      final Process p = pb.start();
+      Timer t = new Timer();
+      t.schedule(new TimerTask() {      
+        @Override
+        public void run() {
+          try {
+            p.exitValue();
+          } catch (IllegalThreadStateException e) {
+            logger.info("Killed the execution {}. Reason: process too long.", ticket);
+            p.destroy();
+          }
+          this.cancel();
+        }
+      }, 1000*60*2);
+      
       InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
       int c;
-      StringBuilder out = new StringBuilder();
+      StringBuilder outputBuilder = new StringBuilder();
       byte[] b = new byte[1024];
-      while ((c = appOutputStream.read(b)) != -1) {
-        String chunk = new String(b, 0, c);
-        out.append(chunk);
+      try {
+        while ((c = appOutputStream.read(b)) != -1) {
+          String chunk = new String(b, 0, c);
+          outputBuilder.append(chunk);
+        }
+      } catch (IOException e) {
+        // the stream maybe closed due to timeout or unknown error
+        logger.debug("Exception occurs when reading output stream from execution {}. Maybe the process has been terminated.", ticket);
+        return new ExecutionResult("Execution terminated.", null, null, -1, "error");
       }
-      output = out.toString();
+      output = outputBuilder.toString();
+      try {
+        p.exitValue();
+      } catch (IllegalThreadStateException e) {
+        p.destroy();
+        t.cancel();
+      }
+      
     } catch (IOException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
       e.printStackTrace();
     }
     
@@ -204,7 +231,8 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
       try {
         processVisualizations(ticket, (Analysis) app);
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.debug("Error occurs when process visualization for analysis {}", app.getName());
+        logger.debug("Exception detail", e);
       }
     }
     
@@ -214,6 +242,7 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
     } else {
       return new ExecutionResult(output, null, datasets, 0, "OK");
     }
+    
   }
   
   private Map<String, DatasetDetail> dataPostProcess(String executionId, BcDataScript script, User user) throws Exception {

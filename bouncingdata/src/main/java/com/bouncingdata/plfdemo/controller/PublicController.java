@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
@@ -100,5 +102,26 @@ public class PublicController {
       model.addAttribute("errorMsg", "Failed to load analysis: Unknown error.");
     }
     return "embed";
+  }
+  
+  @RequestMapping(value="/source/{guid}", method = RequestMethod.GET)
+  public @ResponseBody String getSourceCode(@PathVariable String guid) {
+    Analysis anls = null;
+    try {
+      anls = datastoreService.getAnalysisByGuid(guid);
+    } catch (Exception e) {
+      return "Analysis not found!";
+    }
+    
+    if (anls == null) {
+      return "Analysis not found!";
+    }
+    
+    try {
+      return appStoreService.getScriptCode(anls.getGuid(), anls.getLanguage());
+    } catch (Exception e) {
+      logger.debug("Failed to retrive source code for analysis " + anls.getGuid(), e);
+      return "Failed to retrieve analysis source code. This file maybe corrupted or deleted.";
+    }
   }
 }

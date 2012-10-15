@@ -86,7 +86,7 @@
           <h3 class="anls-score">${anls.score}</h3>&nbsp;
           <a href="javascript:void(0)" class="anls-vote-up">Vote up</a>&nbsp;&nbsp;
           <a href="javascript:void(0)" class="anls-vote-down">Vote down</a>&nbsp;&nbsp;
-          <a href="javascript:void(0)" class="anls-embed-button" id="anls-embed-button">Embed</a>
+          <a href="javascript:void(0)" class="anls-embed-button" id="anls-embed-button">Embed</a>&nbsp;&nbsp;
           <c:if test="${isOwner }">
             <a href="javascript:void(0)" class="anls-edit-button" id="anls-edit-button" title="Edit this analysis in your workbench">Edit</a>
           </c:if>
@@ -109,8 +109,12 @@
           <div class="anls-dashboard" id="anls-dashboard"></div>
           <div class="anls-code" id="anls-code">
             <div class="code-block" id="code-block">
-              <pre class="brush: js"></pre>
+              <pre class="brush: py"></pre>
             </div>
+            <div class="raw-source-link" style="float: right;">
+              <a target="_blank" href="view-source:<c:url value="/public/source/${anls.guid }" />" style=" color: #999; text-decoration: none; font-size: 11px;">Full view</a>
+            </div>
+            <div class="clear"></div>
           </div>
           <div class="anls-data" id="anls-data">
             <c:if test="${empty datasetList and empty attachments }">

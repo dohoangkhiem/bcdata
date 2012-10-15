@@ -551,7 +551,8 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
   this.tabsIndex[tabIndex].dsloaded = false;
   
   // init console
-  var jqConsole = $('#app-execution-logs-' + tabId + ' .console', $tab).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
+  //var jqConsole = $('#app-execution-logs-' + tabId + ' .console', $tab).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
+  var jqConsole = $('#execution-logs-' + tabId + ' .console', $tab).jqconsole('Welcome to our console\n', Utils.getConsoleCaret('python'));
   this.tabsIndex[tabIndex].jqConsole = jqConsole;
   this.startPrompt(jqConsole, 'python');
   
@@ -566,7 +567,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     $('.new-app-info', $tab).show();
   }
     
-  var $appCodeLayoutContainer = $('.app-code-layout', $tab);
+  /*var $appCodeLayoutContainer = $('.app-code-layout', $tab);
   $appCodeLayoutContainer.layout({
     center__paneSelector: '#app-code-layout-center-' + tabId,
     east__paneSelector: '#app-code-layout-east-' + tabId,
@@ -576,7 +577,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
     center__onresize: function() {
       com.bouncingdata.Workbench.resizeEditor($tab);
     }
-  });
+  });*/
   
   // initialize ace editor
   var editorDom = $('.app-code-editor .code-editor', $tab)[0];
@@ -754,7 +755,7 @@ Workbench.prototype.execute = function(tabIndex) {
   }
   
   this.setStatus($tab, "running");
-  $('.app-code-layout', $tab).layout().open("east");
+  //$('.app-code-layout', $tab).layout().open("east");
   
   $(function() {
     $.ajax({
