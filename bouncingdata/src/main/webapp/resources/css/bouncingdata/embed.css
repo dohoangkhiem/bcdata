@@ -1,0 +1,40 @@
+.bcdata-dashboard .viz-container {
+  border: 1px none;
+  background: none repeat scroll left top #FFFFFF;
+  overflow: hidden;
+}
+
+.bcdata-dashboard .viz-container .viz-handle {
+  height: 12px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  background: none repeat scroll left top #FFFFFF;
+  opacity: 0;
+}
+
+.bcdata-dashboard .viz-container .viz-handle .permalink {
+  opacity: 0;
+  float: right;
+  color: #333333;
+  margin-right: 5px;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.bcdata-dashboard .viz-container > iframe {
+  border: 1px none;
+  overflow: hidden;
+}
+
+
+.tabs .tabs-bar {
+  font-size: 12px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  float: right;
+}
+
+.anls-dataset, .anls-attachment {
+  overflow-x: scroll;
+}

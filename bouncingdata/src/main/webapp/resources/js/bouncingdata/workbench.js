@@ -617,7 +617,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
           } else if (type == "scraper") {
             // 
             $tabs.bind('tabsselect', function(event, ui) {
-              if (ui.index == 1 && !me.tabsIndex[tabIndex].dsloaded) {
+              if (ui.index == 2 && !$tab.dsloaded) {
                 me.loadDatasets(result['datasets'], $tab);
               }
             });  

@@ -23,7 +23,7 @@ function addViz(x, y, w, h, viz, $container) {
   $vizContainer.attr('guid', viz.guid).attr('n', viz.name);
     
   var $vizHandle = $('<div class="viz-handle"><span class="permalink viz-permalink"><a href="" target="_blank">permalink</a></span></div>');
-  $vizContainer.append($vizHandle);
+  //$vizContainer.append($vizHandle);
   
   var $inner;
   switch(type) {
@@ -64,4 +64,93 @@ function addViz(x, y, w, h, viz, $container) {
      
   $container.append($vizContainer);
 
+}
+
+function loadDatasetByAjax(dataPanelId) {
+  var $dataPanel = $(dataPanelId);
+  if ($dataPanel.length < 1) {
+    $('bcdata-embedded-wrapper').html('<span>UI error. Cannot render data panel</span>');
+    return;
+  }
+  var dsguids = '';
+  $('.anls-dataset', $dataPanel).each(function() {
+    dsguids += $(this).attr('dsguid') + ',';
+  });
+  dsguids = dsguids.substring(0, dsguids.length - 1);
+  if (dsguids.length > 0) {
+    setOverlay($dataPanel, true);
+    $.ajax({
+      url: ctx + '/public/data/m/' + dsguids,
+      type: 'get',
+      dataType: 'json',
+      success: function(result) {
+        setOverlay($dataPanel, false);
+        $('.anls-dataset', $dataPanel).each(function() {
+          var dsguid = $(this).attr('dsguid');
+          var $table = $('table', $(this));
+          var data = result[dsguid].data;
+          if (data) {
+            renderDatatable($.parseJSON(data), $table);
+          } else if (result[dsguid].size > 0) {
+            console.debug("Load datatable by Ajax...");
+            var columns = result[dsguid].columns;
+            var aoColumns = [];
+            for (idx in columns) {
+              aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
+            }
+            $table.dataTable({
+              "bServerSide": true,
+              "bProcessing": true,
+              "sAjaxSource": ctx + "/public/data/ajax/" + dsguid,
+              "aoColumns": aoColumns
+            });
+          }
+        });
+      },
+      error: function(result) {
+        setOverlay($dataPanel, false);
+        console.debug('Failed to load datasets.');
+        console.debug(result);
+        $dataPanel.text('Failed to load datasets.');
+      }
+    });
+  }
+}
+
+function renderDatatable(data, $table) {
+  if (!data || data.length <= 0) return;
+  
+  //prepare data
+  var first = data[0];
+  var aoColumns = [];
+  for (key in first) {
+    aoColumns.push({ "sTitle": key});
+  }
+  
+  var aaData = [];
+  for (index in data) {
+    var item = data[index];
+    var arr = [];
+    for (key in first) {
+      arr.push(item[key]);
+    }
+    aaData.push(arr);
+  }
+  $table.dataTable({
+    "aaData": aaData, "aoColumns": aoColumns
+  });
+}
+
+function setOverlay($panel, isActive) {
+  if (isActive) {
+    var $overlay = $('<div class="overlay-panel" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>');
+    $overlay.css('background', 'url("' + ctx + '/resources/images/ajax-loader.gif") no-repeat 50% 10% #eee')
+      .css('z-index', 10).css('background-size', '30px 30px').css('opacity', '0.8');
+    if (!$panel.css('position')) {
+      $panel.css('position', 'relative');
+    }
+    $panel.append($overlay);
+  } else {
+    $('div.overlay-panel', $panel).remove();
+  }
 }

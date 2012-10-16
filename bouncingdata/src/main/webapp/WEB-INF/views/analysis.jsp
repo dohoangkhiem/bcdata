@@ -92,8 +92,23 @@
           </c:if>
         </div>
         <div class="embedded-link" id="embedded-link">
-          <textarea id="embedded-link-text" spellcheck='false'></textarea>
-          <a class="embedded-link-hidden" href="<c:url value="/anls/embed/" />${anls.guid}" style="display: none;">embedded</a>
+          <textarea id="embedded-link-text" spellcheck='false' style="float: left;"></textarea>
+          <!-- a class="embedded-link-hidden" href="<c:url value="/anls/embed/" />${anls.guid}" style="display: none;">embedded</a-->
+          <div class="embedded-options" style="float: left; margin-left: 15px;">     
+            <div>  
+              <strong>Include tab</strong><br />
+              <input id="include-viz" type="checkbox" checked />Dashboard<br />
+              <input id="include-code" type="checkbox"/>Code<br />
+              <input id="include-data" type="checkbox"/>Data<br />
+            </div><br />
+            <div>
+              <strong>Width</strong><br />
+              <input id="embedded-width" type="text" value="800" />&nbsp; pixels<br/><br/>
+              <strong>Height</strong><br />
+              <input id="embedded-height" type="text" value="600" />&nbsp; pixels<br/>
+              <input type="checkbox" id="embedded-border" />&nbsp; Border?
+            </div>
+          </div>
         </div>
         <div class="clear"></div>
       </div>

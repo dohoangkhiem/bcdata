@@ -125,6 +125,18 @@ Analysis.prototype.init = function(anls) {
     var host = "www.bouncingdata.com";
     var embedded = '<iframe src="http://' + host + ctx + '/public/embed/' + guid + '" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>';
     $('#embedded-link-text', $embedded).val(embedded).click(function() { $(this).select() });
+    
+    // reset options
+    $('#include-viz', $embedded).prop('checked', true);
+    $('#include-code', $embedded).prop('checked', false);
+    $('#include-data', $embedded).prop('checked', false);
+    $('#embedded-width', $embedded).val('800');
+    $('#embedded-height', $embedded).val('600');
+    $('#embedded-border', $embedded).prop('checked', false);
+  });  
+  
+  $('.embedded-options input', $embedded).change(function() {
+    me.updateEmbeddedLink(guid);
   });
   
   var $edit = $('.anls-action-links a#anls-edit-button');
@@ -432,6 +444,51 @@ Analysis.prototype.updateCommentCounter = function() {
 }
 
 Analysis.prototype.reload = function() {
+  
+}
+
+Analysis.prototype.updateEmbeddedLink = function(guid) {
+  var tabs = [];
+  var width = 0;
+  var height = 0;
+  if ($('.embedded-options #include-viz').prop('checked')) {
+    tabs.push('v')
+  }
+  if ($('.embedded-options #include-code').prop('checked')) {
+    tabs.push('c');
+  }
+  if ($('.embedded-options #include-data').prop('checked')) {
+    tabs.push('d');
+  }
+    
+  width = $('.embedded-options #embedded-width').val();
+  height = $('.embedded-options #embedded-height').val();
+  
+  var border = $('.embedded-options #embedded-border').prop('checked');
+  
+  if (isNaN(width) || width < 1) {
+    width = 800;
+    $('.embedded-options #embedded-width').val(width);
+  }
+  if (isNaN(height) || height < 1) {
+    height = 600;
+    $('.embedded-options #embedded-height').val(height);
+  }
+  
+  var host = "www.bouncingdata.com";
+  var link = "http://" + host + ctx + "/public/embed/" + guid;
+  if (tabs.length > 0) {
+    for (i in tabs) {
+      if (i == 0) {
+        link = link + "/?tab=" + tabs[i];
+      } else {
+        link = link + "&tab=" + tabs[i];
+      } 
+    }
+  }
+  
+  var embedded = '<iframe src="' + link + '" style="' + (border?'border:solid 1px #777':'border-width:0') + '" width="' + width + '" height="' + height + '" frameborder="0" scrolling="no"></iframe>';
+  $('.embedded-link #embedded-link-text').val(embedded);
   
 }
 
