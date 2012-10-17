@@ -31,7 +31,7 @@ public class JdbcBcDatastoreTest extends AbstractJUnit38SpringContextTests {
     assertNotNull(jdbcBcDatastore);
   }
   
-  public void testPersistData() {
+  public void testPersistData() throws Exception {
     String tableName = "demo.testTable";
     String[] headers = {"username", "age", "job"};
     List<String[]> data = new ArrayList<String[]>();

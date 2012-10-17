@@ -65,11 +65,13 @@
           <a href="#" class="anls-vote-up">Vote up</a>&nbsp;
           <a href="#" class="anls-vote-down">Vote down</a>
         </div-->
+        <div class="dataset-actions" style="margin-top: 4px;">
+          <a href="<c:url value="/dataset/csv/${dataset.guid}"/>" style="color: block; text-decoration: none;">Download CSV</a>
+        </div>
       </div>
       <div class="header-rule"></div>
       <div class="data-content content">
         <table class="data-table" id="data-table">
-          
         </table>
         <c:choose>
           <c:when test="${not empty data }">

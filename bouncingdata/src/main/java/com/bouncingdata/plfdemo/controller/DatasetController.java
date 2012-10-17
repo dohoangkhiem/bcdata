@@ -1,11 +1,16 @@
 package com.bouncingdata.plfdemo.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -272,6 +277,31 @@ public class DatasetController {
       return null;
     }
     
+  }
+  
+  /**
+   * Streams the dataset as CSV file format
+   * @param guid dataset guid
+   * @param req the <code>HttpServletRequest</code> object
+   * @param res the <code>HttpServletResponse</code> object
+   * @throws IOException
+   */
+  @RequestMapping(value="/csv/{guid}", method = RequestMethod.GET)
+  public @ResponseBody void getCSV(@PathVariable String guid, HttpServletRequest req, HttpServletResponse res) throws IOException {
+    try {
+      Dataset ds = datastoreService.getDatasetByGuid(guid);
+      if (ds == null) {
+        logger.debug("Can't find the dataset {}", guid);
+        res.sendError(404, "Dataset not found.");
+        return;
+      }
+      res.setContentType("data:text/csv;charset=utf-8"); 
+      res.setHeader("Content-Disposition","attachment; filename=\"" + ds.getName() + ".csv\"");
+      userDataService.getCsvStream(ds.getName(), res.getOutputStream());
+      return;
+    } catch (Exception e) {
+      res.sendError(500, "Sorry, we can't fulfil your download request due to internal error.");
+    }
   }
   
 }

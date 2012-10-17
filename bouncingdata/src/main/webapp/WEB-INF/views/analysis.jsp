@@ -91,7 +91,7 @@
             <a href="javascript:void(0)" class="anls-edit-button" id="anls-edit-button" title="Edit this analysis in your workbench">Edit</a>
           </c:if>
         </div>
-        <div class="embedded-link" id="embedded-link">
+        <div class="embedded-link" id="embedded-link" style="display: none;">
           <textarea id="embedded-link-text" spellcheck='false' style="float: left;"></textarea>
           <!-- a class="embedded-link-hidden" href="<c:url value="/anls/embed/" />${anls.guid}" style="display: none;">embedded</a-->
           <div class="embedded-options" style="float: left; margin-left: 15px;">     
@@ -141,7 +141,9 @@
                   <span class="dataset-item-title">
                     <strong>
                       <a href="<c:url value="/dataset/view/${entry.key }" />">${entry.value }</a>
+                      &nbsp;
                     </strong>
+                    <a href="<c:url value="/dataset/csv/${entry.key }" />" style="color: blue; text-decoration: none;">Download CSV</a>
                   </span>
                   <table dsguid="${entry.key }" class="dataset-table"></table>
                 </div>

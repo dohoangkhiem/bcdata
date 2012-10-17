@@ -28,7 +28,7 @@
     <script>
       var dbDetail = JSON.parse('${dashboardDetail}');
       var $dashboard = $('<div class="bcdata-dashboard"></div>');
-      $dashboard.height('800px').width('600px').css('position', 'relative');
+      $dashboard.height('600px').width('800px').css('position', 'relative');
       $wrapper.append($dashboard);
       view(dbDetail.visualizations, dbDetail.dashboard, $dashboard);
     </script>
@@ -39,7 +39,7 @@
         <script>
         	var dbDetail = JSON.parse('${dashboardDetail}');
         	var $dashboard = $('<div class="bcdata-dashboard"></div>');
-        	$dashboard.height('800px').width('600px').css('position', 'relative');
+        	$dashboard.height('600px').width('800px').css('position', 'relative');
         	$wrapper.append($dashboard);
         	view(dbDetail.visualizations, dbDetail.dashboard, $dashboard);
         </script>
@@ -64,6 +64,8 @@
               <span class="dataset-item-title"> <strong>
                 <a target="_blank" href="<c:url value="/dataset/view/${entry.key }" />">${entry.value}</a>
               </strong>
+              &nbsp;
+              <a href="<c:url value="/dataset/csv/${entry.key }" />" style="color: blue; text-decoration: none;">Download CSV</a>
               </span>
               <table dsguid="${entry.key }" class="dataset-table"></table>
             </div>
@@ -106,7 +108,7 @@
           $('.tabs', $wrapper).tabs('add', '#v', 'Dashboard');
           var $panel = $('.tabs #v', $wrapper);
           var $dashboard = $('<div class="bcdata-dashboard"></div>');
-          $dashboard.height('800px').width('600px').css('position', 'relative');
+          $dashboard.height('600px').width('800px').css('position', 'relative');
           $panel.append($dashboard);
           var dbDetail = JSON.parse('${dashboardDetail}');
           view(dbDetail.visualizations, dbDetail.dashboard, $dashboard);
@@ -139,7 +141,8 @@
             <script>
             $dataTab.append('<div class="anls-dataset" style="margin-top: 2em;" dsguid="${entry.key }">'
             	+ '<span class="dataset-item-title"> <strong><a target="_blank" href="<c:url value="/dataset/view/${entry.key }" />">${entry.value}</a>'
-            	+ '</strong></span><table dsguid="${entry.key }" class="dataset-table"></table></div>');
+            	+ '</strong>&nbsp;&nbsp;<a href="<c:url value="/dataset/csv/${entry.key }" />" style="color: blue; text-decoration: none;">Download CSV</a></span>' 
+            	+ '<table dsguid="${entry.key }" class="dataset-table"></table></div>');
             </script>
           </c:forEach>
           <script>
@@ -172,3 +175,7 @@
   </c:when>
   <c:otherwise></c:otherwise>
 </c:choose>
+
+<div class="footer" style="clear: both; float: right; font-size: 12px;">
+  Power by <a href="http://www.bouncingdata.com" target="_blank" style="font-weight: bold; color: #000; text-decoration: none;">Bouncing Data</a>
+</div>

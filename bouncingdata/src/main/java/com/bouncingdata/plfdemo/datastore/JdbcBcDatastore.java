@@ -1,5 +1,6 @@
 package com.bouncingdata.plfdemo.datastore;
 
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
   private Logger logger = LoggerFactory.getLogger(JdbcBcDatastore.class);
 
   @Override
-  public String getDataset(String dataset) throws DataAccessException {
+  public String getDataset(String dataset) throws Exception {
     String sql = "SELECT * FROM `" + dataset + "`";
     Connection conn = null;
     Statement st = null;
@@ -45,7 +46,7 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
     }  
   }
   
-  public String getDataset(String dataset, int begin, int maxNumber) throws DataAccessException {
+  public String getDataset(String dataset, int begin, int maxNumber) throws Exception {
     String sql = "SELECT * FROM `" + dataset + "` LIMIT " + begin + "," + maxNumber;
     Connection conn = null;
     Statement st = null;
@@ -310,6 +311,27 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
         logger.debug("Exception detail: ", e);
       }
       return null;
+    } finally {
+      if (rs != null) try { rs.close(); } catch (Exception e) {}
+      if (st != null) try { st.close(); } catch (Exception e) {}
+      if (conn != null) try { conn.close(); } catch (Exception e) {}
+    }
+  }
+  
+  public void getCsvStream(String dsFullname, OutputStream os) throws Exception {
+    Connection conn = null;
+    Statement st = null;
+    ResultSet rs = null;
+    try {
+      conn = getDataSource().getConnection();
+      st = conn.createStatement();
+      rs = st.executeQuery("SELECT * FROM `" + dsFullname + "`");
+      Utils.resultSetToCSV(rs, os);
+    } catch (SQLException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Error occurs while reading dataset: {}", dsFullname);
+        logger.debug("Exception detail: ", e);
+      }
     } finally {
       if (rs != null) try { rs.close(); } catch (Exception e) {}
       if (st != null) try { st.close(); } catch (Exception e) {}

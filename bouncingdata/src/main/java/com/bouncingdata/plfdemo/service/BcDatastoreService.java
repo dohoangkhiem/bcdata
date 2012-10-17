@@ -1,6 +1,7 @@
 package com.bouncingdata.plfdemo.service;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,10 @@ public class BcDatastoreService {
   
   public String[] getColumnNames(String dsFullname) throws Exception {
     return jdbcBcDatastore.getColumnNames(dsFullname);
+  }
+  
+  public void getCsvStream(String dsFullname, OutputStream os) throws Exception {
+    jdbcBcDatastore.getCsvStream(dsFullname, os);
   }
       
 }

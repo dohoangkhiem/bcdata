@@ -1,10 +1,8 @@
 package com.bouncingdata.plfdemo.datastore;
 
-import java.sql.SQLException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.dao.DataAccessException;
 
 public interface BcDatastore {
 
@@ -12,7 +10,7 @@ public interface BcDatastore {
    * @param dataset
    * @return
    */
-  String getDataset(String dataset);
+  String getDataset(String dataset) throws Exception;
 
   /**
    * @param tableName
@@ -37,5 +35,7 @@ public interface BcDatastore {
    * @param datasetName
    */
   void dropDataset(String datasetName);
+  
+  void getCsvStream(String dsFullname, OutputStream os) throws Exception;
 
 }

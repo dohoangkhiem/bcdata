@@ -1,8 +1,8 @@
 package com.bouncingdata.plfdemo.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,19 +10,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
@@ -75,16 +72,16 @@ public class Utils {
     return result;
   }
   
-  public static String resultSetToJson(ResultSet rs) throws SQLException {
+  public static String resultSetToJson(ResultSet rs) throws Exception {
     
-    JSONArray json = new JSONArray();
+    ObjectMapper mapper = new ObjectMapper();
+    List<HashMap<String, Object>> list = new ArrayList<HashMap<String,Object>>();
 
     java.sql.ResultSetMetaData rsmd = rs.getMetaData();
 
     while (rs.next()) {
       int numColumns = rsmd.getColumnCount();
-      JSONObject obj = new JSONObject();
-
+      HashMap<String, Object> obj = new LinkedHashMap<String, Object>();
       for (int i = 1; i < numColumns + 1; i++) {
 
         String column_name = rsmd.getColumnName(i);
@@ -120,10 +117,70 @@ public class Utils {
         }
 
       }// end foreach
-      json.add(obj);
+      list.add(obj);
 
     }// end while
-    return json.toString();
+    return mapper.writeValueAsString(list);
+  }
+  
+  public static void resultSetToCSV(ResultSet rs, OutputStream os) throws Exception {
+    Writer out = new OutputStreamWriter(os);
+    CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT);
+    java.sql.ResultSetMetaData rsmd = rs.getMetaData();
+    int numColumns = rsmd.getColumnCount();
+    String[] columnNames = new String[numColumns];
+    try {
+      for (int i = 1; i < numColumns + 1; i++) {
+        columnNames[i-1] = rsmd.getColumnName(i);
+        if (i == numColumns) {
+          printer.println(columnNames[i-1]);
+        } else printer.print(columnNames[i-1]);
+      }
+      while (rs.next()) {
+        for (int i = 1; i < numColumns + 1; i++) {     
+          String column_name = columnNames[i-1];
+          Object value = null;
+          if (rsmd.getColumnType(i) == java.sql.Types.ARRAY) {
+            value = rs.getArray(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.BIGINT) {
+            value = rs.getInt(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.BOOLEAN) {
+            value = rs.getBoolean(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
+            value = rs.getBlob(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.DOUBLE) {
+            value = rs.getDouble(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.FLOAT) {
+            value = rs.getFloat(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.INTEGER) {
+            value = rs.getInt(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.NVARCHAR) {
+            value = rs.getNString(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.VARCHAR) {
+            value = rs.getString(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.TINYINT) {
+            value = rs.getInt(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.SMALLINT) {
+            value = rs.getInt(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.DATE) {
+            value = rs.getDate(column_name);
+          } else if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP) {
+            value = rs.getTimestamp(column_name);
+          } else {
+            value = rs.getObject(column_name);
+          }
+          
+          if (i == numColumns) {
+            printer.println(value!=null?value.toString():"");
+          } else {
+            printer.print(value!=null?value.toString():"");
+          }
+        }     
+      }
+    } finally {
+      out.flush();
+      out.close();
+    }
   }
   
   public static String getExecutionId() {
