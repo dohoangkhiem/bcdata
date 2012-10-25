@@ -137,13 +137,14 @@
             </c:if>
             <c:if test="${not empty datasetList}">
               <c:forEach items="${datasetList }" var="entry">
-                <div class="anls-dataset" style="margin-top: 2em;" dsguid="${entry.key }">
+                <div class="anls-dataset" style="margin: 1em 0 2.5em 0;" dsguid="${entry.key }">
                   <span class="dataset-item-title">
                     <strong>
                       <a href="<c:url value="/dataset/view/${entry.key }" />">${entry.value }</a>
                       &nbsp;
                     </strong>
-                    <a href="<c:url value="/dataset/csv/${entry.key }" />" style="color: blue; text-decoration: none;">Download CSV</a>
+                    <a href="<c:url value="/dataset/dl/csv/${entry.key }" />" style="color: blue; text-decoration: none;">Download CSV</a>&nbsp;&nbsp;
+                    <a href="<c:url value="/dataset/dl/json/${entry.key }" />" style="color: blue; text-decoration: none;">Download JSON</a>
                   </span>
                   <table dsguid="${entry.key }" class="dataset-table"></table>
                 </div>
@@ -153,8 +154,10 @@
               <c:forEach items="${attachments }" var="attachment">
                 <script>
                 	$(function() {
-                	  var $attachment = $('<div class="anls-attachment" style="margin-top: 2em;"><span class="dataset-item-title"><strong>'
-                	  + '<a href="">${attachment.name}</a></strong></span><table class="attachment-table"></table></div>');
+                	  var $attachment = $('<div class="anls-attachment" style="margin: 1em 0 2.5em 0;"><span class="dataset-item-title"><strong>'
+                	  + '<a href="">${attachment.name}</a></strong>&nbsp;<a href="<c:url value="/dataset/att/csv/${anls.guid}/${attachment.name}" />" style="color: blue; text-decoration: none;">Download CSV</a>'
+                	  + '&nbsp;&nbsp;<a href="<c:url value="/dataset/att/json/${anls.guid}/${attachment.name}" />" style="color: blue; text-decoration: none;">Download JSON</a></span>' 
+                	  + '<table class="attachment-table"></table></div>');
                 	  $attachment.appendTo($('#anls-data'));
                 	  var $table = $('table', $attachment);
                 	  var data = '${attachment.data}';

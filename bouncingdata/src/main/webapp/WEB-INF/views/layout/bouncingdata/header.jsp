@@ -172,7 +172,7 @@
             </div>
           </div>
           <div class="app-data" id="\${tabId}-data">
-            <div>No data</div>
+            <span class="no-data">No data</span>
           </div>
         </div>
         

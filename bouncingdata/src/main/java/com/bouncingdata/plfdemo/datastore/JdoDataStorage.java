@@ -23,6 +23,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.DataCollection;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
@@ -1289,6 +1290,139 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
         item.setDataset(dts);
       }
       pm.makePersistentAll(anlsDts);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void createDataCollection(DataCollection collection) {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+   
+    try {
+      tx.begin();
+      DataCollection dataCollection = new DataCollection();
+      dataCollection.setName(collection.getName());
+      dataCollection.setDescription(collection.getDescription());
+      List<Dataset> datasets = new ArrayList<Dataset>();
+      dataCollection.setDatasets(datasets);
+      if (collection.getDatasets() != null) {
+        for (Dataset ds : collection.getDatasets()) {
+          Dataset dataset = pm.getObjectById(Dataset.class, ds.getId());
+          if (dataset != null) datasets.add(dataset);
+        }
+      }
+      pm.makePersistent(collection);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+    
+  }
+
+  @Override
+  public void deleteDataCollection(int collectionId) {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    
+    try {
+      tx.begin();
+      DataCollection collection = pm.getObjectById(DataCollection.class, collectionId);
+      if (collection != null) pm.deletePersistent(collection);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void updateDataCollection(DataCollection collection) {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    
+    try {
+      tx.begin();
+      DataCollection dataCol = pm.getObjectById(DataCollection.class, collection.getId());
+      if (dataCol != null) {
+        List<Dataset> datasets = new ArrayList<Dataset>();
+        dataCol.setName(collection.getName());
+        dataCol.setDescription(collection.getDescription());
+        dataCol.setDatasets(datasets);
+        if (collection.getDatasets() != null) {
+          for (Dataset ds : collection.getDatasets()) {
+            Dataset dataset = pm.getObjectById(Dataset.class, ds.getId());
+            if (dataset != null) datasets.add(dataset);
+          }
+        }
+      }
+      
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+    
+  }
+
+  @Override
+  public DataCollection getDataCollection(int collectionId) {
+    PersistenceManager pm = getPersistenceManager();
+    try {
+      return pm.getObjectById(DataCollection.class, collectionId);
+    } finally {
+      pm.close();
+    }
+  }
+
+  @Override
+  public List<DataCollection> getUserCollections(int userId) {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(DataCollection.class);
+    q.setFilter("this.user.id == " + userId);
+    try {
+      List<DataCollection> dataCol = (List<DataCollection>) q.execute();
+      dataCol = (List<DataCollection>) pm.detachCopyAll(dataCol);
+      return dataCol;
+    } finally {
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void deleteUserCollections(int userId) {
+    PersistenceManager pm = getPersistenceManager();
+    Query q = pm.newQuery(DataCollection.class);
+    q.setFilter("this.user.id == " + userId);
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      List<DataCollection> dataCol = (List<DataCollection>) q.execute();
+      if (dataCol != null) pm.deletePersistentAll(dataCol);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      q.closeAll();
+      pm.close();
+    }
+  }
+
+  @Override
+  public void addDatasetToCollection(int datasetId, int collectionId) {
+    PersistenceManager pm = getPersistenceManager();
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      DataCollection collection = pm.getObjectById(DataCollection.class, collectionId);
+      Dataset dataset = pm.getObjectById(Dataset.class, datasetId);
+      if (collection == null || dataset == null) return;
+      if (collection.getDatasets() == null) collection.setDatasets(new ArrayList<Dataset>());
+      collection.getDatasets().add(dataset);
       tx.commit();
     } finally {
       if (tx.isActive()) tx.rollback();

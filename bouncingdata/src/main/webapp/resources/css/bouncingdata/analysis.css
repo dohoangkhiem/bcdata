@@ -118,7 +118,7 @@
 #anls-content {
   width: 800px;
 }
-.anls-content ul.anls-tabs {
+.anls-content ul.anls-tabs, .data-content ul {
   float: right;
 }
 
@@ -351,6 +351,6 @@ li.comment-item .comment-score, .anls-score {
   color: #000;
 }
 
-.anls-data {
+.anls-data, #dataset-content #data {
   overflow-x: auto;
 }

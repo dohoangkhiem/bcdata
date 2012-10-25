@@ -35,7 +35,8 @@ Dashboard.prototype.load = function(vizList, dashboardPos, $container, editMode)
     for (v in vizList) {
       var viz = vizList[v];
       viz.name = v;
-      var pos = dbCache?dbCache[v]:null;
+      useCache = false;
+      var pos = dbCache && useCache ?dbCache[v]:null;
       if (pos) {
         this.addViz(pos.x, pos.y, pos.w, pos.h, viz, $container, editMode);
       } else {
@@ -153,6 +154,7 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
     $vizContainer.resizable({
       //containment: '#' + $container.attr('id'),
       containment: '#dashboard-wrapper-' + $container.attr('tabid'),
+      //containment: [_x, _y, _x + w, 140000],
       grid: 10,
       //aspectRatio: type=="png"
       aspectRatio: false

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
@@ -83,6 +84,9 @@ public class PublicController {
         model.addAttribute("errorMsg", "Unknown mode");
         return "embed";
       }
+      
+      model.addAttribute("guid", guid);
+      model.addAttribute("anls", anls);
       
       List<String> tabs = new ArrayList<String>();
       if (tabList.contains("v")) {
@@ -162,11 +166,11 @@ public class PublicController {
         logger.debug("Error when trying to get relation datasets", e);
       }
       
-      String code = StringEscapeUtils.escapeJavaScript(appStoreService.getScriptCode(guid, anls.getLanguage()));
-      String data = null;
+      List<Attachment> attachments = appStoreService.getAttachmentData(guid);
+      model.addAttribute("attachments", attachments);
       
+      String code = StringEscapeUtils.escapeJavaScript(appStoreService.getScriptCode(guid, anls.getLanguage()));
       model.addAttribute("code", code);
-      model.addAttribute("data", data);
       
     } catch (Exception e) {
       model.addAttribute("errorMsg", "Failed to load analysis: Unknown error.");

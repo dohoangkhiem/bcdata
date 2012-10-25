@@ -98,7 +98,7 @@ public class ApplicationStoreService {
   public List<Attachment> getAttachmentData(String guid) {
     File dir = new File(storePath + Utils.FILE_SEPARATOR + guid);
     if (!dir.isDirectory()) {
-      logger.debug("The application {} does not exist.", guid);
+      logger.debug("The application directory {} does not exist.", guid);
       return null;
     }
     
@@ -143,6 +143,46 @@ public class ApplicationStoreService {
     }
     
     return results;
+  }
+  
+  public Attachment getAttachment(String guid, String name) {
+    File dir = new File(storePath + Utils.FILE_SEPARATOR + guid);
+    if (!dir.isDirectory()) {
+      logger.debug("The application directory {} does not exist.", guid);
+      return null;
+    }
+    
+    File attFile = new File(dir.getAbsolutePath() + Utils.FILE_SEPARATOR + name + ".att");
+    if (!attFile.isFile()) {
+      logger.debug("The attachment {}/{} does not exist.", guid, name);
+      return null;
+    }
+    
+    ObjectMapper mapper = new ObjectMapper();
+    String s;
+    try {
+      s = FileUtils.readFileToString(attFile);
+    } catch (IOException e) {
+      logger.debug("Can't read the attachment {}", attFile.getAbsolutePath());
+      return null;
+    }
+    if (s == null || s.isEmpty()) return null;
+    
+    try {
+      JsonNode root = mapper.readTree(s);
+      //String name = root.get("name").getTextValue();
+      String description = null;
+      if (root.has("description")) {
+        description = root.get("description").getTextValue();
+      }
+      String data = root.get("data").toString();
+      Attachment attachment = new Attachment(-1, name, description, data);
+      return attachment;
+    } catch (Exception e) {
+      logger.debug("Cannot parse attachment file {}", attFile.getAbsoluteFile());
+      logger.debug("Exception detail", e);
+      return null;
+    }
   }
   
 }

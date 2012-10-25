@@ -19,6 +19,7 @@ import java.util.UUID;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardPosition;
@@ -178,9 +179,44 @@ public class Utils {
         }     
       }
     } finally {
+      printer.flush();
+      out.close();
+    }
+  }
+  
+  public static void jsonToCsv(String jsonData, OutputStream os) throws Exception {
+    Writer out = new OutputStreamWriter(os);
+    CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT);
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode data = mapper.readTree(jsonData);
+    JsonNode firstEle = data.get(0);
+    Iterator<String> it = firstEle.getFieldNames();
+    List<String> columns = new ArrayList<String>();
+    while(it.hasNext()) {
+      String field = it.next();
+      columns.add(field);
+    }
+    try {
+      for (int i = 0; i < columns.size(); i++) {
+        if (i == columns.size() - 1) {
+          printer.println(columns.get(i));
+        } else printer.print(columns.get(i));
+      }
+      for (int i = 0; i< data.size(); i++) {
+        JsonNode element = data.get(i);
+        for (int j = 0; j < columns.size(); j++) {
+          String col = columns.get(j);
+          String val = element.get(col).getValueAsText();
+          if (j == columns.size() - 1) {
+            printer.println(val);
+          } else printer.print(val);
+        }
+      }
+    } finally {
       out.flush();
       out.close();
     }
+    
   }
   
   public static String getExecutionId() {

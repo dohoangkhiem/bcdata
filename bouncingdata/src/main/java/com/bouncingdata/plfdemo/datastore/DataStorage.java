@@ -14,6 +14,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.DataCollection;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.ExecutionLog;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
@@ -439,5 +440,18 @@ public interface DataStorage {
 
   SearchResult search(String query, int ownerId);
   
+  public void createDataCollection(DataCollection collection);
+  
+  public void deleteDataCollection(int collectionId);
+  
+  public void updateDataCollection(DataCollection collection);
+  
+  public DataCollection getDataCollection(int collectionId);
+  
+  public List<DataCollection> getUserCollections(int userId);
+  
+  public void deleteUserCollections(int userId);
+  
+  public void addDatasetToCollection(int datasetId, int collectionId);
 }
 

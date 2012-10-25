@@ -605,14 +605,20 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
             //} else {
             //  $tab['dbloaded'] = false;
             //}       
+              
+            if ((result['datasets'] && result['dataset'].length > 0) || (result['attachments'] && result['attachments'].length > 0)) {
+              $('#' + $tab.prop('id') + '-data .no-data', $tab).remove();
+            }
             $tabs.bind('tabsselect', function(event, ui) {
               //var tabIndex = me.getTabIndex($tab.prop('id'));
               //if (ui.index == 2 && !me.tabsIndex[tabIndex].dsloaded) {
               if (ui.index == 2 && !$tab.dsloaded) {
                 me.loadDatasets(result['datasets'], $tab);
-                //me.renderAttachments(result['attachments'], $('#' + $tab.attr('id') + '-data', $tab););
+                //me.renderAttachments(result['attachments'], $('#' + $tab.attr('id') + '-data', $tab));
               }
-            });  
+            });
+            
+            me.renderAttachments(result['attachments'], $('#' + $tab.attr('id') + '-data', $tab));
             
           } else if (type == "scraper") {
             // 
@@ -788,6 +794,7 @@ Workbench.prototype.execute = function(tabIndex) {
               app.executed = true;
               var datasets = result['datasets'];
               var $dsContainer = $('#' + tabId + '-data', $tab);
+              if (datasets && datasets.length > 0) $dsContainer.empty();
               me.renderDatasets(datasets, $dsContainer);
             } else if (type == 'scraper') {
               var datasets = result['datasets'];
@@ -1091,7 +1098,7 @@ Workbench.prototype.loadDatasets = function(dsList, $tab) {
     type: 'get',
     dataType: 'json',
     success: function(result) {
-      $dsContainer.empty();
+      com.bouncingdata.Utils.setOverlay($dsContainer, false);
       me.renderDatasets(result, $dsContainer);
       //me.tabsIndex[me.getTabIndex($tab.prop('id'))].dsloaded = true;
       $tab.dsloaded = true;

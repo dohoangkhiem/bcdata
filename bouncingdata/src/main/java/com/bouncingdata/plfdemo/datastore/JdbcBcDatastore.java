@@ -338,4 +338,5 @@ public class JdbcBcDatastore extends JdbcDaoSupport implements BcDatastore {
       if (conn != null) try { conn.close(); } catch (Exception e) {}
     }
   }
+  
 }

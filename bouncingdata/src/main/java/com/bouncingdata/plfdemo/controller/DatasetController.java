@@ -1,7 +1,9 @@
 package com.bouncingdata.plfdemo.controller;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +14,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +30,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DatasetDetail;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.QueryResult;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.User;
+import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 import com.bouncingdata.plfdemo.service.BcDatastoreService;
 import com.bouncingdata.plfdemo.service.DatastoreService;
 import com.bouncingdata.plfdemo.util.Utils;
@@ -51,6 +56,9 @@ public class DatasetController {
   
   @Autowired
   private BcDatastoreService userDataService;
+  
+  @Autowired
+  private ApplicationStoreService appStoreService;
     
   @SuppressWarnings("rawtypes")
   @RequestMapping(value="/{guid}", method = RequestMethod.GET)
@@ -286,19 +294,76 @@ public class DatasetController {
    * @param res the <code>HttpServletResponse</code> object
    * @throws IOException
    */
-  @RequestMapping(value="/csv/{guid}", method = RequestMethod.GET)
-  public @ResponseBody void getCSV(@PathVariable String guid, HttpServletRequest req, HttpServletResponse res) throws IOException {
+  @RequestMapping(value="/dl/{type}/{guid}", method = RequestMethod.GET)
+  public @ResponseBody void download(@PathVariable String type, @PathVariable String guid, HttpServletRequest req, HttpServletResponse res) throws IOException {
+    
+    if (!("csv".equalsIgnoreCase(type) || "json".equalsIgnoreCase(type))) {
+      res.sendError(400, "Unknown datatype.");
+      return;
+    }
     try {
       Dataset ds = datastoreService.getDatasetByGuid(guid);
       if (ds == null) {
         logger.debug("Can't find the dataset {}", guid);
-        res.sendError(404, "Dataset not found.");
+        res.sendError(400, "Dataset not found.");
         return;
       }
-      res.setContentType("data:text/csv;charset=utf-8"); 
-      res.setHeader("Content-Disposition","attachment; filename=\"" + ds.getName() + ".csv\"");
-      userDataService.getCsvStream(ds.getName(), res.getOutputStream());
+      
+      if ("csv".equalsIgnoreCase(type)) {
+        res.setContentType("text/csv;charset=utf-8"); 
+        res.setHeader("Content-Disposition","attachment; filename=\"" + ds.getName() + ".csv\"");
+        userDataService.getCsvStream(ds.getName(), res.getOutputStream());
+      } else if ("json".equalsIgnoreCase(type)) {
+        res.setContentType("text/x-json;charset=utf-8"); 
+        res.setHeader("Content-Disposition","attachment; filename=\"" + ds.getName() + ".json\"");
+        BufferedOutputStream buffer = new BufferedOutputStream(res.getOutputStream(), 8*1024);
+        byte[] data = userDataService.getDatasetToString(ds.getName()).getBytes("UTF-8");
+        res.setContentLength(data.length);
+        buffer.write(data);
+        buffer.flush();
+      }
       return;
+    } catch (Exception e) {
+      res.sendError(500, "Sorry, we can't fulfil your download request due to internal error.");
+    }
+  }
+  
+  @RequestMapping(value="/att/{type}/{appGuid}/{attName}", method = RequestMethod.GET)
+  public @ResponseBody void downloadAttachment(@PathVariable String type, @PathVariable String appGuid, @PathVariable String attName, HttpServletRequest req, HttpServletResponse res) throws IOException {
+    if (!("csv".equalsIgnoreCase(type) || "json".equalsIgnoreCase(type))) {
+      res.sendError(400, "Unknown datatype.");
+      return;
+    }
+    try {
+      Analysis anls = datastoreService.getAnalysisByGuid(appGuid);
+      if (anls == null) {
+        logger.debug("Can't find analysis {}", appGuid);
+        res.sendError(400, "Analysis not found.");
+        return;
+      }
+      
+      Attachment attachment = appStoreService.getAttachment(appGuid, attName);
+      if (attachment == null) {
+        res.sendError(400, "Attachment not found or cannot read.");
+        return;
+      }
+      
+      if ("csv".equalsIgnoreCase(type)) {
+        res.setContentType("text/csv;charset=utf-8"); 
+        res.setHeader("Content-Disposition","attachment; filename=\"" + attName + ".csv\"");
+        Utils.jsonToCsv(attachment.getData(), res.getOutputStream());
+      } else if ("json".equalsIgnoreCase(type)) {
+        res.setContentType("text/x-json;charset=utf-8"); 
+        res.setHeader("Content-Disposition","attachment; filename=\"" + attName + ".json\"");
+        BufferedOutputStream buffer = new BufferedOutputStream(res.getOutputStream());
+        byte[] data = attachment.getData().getBytes("UTF-8");
+        res.setContentLength(data.length);
+        buffer.write(data);
+        buffer.flush();
+      }
+      
+      return;
+ 
     } catch (Exception e) {
       res.sendError(500, "Sorry, we can't fulfil your download request due to internal error.");
     }

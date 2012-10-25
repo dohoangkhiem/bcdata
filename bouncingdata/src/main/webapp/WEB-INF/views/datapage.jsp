@@ -4,6 +4,7 @@
 
 <script>
 	$(function() {
+	  $('#dataset-content').tabs();
 	  com.bouncingdata.Nav.setSelected('data', '${dataset.guid}');
 	});
 </script>
@@ -66,42 +67,60 @@
           <a href="#" class="anls-vote-down">Vote down</a>
         </div-->
         <div class="dataset-actions" style="margin-top: 4px;">
-          <a href="<c:url value="/dataset/csv/${dataset.guid}"/>" style="color: block; text-decoration: none;">Download CSV</a>
+          <a href="<c:url value="/dataset/dl/csv/${dataset.guid}"/>" style="color: block; text-decoration: none;">Download CSV</a>&nbsp;&nbsp;
+          <a href="<c:url value="/dataset/dl/json/${dataset.guid}"/>" style="color: block; text-decoration: none;">Download JSON</a>
         </div>
       </div>
       <div class="header-rule"></div>
-      <div class="data-content content">
-        <table class="data-table" id="data-table">
-        </table>
-        <c:choose>
-          <c:when test="${not empty data }">
-            <script>
-          		var data = ${data};
-              var $table = $('#data-table');
-              com.bouncingdata.Workbench.renderDatatable(data, $table);
-            </script>
-          </c:when>
-          <c:otherwise>
-            <script>
-            $(function() {
-              console.debug("Load datatable by Ajax...");
-              var guid = '${guid}';
-              var columns = ${columns};
-              var aoColumns = [];
-              for (idx in columns) {
-                aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
-              }
-              var $table = $('#data-table');
-              $table.dataTable({
-                "bServerSide": true,
-                "bProcessing": true,
-                "sAjaxSource": ctx + "/dataset/ajax/" + guid,
-                "aoColumns": aoColumns
-              });
-            });
-            </script>  
-          </c:otherwise>
-        </c:choose>
+      <div class="data-content data-tab-container" id="dataset-content">
+        <ul>
+          <li><a href="#data">Data</a></li>
+          <li><a href="#schema">Schema</a></li>
+          <li><a href="#description">Description</a></li>
+        </ul>
+        <div class="clear"></div>
+        <div class="dataset-content-wrapper">
+          <div id="data">
+            <table class="data-table" id="data-table">
+            </table>
+            <c:choose>
+              <c:when test="${not empty data }">
+                <script>
+                  var data = ${data};
+                  var $table = $('#data-table');
+                  com.bouncingdata.Workbench.renderDatatable(data, $table);
+                </script>
+              </c:when>
+              <c:otherwise>
+                <script>
+                $(function() {
+                  console.debug("Load datatable by Ajax...");
+                  var guid = '${guid}';
+                  var columns = ${columns};
+                  var aoColumns = [];
+                  for (idx in columns) {
+                    aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
+                  }
+                  var $table = $('#data-table');
+                  $table.dataTable({
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "sAjaxSource": ctx + "/dataset/ajax/" + guid,
+                    "aoColumns": aoColumns
+                  });
+                });
+                </script>  
+              </c:otherwise>
+            </c:choose>
+          </div>
+        </div>
+        <div id="schema">
+          Dataset schema
+        </div>
+        <div id="description">
+          Dataset description
+        </div>
+        
       </div>
       <div class="clear"></div>
       <div class="comments-container">
