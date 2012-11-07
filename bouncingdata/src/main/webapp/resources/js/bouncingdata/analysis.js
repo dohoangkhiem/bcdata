@@ -35,16 +35,7 @@ Analysis.prototype.init = function(anls) {
               } else if (result[dsguid].size > 0) {
                 console.debug("Load datatable by Ajax...");
                 var columns = result[dsguid].columns;
-                var aoColumns = [];
-                for (idx in columns) {
-                  aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
-                }
-                $table.dataTable({
-                  "bServerSide": true,
-                  "bProcessing": true,
-                  "sAjaxSource": ctx + "/dataset/ajax/" + dsguid,
-                  "aoColumns": aoColumns
-                });
+                com.bouncingdata.Workbench.loadDatatableByAjax(dsguid, columns, $table);
               }
             });
             me.loadedData = true;

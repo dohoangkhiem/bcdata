@@ -122,6 +122,10 @@
   float: right;
 }
 
+.anls-content ul.anls-tabs {
+  width: 204px;
+}
+
 .anls-content .anls-tabs-content-wrapper > .ui-tabs-panel {
   padding: 0;
 } 
@@ -346,11 +350,23 @@ li.comment-item .comment-score, .anls-score {
   border-radius: 2px;
 }
 
+.dataset-item-title {
+  margin: 5px 0;  
+}
+
 .dataset-item-title a {
   text-decoration: none;
   color: #000;
 }
 
 .anls-data, #dataset-content #data {
+  
+}
+
+#dataset-content #data .dataTables_wrapper {
+  overflow: auto;
+}
+
+.anls-data .anls-dataset, .anls-data .anls-attachment {
   overflow-x: auto;
 }

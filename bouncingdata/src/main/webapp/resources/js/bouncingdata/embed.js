@@ -98,11 +98,18 @@ function loadDatasetByAjax(dataPanelId) {
             for (idx in columns) {
               aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
             }
-            $table.dataTable({
+            var datatable = $table.dataTable({
               "bServerSide": true,
               "bProcessing": true,
               "sAjaxSource": ctx + "/public/data/ajax/" + dsguid,
-              "aoColumns": aoColumns
+              "aoColumns": aoColumns,
+              "bJQueryUI": true,
+              "sPaginationType": "full_numbers"
+            });
+            
+            var keys = new KeyTable( {
+              "table": $table[0],
+              "datatable": datatable
             });
           }
         });
@@ -136,8 +143,15 @@ function renderDatatable(data, $table) {
     }
     aaData.push(arr);
   }
-  $table.dataTable({
-    "aaData": aaData, "aoColumns": aoColumns
+  var datatable = $table.dataTable({
+    "aaData": aaData, 
+    "aoColumns": aoColumns, 
+    "bJQueryUI": true,
+    "sPaginationType": "full_numbers"
+  });
+  var keys = new KeyTable( {
+    "table": $table[0],
+    "datatable": datatable
   });
 }
 

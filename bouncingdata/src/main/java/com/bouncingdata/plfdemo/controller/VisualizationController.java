@@ -1,6 +1,9 @@
 package com.bouncingdata.plfdemo.controller;
 
 import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +13,16 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
 
 @Controller
 @RequestMapping(value={"/visualize", "/public"})
-public class VisualizeController {
+public class VisualizationController {
   
-  private Logger logger = LoggerFactory.getLogger(VisualizeController.class);
+  private Logger logger = LoggerFactory.getLogger(VisualizationController.class);
    
   @Autowired
   private ApplicationStoreService appStoreService;
@@ -30,9 +35,9 @@ public class VisualizeController {
     } catch (IOException e) {
       // log: file not found
       logger.debug("Failed to find visualization file, appGuid: {}, vGuid: {}", guid, vGuid);
-      e.printStackTrace();
+      logger.debug("", e);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.debug("", e);
     }
     return "visualize";
   }
@@ -43,9 +48,39 @@ public class VisualizeController {
       String content = appStoreService.getTemporaryVisualization(executionId, name, type);
       model.addAttribute("content", content);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.debug("", e);
     }
     return "visualize";
+  }
+  
+  
+  public @ResponseBody void resizeViz(@PathVariable String guid, @PathVariable String vGuid, @PathVariable String type, WebRequest request, ModelMap model) {
+    if (!"png".equalsIgnoreCase(type)) {
+      return;
+    }
+    
+    Map<String, String[]> params = request.getParameterMap();
+    if (!params.containsKey("w") || !params.containsKey("h")) {
+      return;
+    }
+    
+    int w = 0;
+    int h = 0;
+    try {
+      w = Integer.parseInt(params.get("w")[0]);
+      h = Integer.parseInt(params.get("h")[0]);
+    } catch (NumberFormatException e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Resize viz. {}/{} failed. Reason: Cannot parse width and height.", guid, vGuid);
+      }
+      return;
+    }
+    
+    
+    
+    // determine the viz. snapshot file
+    // initiate a process to replay the plot
+    // return when replay process finish
   }
 
 }

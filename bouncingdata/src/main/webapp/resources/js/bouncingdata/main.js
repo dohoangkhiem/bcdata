@@ -73,8 +73,15 @@ Utils.prototype.renderDatatable = function(data, $table) {
     }
     aaData.push(arr);
   }
-  $table.dataTable({
-    "aaData": aaData, "aoColumns": aoColumns
+  var datatable = $table.dataTable({
+    "aaData": aaData, 
+    "aoColumns": aoColumns, 
+    "bJQueryUI": true,
+    "sPaginationType": "full_numbers"
+  });
+  var keys = new KeyTable( {
+    "table": $table[0],
+    "datatable": datatable
   });
 }
 

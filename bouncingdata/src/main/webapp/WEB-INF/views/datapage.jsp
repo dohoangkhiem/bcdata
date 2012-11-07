@@ -97,17 +97,8 @@
                   console.debug("Load datatable by Ajax...");
                   var guid = '${guid}';
                   var columns = ${columns};
-                  var aoColumns = [];
-                  for (idx in columns) {
-                    aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
-                  }
                   var $table = $('#data-table');
-                  $table.dataTable({
-                    "bServerSide": true,
-                    "bProcessing": true,
-                    "sAjaxSource": ctx + "/dataset/ajax/" + guid,
-                    "aoColumns": aoColumns
-                  });
+                  com.bouncingdata.Workbench.loadDatatableByAjax(guid, columns, $table);               
                 });
                 </script>  
               </c:otherwise>
@@ -115,15 +106,22 @@
           </div>
         </div>
         <div id="schema">
-          Dataset schema
+          <pre style="white-space: normal; word-wrap: break-word;">${dataset.schema }</pre>
         </div>
         <div id="description">
-          Dataset description
+        <c:choose>
+          <c:when test="${not empty dataset.description }">
+            <span>${dataset.description }</span>
+          </c:when>
+          <c:otherwise>
+            <span>No description</span>
+          </c:otherwise>
+        </c:choose>
         </div>
         
       </div>
       <div class="clear"></div>
-      <div class="comments-container">
+      <!-- div class="comments-container">
         <h3 class="comments-title">
           <a href="javascript:void(0);" onclick="$('#comment-form').toggle('slow');">Comment</a>
         </h3>
@@ -146,7 +144,7 @@
           <ul id="comment-list" class="comment-list">
           </ul>
         </div>
-      </div>
+      </div-->
     </div>
   </div>
 </div>

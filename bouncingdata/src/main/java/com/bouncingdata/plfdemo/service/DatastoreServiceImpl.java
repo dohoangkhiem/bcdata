@@ -2,7 +2,6 @@ package com.bouncingdata.plfdemo.service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,7 @@ import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
+import com.bouncingdata.plfdemo.datastore.pojo.model.DataCollection;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Following;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Scraper;
@@ -444,6 +444,45 @@ public class DatastoreServiceImpl implements DatastoreService {
   @Override
   public void updateBcDataScript(BcDataScript script) {
     dataStorage.updateBcDataScript(script);
+  }
+
+  @Override
+  public void createDataCollection(DataCollection collection) {
+    dataStorage.createDataCollection(collection);
+    
+  }
+
+  @Override
+  public void deleteDataCollection(int collectionId) {
+    dataStorage.deleteDataCollection(collectionId);
+    
+  }
+
+  @Override
+  public void updateDataCollection(DataCollection collection) {
+    dataStorage.updateDataCollection(collection);
+    
+  }
+
+  @Override
+  public DataCollection getDataCollection(int collectionId) {
+    return dataStorage.getDataCollection(collectionId);
+  }
+
+  @Override
+  public List<DataCollection> getUserCollections(int userId) {
+    return dataStorage.getUserCollections(userId);
+  }
+
+  @Override
+  public void deleteUserCollections(int userId) {
+    dataStorage.deleteUserCollections(userId);
+    
+  }
+
+  @Override
+  public void addDatasetToCollection(int datasetId, int collectionId) {
+    dataStorage.addDatasetToCollection(datasetId, collectionId);
   }
 
 }

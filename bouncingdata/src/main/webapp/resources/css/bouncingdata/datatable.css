@@ -1,0 +1,15 @@
+#main-content .dataTables_wrapper .fg-toolbar {
+  padding: 5px;
+}
+
+#main-content .dataTables_paginate .fg-button {
+  margin: 0;
+  margin-right: -0.1em !important;
+  cursor: pointer;
+  padding: 2px 6px;
+  outline: none;
+}
+
+.KeyTable td.focus {
+  border: 1px solid orange;
+}

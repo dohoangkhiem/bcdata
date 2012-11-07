@@ -13,6 +13,7 @@
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/analysis.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/home.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/connect.css" />" />
+  <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/bouncingdata/datatable.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/jquery-ui/smoothness/jquery-ui-1.8.20.custom.css" />" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/css/demo_page.css" />" />
   <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/css/jquery.dataTables.css" />" />
@@ -23,6 +24,7 @@
   <script type="text/javascript" src="<c:url value="/resources/js/jquery/jquery-ui-1.8.20.custom.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.layout-1.3.0.rc30.4.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.dataTables.min.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/resources/js/KeyTable.min.js" />"></script>
   <script type="text/javascript" src="<c:url value="/resources/js/jquery.tmpl.min.js" />"></script>
   
   <script type="text/javascript" src="<c:url value="/resources/dojo/dojo.js" />"> </script>

@@ -606,7 +606,7 @@ Workbench.prototype.processTab = function(tabIndex, $tabContent) {
             //  $tab['dbloaded'] = false;
             //}       
               
-            if ((result['datasets'] && result['dataset'].length > 0) || (result['attachments'] && result['attachments'].length > 0)) {
+            if ((result['datasets'] && result['datasets'].length > 0) || (result['attachments'] && result['attachments'].length > 0)) {
               $('#' + $tab.prop('id') + '-data .no-data', $tab).remove();
             }
             $tabs.bind('tabsselect', function(event, ui) {
@@ -794,7 +794,7 @@ Workbench.prototype.execute = function(tabIndex) {
               app.executed = true;
               var datasets = result['datasets'];
               var $dsContainer = $('#' + tabId + '-data', $tab);
-              if (datasets && datasets.length > 0) $dsContainer.empty();
+              $dsContainer.empty();
               me.renderDatasets(datasets, $dsContainer);
             } else if (type == 'scraper') {
               var datasets = result['datasets'];
@@ -1119,9 +1119,8 @@ Workbench.prototype.renderDatasets = function(datasetDetailMap, $dsContainer) {
   var i = 0;
   for (guid in datasetDetailMap) {
     var name = datasetDetailMap[guid].name;
-    htmlToAppend[i++] = '<div class="dataset-item" style="margin-top: 2em;" dsguid="' 
-      + guid + '"><span class="dataset-item-title">'
-      + '<strong><a target="_blank" href="' + ctx + '/dataset/view/' + guid + '">' + name + '</a></strong></span><table class="dataset-item-table"></table></div>';
+    htmlToAppend[i++] = '<div class="dataset-item" style="margin-top: 2em;" dsguid="' + guid + '"><div class="dataset-item-title">'
+      + '<strong><a target="_blank" href="' + ctx + '/dataset/view/' + guid + '">' + name + '</a></strong></div><table class="dataset-item-table"></table></div>';
   }
   
   //$dsContainer.empty();
@@ -1138,18 +1137,8 @@ Workbench.prototype.renderDatasets = function(datasetDetailMap, $dsContainer) {
     } else if (size > 0) {
       console.debug("Load datatable by Ajax...");
       var columns = datasetDetailMap[guid].columns;
-      var aoColumns = [];
-      for (idx in columns) {
-        aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
-      }
-      $table.dataTable({
-        "bServerSide": true,
-        "bProcessing": true,
-        "sAjaxSource": ctx + "/dataset/ajax/" + guid,
-        "aoColumns": aoColumns
-      });
-    }
-    
+      me.loadDatatableByAjax(guid, columns, $table);
+    }    
   });
 }
 
@@ -1188,11 +1177,23 @@ Workbench.prototype.renderDatatable = function(data, $table) {
   com.bouncingdata.Utils.renderDatatable(data, $table);
 }
 
-Workbench.prototype.loadDatatableByAjax = function(dsGuid, $table) {
-  $table.dataTable({
+Workbench.prototype.loadDatatableByAjax = function(dsGuid, columns, $table) {
+  var aoColumns = [];
+  for (idx in columns) {
+    aoColumns.push({ "mDataProp": columns[idx], "sTitle": columns[idx] });
+  }
+  var datatable = $table.dataTable({
     "bServerSide": true,
     "bProcessing": true,
-    "sAjaxSource": ctx + "/dataset/" + dsGuid
+    "sAjaxSource": ctx + "/dataset/ajax/" + dsGuid,
+    "aoColumns": aoColumns,
+    "bJQueryUI": true,
+    "sPaginationType": "full_numbers"
+  });
+  
+  var keys = new KeyTable( {
+    "table": $table[0],
+    "datatable": datatable
   });
 }
 

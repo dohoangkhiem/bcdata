@@ -185,4 +185,25 @@ public class ApplicationStoreService {
     }
   }
   
+  public void resizeRPlot(String anlsGuid, String vizGuid, int width, int height) throws IOException {
+    File f = new File(storePath + Utils.FILE_SEPARATOR + anlsGuid + Utils.FILE_SEPARATOR + "/v/" + vizGuid + ".png");    
+    if (!f.isFile()) {
+      // 
+      if (logger.isDebugEnabled()) {
+        logger.debug("Visualization file {} does not existed.", f.getAbsolutePath());
+      }
+      return;
+    }
+    
+    File snapshot = new File(storePath + Utils.FILE_SEPARATOR + anlsGuid + Utils.FILE_SEPARATOR + "/v/" + vizGuid + ".snapshot");
+    if (!snapshot.isFile()) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Snapshot file {} not found.", snapshot.getAbsolutePath());
+      }
+    }
+    
+    
+    
+  }
+  
 }

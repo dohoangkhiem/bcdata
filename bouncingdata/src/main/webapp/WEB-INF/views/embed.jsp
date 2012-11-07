@@ -12,6 +12,7 @@
   
 <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/datatable/css/jquery.dataTables.css" />" />
 <script type="text/javascript" src="<c:url value="/resources/js/jquery.dataTables.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/js/KeyTable.min.js" />"></script>
   
 <div id="bcdata-embedded-wrapper" class="bcdata-embedded-wrapper"></div>
 <script>
