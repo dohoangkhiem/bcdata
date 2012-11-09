@@ -1,13 +1,13 @@
 package com.bouncingdata.plfdemo.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +16,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
+import com.bouncingdata.plfdemo.datastore.pojo.model.User;
 import com.bouncingdata.plfdemo.service.ApplicationStoreService;
+import com.bouncingdata.plfdemo.service.DatastoreService;
 
 @Controller
 @RequestMapping(value={"/visualize", "/public"})
 public class VisualizationController {
   
   private Logger logger = LoggerFactory.getLogger(VisualizationController.class);
+  
+  @Autowired
+  private DatastoreService datastoreService;
    
   @Autowired
   private ApplicationStoreService appStoreService;
@@ -53,14 +59,27 @@ public class VisualizationController {
     return "visualize";
   }
   
-  
-  public @ResponseBody void resizeViz(@PathVariable String guid, @PathVariable String vGuid, @PathVariable String type, WebRequest request, ModelMap model) {
+  @RequestMapping(value="/replot/{guid}/{vGuid}/{type}", method = RequestMethod.GET)
+  public @ResponseBody void resizeViz(@PathVariable String guid, @PathVariable String vGuid, @PathVariable String type, WebRequest request, ModelMap model, Principal principal) {
     if (!"png".equalsIgnoreCase(type)) {
       return;
     }
     
     Map<String, String[]> params = request.getParameterMap();
     if (!params.containsKey("w") || !params.containsKey("h")) {
+      return;
+    }
+    
+    User user = (User) ((Authentication)principal).getPrincipal();
+    Analysis anls;
+    try {
+      anls = datastoreService.getAnalysisByGuid(guid);
+      if (anls.getUser().getId() != user.getId()) {
+        return;
+      }
+    } catch (Exception e) {
+      logger.debug("Failed to get analysis {}", guid);
+      logger.debug("Exception detail", e);
       return;
     }
     
@@ -75,9 +94,11 @@ public class VisualizationController {
       }
       return;
     }
-    
-    
-    
+    try {
+      appStoreService.resizeRPlot(guid, vGuid, w, h);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     // determine the viz. snapshot file
     // initiate a process to replay the plot
     // return when replay process finish

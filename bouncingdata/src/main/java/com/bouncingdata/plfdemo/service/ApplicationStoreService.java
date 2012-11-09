@@ -1,11 +1,15 @@
 package com.bouncingdata.plfdemo.service;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -15,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
+import com.bouncingdata.plfdemo.datastore.pojo.dto.ExecutionResult;
 import com.bouncingdata.plfdemo.util.Utils;
 
 public class ApplicationStoreService {
@@ -202,8 +207,61 @@ public class ApplicationStoreService {
       }
     }
     
+    String script = "library(datastore)\n datastore::resizePlot('" + snapshot.getAbsolutePath() + ")";
     
+    // 
+    ProcessBuilder pb = new ProcessBuilder("Rscript", "-e", script);
+    if (!pb.environment().containsKey("R_DEFAULT_DEVICE")) {
+      pb.environment().put("R_DEFAULT_DEVICE", "png");
+    }
     
+    pb.redirectErrorStream(true);
+    pb.directory(snapshot.getParentFile());
+    
+    try {
+      final Process p = pb.start();
+      Timer t = new Timer();
+      t.schedule(new TimerTask() {      
+        @Override
+        public void run() {
+          try {
+            p.exitValue();
+          } catch (IllegalThreadStateException e) {
+            //logger.info("");
+            e.printStackTrace();
+            p.destroy();
+          }
+          this.cancel();
+        }
+      }, 1000*60);
+      
+      InputStream appOutputStream = new BufferedInputStream(p.getInputStream());
+      int c;
+      StringBuilder outputBuilder = new StringBuilder();
+      byte[] b = new byte[4096];
+      try {
+        while ((c = appOutputStream.read(b)) != -1) {
+          String chunk = new String(b, 0, c);
+          outputBuilder.append(chunk);
+        }
+      } catch (IOException e) {
+        // the stream maybe closed due to timeout or unknown error
+        logger.debug("Exception occurs");
+        e.printStackTrace();
+      }
+      String output = outputBuilder.toString();
+      logger.info("RESIZE OUTPUT: " + output);
+      try {
+        p.exitValue();
+      } catch (IllegalThreadStateException e) {
+        p.destroy();
+        t.cancel();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
   
 }
