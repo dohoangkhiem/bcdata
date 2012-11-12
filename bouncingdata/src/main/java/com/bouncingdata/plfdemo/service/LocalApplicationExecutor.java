@@ -414,14 +414,19 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
         String filename = f.getName();
         Visualization v = new Visualization();
         
+        String name = filename.substring(0, filename.lastIndexOf(".")); 
         String extension = filename.substring(filename.lastIndexOf(".") + 1);
         VisualizationType type = null;
-        if ("png".equals(extension)) type = VisualizationType.PNG;
+        File snapshot = null;
+        if ("png".equals(extension)) {
+          type = VisualizationType.PNG;
+          snapshot = new File(f.getParent() + Utils.FILE_SEPARATOR + name + ".snapshot");        
+        }
         else if ("html".equals(extension)) type = VisualizationType.HTML;
         
         v.setAnalysis(anls);
         v.setUser(anls.getUser());
-        v.setName(filename.substring(0, filename.lastIndexOf(".")));
+        v.setName(name);
         v.setType(type.getType());
         String guid = Utils.generateGuid();
         v.setGuid(guid);
@@ -444,6 +449,9 @@ public class LocalApplicationExecutor implements ApplicationExecutor, ServletCon
         }
         try {
           FileUtils.copyFile(f, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + "." + type.getType()));
+          if (type == VisualizationType.PNG && snapshot.isFile()) {
+            FileUtils.copyFile(snapshot, new File(vDir.getAbsoluteFile() + Utils.FILE_SEPARATOR + guid + ".snapshot"));
+          }
         } catch (IOException e) {
           logger.debug("Failed to copy visual file " + f.getAbsolutePath() + " to " + vDir.getAbsolutePath());
         }

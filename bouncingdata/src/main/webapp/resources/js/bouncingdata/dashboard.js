@@ -250,6 +250,29 @@ Dashboard.prototype.addViz = function(x, y, w, h, viz, $container, editMode) {
       
       // post back
       me.postback($container, "rearrange");
+      
+      // request re-plot viz.
+      if (type == "png") {
+        var anlsGuid = $container.attr('guid');
+        var vizGuid = $(this).attr('guid');
+        if (!anlsGuid || !vizGuid) return;
+        console.debug("Request for replay plot..")
+        $.ajax({
+          url: ctx + "/visualize/replot/" + anlsGuid + "/" + vizGuid + "/png",
+          type: "get",
+          data: {
+            w: $vizContainer.width() - 10,
+            h: $vizContainer.height() - 15
+          },
+          success: function(res) {
+            console.debug("Successfully replay plot.");
+          }, 
+          error: function(res) {
+            console.debug("Failed to replot viz.");
+            console.debug(res);
+          }
+        });
+      }
     });
     
     $vizContainer.hover(function() {
@@ -309,6 +332,8 @@ Dashboard.prototype.postback = function($container, cause) {
     }
   });
 }
+
+
 
 /**
  * 

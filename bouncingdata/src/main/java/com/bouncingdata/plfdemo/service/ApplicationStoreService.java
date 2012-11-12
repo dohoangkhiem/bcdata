@@ -191,26 +191,33 @@ public class ApplicationStoreService {
   }
   
   public void resizeRPlot(String anlsGuid, String vizGuid, int width, int height) throws IOException {
-    File f = new File(storePath + Utils.FILE_SEPARATOR + anlsGuid + Utils.FILE_SEPARATOR + "/v/" + vizGuid + ".png");    
+    /*File f = new File(storePath + Utils.FILE_SEPARATOR + anlsGuid + Utils.FILE_SEPARATOR + "/v/" + vizGuid + ".png");    
     if (!f.isFile()) {
       // 
       if (logger.isDebugEnabled()) {
         logger.debug("Visualization file {} does not existed.", f.getAbsolutePath());
       }
       return;
-    }
+    }*/
     
     File snapshot = new File(storePath + Utils.FILE_SEPARATOR + anlsGuid + Utils.FILE_SEPARATOR + "/v/" + vizGuid + ".snapshot");
     if (!snapshot.isFile()) {
       if (logger.isDebugEnabled()) {
         logger.debug("Snapshot file {} not found.", snapshot.getAbsolutePath());
       }
+      return;
     }
     
-    String script = "library(datastore)\n datastore::resizePlot('" + snapshot.getAbsolutePath() + ")";
+    String script = "library(datastore)\n" 
+                  + "datastore::resizePlot('" 
+                  + snapshot.getAbsolutePath() 
+                  + "'," + width + "," + height + ")";
+    
+    File temp = new File(snapshot.getParentFile().getAbsolutePath() + "/temp.R");
+    FileUtils.writeStringToFile(temp, script);
     
     // 
-    ProcessBuilder pb = new ProcessBuilder("Rscript", "-e", script);
+    ProcessBuilder pb = new ProcessBuilder("Rscript", temp.getAbsolutePath());
     if (!pb.environment().containsKey("R_DEFAULT_DEVICE")) {
       pb.environment().put("R_DEFAULT_DEVICE", "png");
     }
@@ -256,6 +263,10 @@ public class ApplicationStoreService {
       } catch (IllegalThreadStateException e) {
         p.destroy();
         t.cancel();
+      }
+      
+      if (temp.isFile()) {
+        temp.delete();
       }
     } catch (IOException e) {
       e.printStackTrace();

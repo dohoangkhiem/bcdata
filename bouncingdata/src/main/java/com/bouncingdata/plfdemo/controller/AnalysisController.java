@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bouncingdata.plfdemo.datastore.pojo.dto.Attachment;
 import com.bouncingdata.plfdemo.datastore.pojo.dto.DashboardDetail;
@@ -262,4 +263,12 @@ public class AnalysisController {
       return "Failed to retrieve analysis source code. This file maybe corrupted or deleted.";
     }
   }
+  
+  
+  public @ResponseBody void uploadAnalysis(@RequestParam(value="file", required=true) MultipartFile file, @RequestParam(value="type", required=true) String type, ModelMap model, Principal principal) {
+    User user = (User) ((Authentication)principal).getPrincipal();
+    
+  }
+  
+  
 }
