@@ -15,7 +15,7 @@
   <url>http://maven.apache.org</url>
   
   <properties>
-    <spring.version>3.0.5.RELEASE</spring.version>
+    <spring.version>3.1.0.RELEASE</spring.version>
   </properties>
   
   <dependencies>
@@ -330,6 +330,7 @@
   </build>
   
   <repositories>
+    <!-- This repo only for commons-csv -->
     <repository>
       <id>apache</id>
       <name>Apache Repository</name>
@@ -338,6 +339,9 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
   </repositories>
   

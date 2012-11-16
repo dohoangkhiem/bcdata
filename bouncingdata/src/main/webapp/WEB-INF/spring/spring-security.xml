@@ -1,27 +1,30 @@
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-  xmlns:beans="http://www.springframework.org/schema/beans" 
+<beans xmlns:sec="http://www.springframework.org/schema/security"
+  xmlns="http://www.springframework.org/schema/beans" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans
-  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
   http://www.springframework.org/schema/security
-  http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
- 
-  <http use-expressions="true">
-    <intercept-url pattern="/auth/*" access="permitAll" />
-    <intercept-url pattern="/plfdemo/*" access="permitAll" />
-    <intercept-url pattern="/resources/**" access="permitAll" />
-    <intercept-url pattern="/cdn/**" access="permitAll" />
-    <intercept-url pattern="/favicon.ico" access="permitAll"/>
-    <intercept-url pattern="/public/**" access="permitAll" />
-    <intercept-url pattern="/**" access="isAuthenticated()" />
-    <form-login login-page="/auth/login" default-target-url="/"
+  http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+  
+  <sec:http use-expressions="true">
+    <sec:intercept-url pattern="/auth/*" access="permitAll" />
+    <sec:intercept-url pattern="/plfdemo/*" access="permitAll" />
+    <sec:intercept-url pattern="/resources/**" access="permitAll" />
+    <sec:intercept-url pattern="/cdn/**" access="permitAll" />
+    <sec:intercept-url pattern="/favicon.ico" access="permitAll"/>
+    <sec:intercept-url pattern="/public/**" access="permitAll" />
+    <sec:intercept-url pattern="/**" access="isAuthenticated()" />
+    
+    <sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="basicProcessingFilter" />
+
+    <sec:form-login login-page="/auth/login" default-target-url="/"
       authentication-failure-url="/auth/failed" login-processing-url="/auth/j_spring_security_check"  />
-    <http-basic />
-    <logout logout-success-url="/auth/logout" logout-url="/auth/j_spring_security_logout" />
-  </http>
+    <sec:logout logout-success-url="/auth/logout" logout-url="/auth/j_spring_security_logout" />  
+     
+  </sec:http>
  
-  <authentication-manager>
-    <authentication-provider user-service-ref="customUserDetailsService">
+  <sec:authentication-manager alias="authenticationManager">
+    <sec:authentication-provider user-service-ref="customUserDetailsService">
     
       <!-- jdbc-user-service data-source-ref="dataSource"
        users-by-username-query="select username, password, enabled from spring_users where username = ?"
@@ -31,7 +34,21 @@
       <!-- group-authorities-by-username-query=
           "select m.username, ga.authority from spring_group_authorities ga, 
           spring_memberships m where m.group_id = ga.id and m.username = ?" -->
-    </authentication-provider>
-  </authentication-manager>
+    </sec:authentication-provider>
+  </sec:authentication-manager>
+  
+  <bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+    <property name="authenticationManager">
+        <ref bean="authenticationManager" />
+    </property> 
+    <property name="authenticationEntryPoint">
+        <ref bean="authenticationEntryPoint" />
+    </property>
+  </bean>
+
+  <bean id="authenticationEntryPoint"
+    class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+    <property name="realmName" value="bouncingdata" />
+  </bean>
  
-</beans:beans>
+</beans>
