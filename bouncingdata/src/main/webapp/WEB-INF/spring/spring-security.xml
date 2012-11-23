@@ -6,6 +6,11 @@
   http://www.springframework.org/schema/security
   http://www.springframework.org/schema/security/spring-security-3.1.xsd">
   
+  <sec:http pattern="/client/**" use-expressions="true" create-session="never">
+    <sec:intercept-url pattern='/**' access='isAuthenticated()' />
+    <sec:http-basic/>  
+  </sec:http>
+  
   <sec:http use-expressions="true">
     <sec:intercept-url pattern="/auth/*" access="permitAll" />
     <sec:intercept-url pattern="/plfdemo/*" access="permitAll" />
@@ -15,8 +20,6 @@
     <sec:intercept-url pattern="/public/**" access="permitAll" />
     <sec:intercept-url pattern="/**" access="isAuthenticated()" />
     
-    <sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="basicProcessingFilter" />
-
     <sec:form-login login-page="/auth/login" default-target-url="/"
       authentication-failure-url="/auth/failed" login-processing-url="/auth/j_spring_security_check"  />
     <sec:logout logout-success-url="/auth/logout" logout-url="/auth/j_spring_security_logout" />  

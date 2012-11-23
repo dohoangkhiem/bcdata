@@ -13,3 +13,8 @@
 .KeyTable td.focus {
   border: 1px solid orange;
 }
+
+#main-content .dataTables_wrapper {
+  height: 350px;
+  overflow: auto;
+}

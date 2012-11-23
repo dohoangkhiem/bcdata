@@ -30,7 +30,8 @@ public abstract class BcDataScript {
   private Date lastUpdate;
   private boolean isExecuted;
   private String type;
-  
+  private String createSource;
+   
   public int getId() {
     return id;
   }
@@ -113,6 +114,12 @@ public abstract class BcDataScript {
   }
   public void setType(String type) {
     this.type = type;
+  }
+  public String getCreateSource() {
+    return createSource;
+  }
+  public void setCreateSource(String createSource) {
+    this.createSource = createSource;
   }
   
 }

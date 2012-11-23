@@ -1,13 +1,10 @@
 package com.bouncingdata.plfdemo.controller;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -31,7 +28,6 @@ import com.bouncingdata.plfdemo.datastore.pojo.dto.VisualizationType;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Analysis;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisDataset;
 import com.bouncingdata.plfdemo.datastore.pojo.model.AnalysisVote;
-import com.bouncingdata.plfdemo.datastore.pojo.model.BcDataScript;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Comment;
 import com.bouncingdata.plfdemo.datastore.pojo.model.CommentVote;
 import com.bouncingdata.plfdemo.datastore.pojo.model.Dataset;
@@ -245,128 +241,5 @@ public class AnalysisController {
       }
     }
   }
-  
-  @RequestMapping(value="/source/{guid}", method = RequestMethod.GET)
-  public @ResponseBody String getSourceCode(@PathVariable String guid) {
-    Analysis anls = null;
-    try {
-      anls = datastoreService.getAnalysisByGuid(guid);
-    } catch (Exception e) {
-      return "Analysis not found!";
-    }
-    
-    if (anls == null) {
-      return "Analysis not found!";
-    }
-    
-    try {
-      return appStoreService.getScriptCode(anls.getGuid(), anls.getLanguage());
-    } catch (Exception e) {
-      logger.debug("Failed to retrive source code for analysis " + anls.getGuid(), e);
-      return "Failed to retrieve analysis source code. This file maybe corrupted or deleted.";
-    }
-  }
-  
-  
-  @RequestMapping(value="/client/up", method = RequestMethod.POST)
-  public @ResponseBody String uploadAnalysis(@RequestParam(value="code", required=true) String code, 
-      @RequestParam(value="file", required=true) String name, 
-      @RequestParam(value="type", required=false) String type, 
-      HttpServletResponse res, ModelMap model, Principal principal) throws IOException {
-    
-    User user = (User) ((Authentication)principal).getPrincipal();
-    
-    // check user
-    if (user == null) {
-      res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not authorized!");
-      return null;
-    }
-    
-    /*String script = null;
-    try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-      String line;
-      StringBuilder s = new StringBuilder();
-      while ((line = reader.readLine()) != null) {
-        s.append(line);
-      }
-      
-      script  = s.toString();
-      
-    } catch (IOException e) {
-      res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad content!");
-      return;
-    }
-    */
-    
-    if (code == null || code.isEmpty()) {
-      res.sendError(HttpServletResponse.SC_NO_CONTENT, "No content!");
-      return null;
-    }
-    
-    BcDataScript script = new Analysis();
-    script.setName(name);
-    script.setUser(user);
-    script.setLanguage("r");
-    script.setLineCount(Utils.countLines(code));
-    Date date = Utils.getCurrentDate();
-    script.setCreateAt(date);
-    script.setLastUpdate(date);
-    script.setUser(user);
-    script.setExecuted(false);
-    
-    String guid = null;
-    try { 
-      guid = datastoreService.createBcDataScript(script, type);
-    } catch (Exception e) {
-      logger.debug("Failed to create analysis " + name + " for user " + user.getUsername(), e);
-      logger.debug("", e);
-    }
-    
-    if (guid == null) {
-      res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Can't create new analysis.");
-      return null;
-    }
-    
-    // store application code
-    try {
-      appStoreService.createApplicationFile(guid, "r", code);
-    } catch (Exception e) {
-      logger.error("Error occurs when save application code, guid {}", guid);
-    }
-    
-    return guid;
-    
-  }
-  
-  
-  @RequestMapping(value="/client/getscript/{guid}", method=RequestMethod.GET)
-  public @ResponseBody String downloadScript(@PathVariable String guid, ModelMap model, Principal principal, HttpServletResponse res) throws IOException {
-    // to return to client: script code
-    User user = (User) ((Authentication)principal).getPrincipal();
-    
-    // check user
-    if (user == null) {
-      res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not authorized!");
-      return null;
-    }
-    
-    if (guid == null) {
-      res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad guid!");
-    }
-    
-    Analysis anls = null;
-    try {
-      anls = datastoreService.getAnalysisByGuid(guid);
-    } catch (Exception e) {
-      return null;
-    }
-    
-    if (anls == null) return null;
-    
-    String code =  appStoreService.getScriptCode(guid, null);
-    return code;
-  }
-  
   
 }
