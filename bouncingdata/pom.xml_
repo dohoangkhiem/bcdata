@@ -44,13 +44,13 @@
       <groupId>javax.servlet.jsp.jstl</groupId>
       <artifactId>jstl-api</artifactId>
       <version>1.2</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.glassfish.web</groupId>
       <artifactId>jstl-impl</artifactId>
       <version>1.2</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     
     <!-- Spring 3 dependencies -->
@@ -58,48 +58,47 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
  
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
  
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-js</artifactId>
       <version>2.3.1.RELEASE</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-js-resources</artifactId>
       <version>2.3.1.RELEASE</version>
-      <scope>provided</scope>
     </dependency>
     
     <!-- Spring Security -->
@@ -107,28 +106,24 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
     </dependency>
  
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
     </dependency>
  
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-taglibs</artifactId>
       <version>${spring.version}</version>
-      <scope>provided</scope>
     </dependency>
     
     <!-- Apache Tiles -->
@@ -136,31 +131,31 @@
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-core</artifactId>
       <version>2.2.2</version>
-      <scope>provided</scope>
+      <!-- scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-api</artifactId>
       <version>2.2.2</version>
-      <scope>provided</scope>
+      <!-- scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-jsp</artifactId>
       <version>2.2.2</version>
-      <scope>provided</scope>
+      <!-- scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-servlet</artifactId>
       <version>2.2.2</version>
-      <scope>provided</scope>
+      <!-- scope>provided</scope-->
     </dependency>        
     <dependency>
       <groupId>org.apache.tiles</groupId>
       <artifactId>tiles-template</artifactId>
       <version>2.2.2</version>
-      <scope>provided</scope>
+      <!-- scope>provided</scope-->
     </dependency>
     
     <!-- Datastore libraries -->
@@ -174,31 +169,28 @@
       <groupId>javax.jdo</groupId>
       <artifactId>jdo-api</artifactId>
       <version>3.0</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-core</artifactId>
       <version>3.0.5</version>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-api-jdo</artifactId>
       <version>3.0.5</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-rdbms</artifactId>
       <version>3.0.5</version>
-      <scope>provided</scope>
     </dependency>
     <!-- dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-enhancer</artifactId>
       <version>3.0.1</version>
-      <scope>provided</scope>
     </dependency-->
   
     <!-- Apache Commons -->
@@ -206,39 +198,36 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.6</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.0.1</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.6</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.2.2</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-csv</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
+    </dependency> 
     
     <!-- Jackson JSON Processor -->
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.8.1</version>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>    
     
     <!-- Logging framework -->    
@@ -247,37 +236,35 @@
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
       <type>jar</type>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.5.8</version>
       <type>jar</type>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.8</version>
       <type>jar</type>
-      <scope>provided</scope>
+      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
       <version>3.8</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
       <version>3.8</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
-    <finalName>snapshot</finalName>
+    <finalName>bouncingdata</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/java</directory>
@@ -314,13 +301,12 @@
         </configuration>
         <executions>
           <execution>
-            <phase>process-classes</phase>
+            <phase>compile</phase>
             <goals>
               <goal>enhance</goal>
             </goals>
           </execution>
         </executions>
-        <!-- Force the Datanucleus plugin to use datanucleus-core-3.0.5 instead of the newest version  -->
         <dependencies>
           <dependency>
             <groupId>org.datanucleus</groupId>
@@ -344,6 +330,7 @@
   </build>
   
   <repositories>
+    <!-- This repo only for commons-csv -->
     <repository>
       <id>apache</id>
       <name>Apache Repository</name>
@@ -357,4 +344,5 @@
       </releases>
     </repository>
   </repositories>
+  
 </project>
