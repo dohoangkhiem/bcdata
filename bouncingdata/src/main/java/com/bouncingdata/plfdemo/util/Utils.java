@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -134,7 +133,8 @@ public class Utils {
       for (int i = 1; i < numColumns + 1; i++) {
         columnNames[i-1] = rsmd.getColumnName(i);
         if (i == numColumns) {
-          printer.println(columnNames[i-1]);
+          printer.print(columnNames[i-1]);
+          printer.println();
         } else printer.print(columnNames[i-1]);
       }
       while (rs.next()) {
@@ -172,7 +172,8 @@ public class Utils {
           }
           
           if (i == numColumns) {
-            printer.println(value!=null?value.toString():"");
+            printer.print(value!=null?value.toString():"");
+            printer.println();
           } else {
             printer.print(value!=null?value.toString():"");
           }
@@ -199,7 +200,8 @@ public class Utils {
     try {
       for (int i = 0; i < columns.size(); i++) {
         if (i == columns.size() - 1) {
-          printer.println(columns.get(i));
+          printer.print(columns.get(i));
+          printer.println();
         } else printer.print(columns.get(i));
       }
       for (int i = 0; i< data.size(); i++) {
@@ -208,7 +210,8 @@ public class Utils {
           String col = columns.get(j);
           String val = element.get(col).getValueAsText();
           if (j == columns.size() - 1) {
-            printer.println(val);
+            printer.print(val);
+            printer.println();
           } else printer.print(val);
         }
       }
