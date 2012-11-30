@@ -18,7 +18,7 @@
   
   <!-- PMF Bean -->
   <bean id="pmf" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean"
-    p:configLocation="classpath:datanucleus-test.properties" >
+    p:configLocation="classpath:datanucleus-test.properties" />
   
   <!--bean id="pmf" class="org.datanucleus.jdo.JDOPersistenceManagerFactory" destroy-method="close">
     <property name="connectionFactory" ref="dataSource"/>
