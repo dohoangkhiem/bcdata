@@ -12,9 +12,9 @@
   
   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
     p:driverClassName="${bcdatastore.jdbc.driverClassName}"
-    p:url="${bcdatastore.jdbc.url}"
-    p:username="${bcdatastore.jdbc.username}"
-    p:password="${bcdatastore.jdbc.password}" />
+    p:url="jdbc:mysql://ec2-50-19-213-178.compute-1.amazonaws.com:3306/bcdata-test"
+    p:username="bcdata-test"
+    p:password="a" />
   
   <!-- PMF Bean -->
   <bean id="pmf" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean"
