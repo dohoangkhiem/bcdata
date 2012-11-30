@@ -8,9 +8,9 @@
   <name>dataprj-parent</name>
   <url>http://maven.apache.org</url>
   <modules>
-    <module>wbexplorer</module>
+    <!--module>wbexplorer</module>
     <module>sec-xbrl</module>
-    <module>hive-experiment</module>
+    <module>hive-experiment</module-->
     <module>bouncingdata</module>
   </modules>
 </project>
