@@ -17,13 +17,13 @@
     p:password="a" />
   
   <!-- PMF Bean -->
-  <bean id="pmf" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean"
-    p:configLocation="classpath:datanucleus.properties" />
+  <!--bean id="pmf" class="org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean"
+    p:configLocation="classpath:datanucleus.properties" /-->
   
-  <!-- bean id="myPmf" class="org.datanucleus.jdo.JDOPersistenceManagerFactory" destroy-method="close">
+  <bean id="pmf" class="org.datanucleus.jdo.JDOPersistenceManagerFactory" destroy-method="close">
     <property name="connectionFactory" ref="dataSource"/>
     <property name="nontransactionalRead" value="true"/>
-  </bean-->
+  </bean>
 
   <!-- Typical DAO -->
   <bean id="jdoDataStorage" class="com.bouncingdata.plfdemo.datastore.JdoDataStorage">
