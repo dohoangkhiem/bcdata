@@ -348,7 +348,7 @@
       <id>apache</id>
       <name>Apache Repository</name>
       <layout>default</layout>
-      <url>http://repository.apache.org</url>
+      <url>https://repository.apache.org/content/groups/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

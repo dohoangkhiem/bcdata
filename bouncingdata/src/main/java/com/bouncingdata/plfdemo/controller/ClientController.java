@@ -55,7 +55,7 @@ public class ClientController {
    * @param principal
    * @return
    */
-  @RequestMapping(value="/test", method=RequestMethod.GET)
+  @RequestMapping(value="/test")
   public @ResponseBody String test(Principal principal) {
     StringBuilder response = new StringBuilder("Your request has been authenticated.");
     User user = (User) ((Authentication)principal).getPrincipal();
@@ -79,7 +79,7 @@ public class ClientController {
     }
     
     String[] types = new String[] {"all", "analysis", "dataset"};
-    if (type == null) type = "all";
+    if (type == null) type = "analysis";
     type = type.toLowerCase();
     if (type != null && !Arrays.asList(types).contains(type)) {
       res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown type.");
@@ -89,14 +89,14 @@ public class ClientController {
     Map<String, Object> results = new LinkedHashMap<String, Object>();
     if (type.equals("all") || type.equals("analysis")) {
       try {
-        results.put("analysis", datastoreService.getAnalysisList(user.getId()));
+        results.put("analyses", datastoreService.getAnalysisList(user.getId()));
       } catch (Exception e) {
         results.put("analyses", null);
       }
     }
     if (type.equals("all") || type.equals("dataset")) {
       try {
-        results.put("dataset", datastoreService.getDatasetList(user.getId()));
+        results.put("datasets", datastoreService.getDatasetList(user.getId()));
       } catch (Exception e) {
         results.put("datasets", null);
       }
@@ -104,7 +104,7 @@ public class ClientController {
     
     return results;
   }
-  
+    
   @RequestMapping(value="/anls/info/{guid}", method=RequestMethod.GET)
   public @ResponseBody Analysis getAnalysisInfo(@PathVariable String guid, Principal principal) throws Exception {
     Analysis anls = datastoreService.getAnalysisByGuid(guid);

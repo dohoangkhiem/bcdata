@@ -24,7 +24,7 @@ public class CsvParser implements DataParser {
   public List<String[]> parse(InputStream is) throws Exception {
     CSVParser parser = new CSVParser(new InputStreamReader(is), CSVFormat.DEFAULT);
     List<CSVRecord> records = parser.getRecords();
-    int lineNumber = parser.getLineNumber();
+    long lineNumber = parser.getLineNumber();
     logger.info("Reading CSV file: {} rows found.", lineNumber);
     List<String[]> results = new ArrayList<String[]>();
     boolean isFirst = true;
@@ -52,7 +52,7 @@ public class CsvParser implements DataParser {
     CSVParser parser = new CSVParser(new FileReader(file));
     //Map<String, Integer> headerMap = parser.getHeaderMap();
     List<CSVRecord> records = parser.getRecords();
-    int lineNumber = parser.getLineNumber();
+    long lineNumber = parser.getLineNumber();
     System.out.println("Number of line " + lineNumber);
   }
 }
