@@ -37,5 +37,9 @@
   <definition name="search" extends="based-layout">
     <put-attribute name="main-content" value="/WEB-INF/views/search.jsp"></put-attribute>
   </definition>
+  
+  <definition name="help" extends="based-layout">
+    <put-attribute name="main-content" value="/WEB-INF/views/help.jsp"></put-attribute>
+  </definition>
     
 </tiles-definitions>

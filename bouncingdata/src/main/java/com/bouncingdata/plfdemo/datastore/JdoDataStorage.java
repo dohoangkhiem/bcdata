@@ -246,6 +246,20 @@ public class JdoDataStorage extends JdoDaoSupport implements DataStorage {
     users.add(user);
     persistData(users);
   }
+  
+  public void deleteUser(int userId) {
+    PersistenceManager pm = getPersistenceManager();
+    User user = pm.getObjectById(User.class, userId);
+    Transaction tx = pm.currentTransaction();
+    try {
+      tx.begin();
+      pm.deletePersistent(user);
+      tx.commit();
+    } finally {
+      if (tx.isActive()) tx.rollback();
+      pm.close();
+    }
+  }
 
   @Override
   public void createGroup(Group group) {

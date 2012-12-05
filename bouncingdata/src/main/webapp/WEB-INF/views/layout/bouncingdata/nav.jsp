@@ -27,6 +27,13 @@
     <div class="nav-item-text">Connect</div>
   </a>
 </div>
+<div class="nav-item" id="nav-help">
+  <form action="<c:url value='/help'/>" method="GET" id="nav-help-form" style="padding: 0px;margin: 0px;"></form>
+  <a href="<c:url value='/help'/>" class="nav-item-link" id="nav-help-link" ref="help">
+    <div class="nav-item-icon"></div>
+    <div class="nav-item-text">API Help</div>
+  </a>
+</div>
 <!-- div class="nav-item" id="nav-search">
   <form action="<c:url value='/main/search'/>" method="GET" id="nav-search-form" style="padding: 0px;margin: 0px;"></form>
   <a href="<c:url value='/main/search'/>" class="nav-item-link" id="nav-search-link">

@@ -1,5 +1,6 @@
 package com.bouncingdata.plfdemo.datastore;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,7 +50,9 @@ public class JdbcBcDatastoreTest extends AbstractJUnit38SpringContextTests {
   
   public void testParseExcel() throws Exception {
     String tableName = "demo.from_excel";
-    InputStream is = new FileInputStream("/home/khiem/workbook.xls");
+    File file = new File("/home/khiem/workbook.xls");
+    if (!file.isFile()) return;
+    InputStream is = new FileInputStream(file);
     DataParser parser = DataParserFactory.getDataParser(FileType.EXCEL);
     List<String[]> data = parser.parse(is);
     try {

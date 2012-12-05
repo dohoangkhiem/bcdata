@@ -32,6 +32,11 @@ public class LoginController {
   public String openCreate() {
     return "create";
   }
+  
+  @RequestMapping(value="/help", method = RequestMethod.GET)
+  public String openHelp() {
+    return "help";
+  }
     
   @RequestMapping(value="/auth", method=RequestMethod.GET)
   public String gologin(ModelMap model) {

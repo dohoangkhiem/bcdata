@@ -39,11 +39,11 @@ public class AbstractBouncingDataTest extends TestCase {
     PersistenceManager pm = pmf.getPersistenceManager();
     assertNotNull(pm);
     
-    Query q = pm.newQuery(Analysis.class);
+    /*Query q = pm.newQuery(Analysis.class);
     List<Analysis> analyses =  (List<Analysis>) q.execute();
     assertNotNull(analyses);
     System.out.println("Number of analyses: " + analyses.size());
-    assertTrue(analyses.size() > 0);
+    assertTrue(analyses.size() > 0);*/
     pm.close();
   }
     
